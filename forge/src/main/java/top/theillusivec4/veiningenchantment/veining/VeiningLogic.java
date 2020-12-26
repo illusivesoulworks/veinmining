@@ -16,15 +16,17 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import top.theillusivec4.veiningenchantment.VeiningEnchantmentMod;
+import top.theillusivec4.veiningenchantment.config.VeiningEnchantmentConfig;
 
-public class VeiningManager {
+public class VeiningLogic {
 
-  private static final Direction[] CARDINAL =
+  private static final Direction[] CARDINAL_DIRECTIONS =
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
@@ -36,28 +38,45 @@ public class VeiningManager {
     if (veiningLevels <= 0 || playerEntity.isCrouching()) {
       return;
     }
-    int blocks = 100;
+    int blocks = 0;
+    int maxBlocks = VeiningEnchantmentConfig.Veining.maxBlocksPerLevel * veiningLevels;
+    int maxDistance = VeiningEnchantmentConfig.Veining.maxDistancePerLevel * veiningLevels;
     Set<BlockPos> visited = new HashSet<>();
     visited.add(pos);
-    LinkedList<BlockPos> candidates = new LinkedList<>();
-    search(candidates, pos);
+    LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
+    search(candidates, pos, 1);
 
     while (!candidates.isEmpty()) {
-      BlockPos candidate = candidates.poll();
+      Tuple<BlockPos, Integer> candidate = candidates.poll();
+      BlockPos blockPos = candidate.getA();
+      int blockDistance = candidate.getB();
 
-      if (blocks > 0 && visited.add(candidate) &&
-          matches(source, world.getBlockState(candidate).getBlock()) &&
-          harvest(playerEntity, candidate)) {
-        search(candidates, candidate);
-        blocks--;
+      if (blocks < maxBlocks && blockDistance < maxDistance && visited.add(blockPos) &&
+          matches(source, world.getBlockState(blockPos).getBlock()) &&
+          harvest(playerEntity, blockPos)) {
+        search(candidates, blockPos, blockDistance + 1);
+        blocks++;
       }
     }
   }
 
-  private static void search(LinkedList<BlockPos> candidates, BlockPos source) {
+  private static void search(LinkedList<Tuple<BlockPos, Integer>> candidates, BlockPos source,
+                             int distance) {
 
-    for (Direction direction : CARDINAL) {
-      candidates.add(source.offset(direction));
+    for (Direction direction : CARDINAL_DIRECTIONS) {
+      candidates.add(new Tuple<>(source.offset(direction), distance));
+    }
+
+    if (VeiningEnchantmentConfig.Veining.diagonalMining) {
+      BlockPos up = source.offset(Direction.UP);
+      BlockPos down = source.offset(Direction.DOWN);
+      Direction[] yOffsets = new Direction[] {Direction.SOUTH, Direction.SOUTH, Direction.NORTH, Direction.NORTH};
+      Direction[] xOffsets = new Direction[] {Direction.EAST, Direction.WEST, Direction.EAST, Direction.WEST};
+
+      for (int i = 0; i < yOffsets.length; i++) {
+        candidates.add(new Tuple<>(up.offset(yOffsets[i]).offset(xOffsets[i]), distance));
+        candidates.add(new Tuple<>(down.offset(yOffsets[i]).offset(xOffsets[i]), distance));
+      }
     }
   }
 
