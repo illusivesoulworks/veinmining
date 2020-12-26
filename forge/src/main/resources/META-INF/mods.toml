@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[35,)"
+license="LGPL-3.0-or-later"
+issueTrackerURL="https://github.com/TheIllusiveC4/VeiningEnchantment/issues"
+logoFile="${mod_icon}"
+[[mods]]
+modId="${mod_id}"
+version="${version}"
+displayName="${mod_name}"
+displayURL="${mod_url}"
+authors="${mod_author}"
+description='''
+${mod_description}
+'''
+[[dependencies.veiningenchantment]]
+    modId="forge"
+    mandatory=true
+    versionRange="[35,)"
+    ordering="NONE"
+    side="BOTH"
+[[dependencies.veiningenchantment]]
+    modId="minecraft"
+    mandatory=true
+    versionRange="[1.16.4,1.17)"
+    ordering="NONE"
+    side="BOTH"
