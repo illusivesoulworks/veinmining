@@ -2,6 +2,7 @@ package top.theillusivec4.veiningenchantment.veining;
 
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
@@ -10,7 +11,6 @@ import net.minecraft.block.CommandBlockBlock;
 import net.minecraft.block.JigsawBlock;
 import net.minecraft.block.StructureBlock;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.item.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
@@ -21,12 +21,10 @@ import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.items.ItemHandlerHelper;
 import top.theillusivec4.veiningenchantment.VeiningEnchantmentMod;
 import top.theillusivec4.veiningenchantment.config.VeiningEnchantmentConfig;
 
@@ -40,8 +38,11 @@ public class VeiningLogic {
     ServerWorld world = playerEntity.getServerWorld();
     ItemStack stack = playerEntity.getHeldItemMainhand();
     int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeiningEnchantmentMod.VEINING, stack);
+    boolean activate =
+        (playerEntity.isCrouching() && VeiningEnchantmentConfig.Veining.invertActivation) ||
+            (!VeiningEnchantmentConfig.Veining.invertActivation && !playerEntity.isCrouching());
 
-    if (veiningLevels <= 0 || playerEntity.isCrouching()) {
+    if (veiningLevels <= 0 || !activate) {
       return;
     }
     int blocks = 0;
@@ -52,28 +53,21 @@ public class VeiningLogic {
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
     search(candidates, pos, 1);
 
-    if (VeiningEnchantmentConfig.Veining.relocateDrops) {
-      world.getEntitiesWithinAABB(ItemEntity.class, new AxisAlignedBB(pos))
-          .forEach(itemEntity -> {
-            ItemHandlerHelper.giveItemToPlayer(playerEntity, itemEntity.getItem());
-            itemEntity.remove();
-          });
-    }
-
     while (!candidates.isEmpty()) {
       Tuple<BlockPos, Integer> candidate = candidates.poll();
       BlockPos blockPos = candidate.getA();
       int blockDistance = candidate.getB();
 
-      if (stack.getDamage() == stack.getMaxDamage() ||
-          (VeiningEnchantmentConfig.Veining.preventToolDestruction &&
-              stack.getDamage() == stack.getMaxDamage() - 1)) {
+      if (VeiningEnchantmentConfig.Veining.limitedByDurability &&
+          (stack.getDamage() == stack.getMaxDamage() ||
+              (VeiningEnchantmentConfig.Veining.preventToolDestruction &&
+                  stack.getDamage() == stack.getMaxDamage() - 1))) {
         return;
       }
+      Block block = world.getBlockState(blockPos).getBlock();
 
       if (blocks < maxBlocks && blockDistance < maxDistance && visited.add(blockPos) &&
-          matches(source, world.getBlockState(blockPos).getBlock()) &&
-          harvest(playerEntity, blockPos, pos)) {
+          isValidBlock(block) && matches(source, block) && harvest(playerEntity, blockPos, pos)) {
         search(candidates, blockPos, blockDistance + 1);
         blocks++;
       }
@@ -199,6 +193,34 @@ public class VeiningLogic {
       state.getBlock().onPlayerDestroy(world, pos, state);
     }
     return removed;
+  }
+
+  private static boolean isValidBlock(Block block) {
+    Set<String> ids = new HashSet<>();
+    ids.add(Objects.requireNonNull(block.getRegistryName()).toString());
+    block.getTags().forEach(tag -> ids.add(tag.toString()));
+    Set<String> configs = VeiningEnchantmentConfig.Veining.blocks;
+
+    if (VeiningEnchantmentConfig.Veining.blocksPermission ==
+        VeiningEnchantmentConfig.PermissionType.BLACKLIST) {
+
+      for (String id : configs) {
+
+        if (ids.contains(id)) {
+          return false;
+        }
+      }
+      return true;
+    } else {
+
+      for (String id : configs) {
+
+        if (ids.contains(id)) {
+          return true;
+        }
+      }
+      return false;
+    }
   }
 
   private static boolean matches(Block origin, Block target) {

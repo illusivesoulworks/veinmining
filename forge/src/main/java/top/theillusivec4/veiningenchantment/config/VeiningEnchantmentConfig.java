@@ -1,5 +1,9 @@
 package top.theillusivec4.veiningenchantment.config;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
@@ -57,6 +61,10 @@ public class VeiningEnchantmentConfig {
     public static int toolDamageMultiplier;
     public static boolean addPlayerExhaustion;
     public static double playerExhaustionMultiplier;
+    public static boolean limitedByDurability;
+    public static boolean invertActivation;
+    public static Set<String> blocks;
+    public static PermissionType blocksPermission;
 
     public static void bake() {
       maxBlocksPerLevel = CONFIG.maxBlocksPerLevel.get();
@@ -68,6 +76,11 @@ public class VeiningEnchantmentConfig {
       toolDamageMultiplier = CONFIG.toolDamageMultiplier.get();
       addPlayerExhaustion = CONFIG.addPlayerExhaustion.get();
       playerExhaustionMultiplier = CONFIG.playerExhaustionMultiplier.get();
+      limitedByDurability = CONFIG.limitedByDurability.get();
+      invertActivation = CONFIG.invertActivation.get();
+      blocks = new HashSet<>();
+      blocks.addAll(CONFIG.blocks.get());
+      blocksPermission = CONFIG.blocksPermission.get();
     }
   }
 
@@ -90,6 +103,10 @@ public class VeiningEnchantmentConfig {
     public final IntValue toolDamageMultiplier;
     public final BooleanValue addPlayerExhaustion;
     public final DoubleValue playerExhaustionMultiplier;
+    public final BooleanValue limitedByDurability;
+    public final BooleanValue invertActivation;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> blocks;
+    public final EnumValue<PermissionType> blocksPermission;
 
     public Config(ForgeConfigSpec.Builder builder) {
       builder.push("enchantment");
@@ -128,6 +145,10 @@ public class VeiningEnchantmentConfig {
 
       builder.push("veining");
 
+      invertActivation = builder.comment("Set to true to activate veining only when sneaking")
+          .translation(CONFIG_PREFIX + "invertActivation")
+          .define("invertActivation", false);
+
       maxBlocksPerLevel =
           builder.comment("The maximum number of blocks to mine per level of the enchantment")
               .translation(CONFIG_PREFIX + "maxBlocksPerLevel")
@@ -143,13 +164,20 @@ public class VeiningEnchantmentConfig {
               .translation(CONFIG_PREFIX + "diagonalMining")
               .define("diagonalMining", false);
 
-      relocateDrops = builder.comment("Whether or not to move the drops from veining to the same location as the original block")
+      limitedByDurability =
+          builder.comment("Whether or not to stop the veining when the tool can no longer be used")
+              .translation(CONFIG_PREFIX + "limitedByDurability")
+              .define("limitedByDurability", true);
+
+      relocateDrops = builder.comment(
+          "Whether or not to move the drops from veining to the same location as the original block")
           .translation(CONFIG_PREFIX + "relocateDrops")
           .define("relocateDrops", true);
 
-      preventToolDestruction = builder.comment("Whether or not to stop veining before the tool breaks")
-          .translation(CONFIG_PREFIX + "preventToolDestruction")
-          .define("preventToolDestruction", false);
+      preventToolDestruction =
+          builder.comment("Whether or not to stop veining before the tool breaks")
+              .translation(CONFIG_PREFIX + "preventToolDestruction")
+              .define("preventToolDestruction", false);
 
       addToolDamage =
           builder.comment("Whether or not the tool takes additional damage from veining")
@@ -171,7 +199,21 @@ public class VeiningEnchantmentConfig {
               .translation(CONFIG_PREFIX + "playerExhaustionMultiplier")
               .defineInRange("playerExhaustionMultiplier", 1.0F, 0.0F, 1000.0F);
 
+      blocks = builder.comment("List of whitelisted/blacklisted blocks or block tags")
+          .translation(CONFIG_PREFIX + "blocks")
+          .defineList("blocks", new ArrayList<>(), s -> s instanceof String);
+
+      blocksPermission =
+          builder.comment("Whether the blocks configuration is a whitelist or a blacklist")
+              .translation(CONFIG_PREFIX + "blocksPermission")
+              .defineEnum("blocksPermission", PermissionType.BLACKLIST);
+
       builder.pop();
     }
+  }
+
+  public enum PermissionType {
+    BLACKLIST,
+    WHITELIST
   }
 }
