@@ -1,16 +1,10 @@
 package top.theillusivec4.veiningenchantment.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.EntityType;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.veiningenchantment.VeiningEnchantmentMod;
 
@@ -57,8 +51,8 @@ public class VeiningEnchantmentConfig {
     public static int maxBlocksPerLevel;
     public static int maxDistancePerLevel;
     public static boolean diagonalMining;
-    public static boolean autoPickup;
-    public static boolean guardToolDamage;
+    public static boolean relocateDrops;
+    public static boolean preventToolDestruction;
     public static boolean addToolDamage;
     public static int toolDamageMultiplier;
     public static boolean addPlayerExhaustion;
@@ -68,8 +62,8 @@ public class VeiningEnchantmentConfig {
       maxBlocksPerLevel = CONFIG.maxBlocksPerLevel.get();
       maxDistancePerLevel = CONFIG.maxDistancePerLevel.get();
       diagonalMining = CONFIG.diagonalMining.get();
-      autoPickup = CONFIG.autoPickup.get();
-      guardToolDamage = CONFIG.guardToolDamage.get();
+      relocateDrops = CONFIG.relocateDrops.get();
+      preventToolDestruction = CONFIG.preventToolDestruction.get();
       addToolDamage = CONFIG.addToolDamage.get();
       toolDamageMultiplier = CONFIG.toolDamageMultiplier.get();
       addPlayerExhaustion = CONFIG.addPlayerExhaustion.get();
@@ -90,8 +84,8 @@ public class VeiningEnchantmentConfig {
     public final IntValue maxBlocksPerLevel;
     public final IntValue maxDistancePerLevel;
     public final BooleanValue diagonalMining;
-    public final BooleanValue autoPickup;
-    public final BooleanValue guardToolDamage;
+    public final BooleanValue relocateDrops;
+    public final BooleanValue preventToolDestruction;
     public final BooleanValue addToolDamage;
     public final IntValue toolDamageMultiplier;
     public final BooleanValue addPlayerExhaustion;
@@ -149,13 +143,13 @@ public class VeiningEnchantmentConfig {
               .translation(CONFIG_PREFIX + "diagonalMining")
               .define("diagonalMining", false);
 
-      autoPickup = builder.comment("Whether or not to automatically pickup the drops from veining")
-          .translation(CONFIG_PREFIX + "autoPickup")
-          .define("autoPickup", false);
+      relocateDrops = builder.comment("Whether or not to move the drops from veining to the same location as the original block")
+          .translation(CONFIG_PREFIX + "relocateDrops")
+          .define("relocateDrops", true);
 
-      guardToolDamage = builder.comment("Whether or not to stop veining before the tool breaks")
-          .translation(CONFIG_PREFIX + "guardToolDamage")
-          .define("guardToolDamage", false);
+      preventToolDestruction = builder.comment("Whether or not to stop veining before the tool breaks")
+          .translation(CONFIG_PREFIX + "preventToolDestruction")
+          .define("preventToolDestruction", false);
 
       addToolDamage =
           builder.comment("Whether or not the tool takes additional damage from veining")
