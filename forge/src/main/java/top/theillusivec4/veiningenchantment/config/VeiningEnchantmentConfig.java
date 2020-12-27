@@ -62,7 +62,7 @@ public class VeiningEnchantmentConfig {
     public static boolean addPlayerExhaustion;
     public static double playerExhaustionMultiplier;
     public static boolean limitedByDurability;
-    public static boolean invertActivation;
+    public static boolean enabledByCrouching;
     public static Set<String> blocks;
     public static PermissionType blocksPermission;
 
@@ -77,7 +77,7 @@ public class VeiningEnchantmentConfig {
       addPlayerExhaustion = CONFIG.addPlayerExhaustion.get();
       playerExhaustionMultiplier = CONFIG.playerExhaustionMultiplier.get();
       limitedByDurability = CONFIG.limitedByDurability.get();
-      invertActivation = CONFIG.invertActivation.get();
+      enabledByCrouching = CONFIG.enabledByCrouching.get();
       blocks = new HashSet<>();
       blocks.addAll(CONFIG.blocks.get());
       blocksPermission = CONFIG.blocksPermission.get();
@@ -104,7 +104,7 @@ public class VeiningEnchantmentConfig {
     public final BooleanValue addPlayerExhaustion;
     public final DoubleValue playerExhaustionMultiplier;
     public final BooleanValue limitedByDurability;
-    public final BooleanValue invertActivation;
+    public final BooleanValue enabledByCrouching;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> blocks;
     public final EnumValue<PermissionType> blocksPermission;
 
@@ -145,9 +145,10 @@ public class VeiningEnchantmentConfig {
 
       builder.push("veining");
 
-      invertActivation = builder.comment("Set to true to activate veining only when sneaking")
-          .translation(CONFIG_PREFIX + "invertActivation")
-          .define("invertActivation", false);
+      enabledByCrouching = builder.comment(
+          "Set to true to activate veining when crouching, false to disable veining when crouching")
+          .translation(CONFIG_PREFIX + "enabledByCrouching")
+          .define("enabledByCrouching", false);
 
       maxBlocksPerLevel =
           builder.comment("The maximum number of blocks to mine per level of the enchantment")

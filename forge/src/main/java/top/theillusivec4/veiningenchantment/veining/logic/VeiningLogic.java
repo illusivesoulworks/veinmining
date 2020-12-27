@@ -1,8 +1,7 @@
-package top.theillusivec4.veiningenchantment.veining;
+package top.theillusivec4.veiningenchantment.veining.logic;
 
-import java.util.HashSet;
+import com.google.common.collect.Sets;
 import java.util.LinkedList;
-import java.util.Objects;
 import java.util.Set;
 import javax.annotation.Nullable;
 import net.minecraft.block.Block;
@@ -19,7 +18,6 @@ import net.minecraft.stats.Stats;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
@@ -34,24 +32,23 @@ public class VeiningLogic {
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
-  public static void veining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
+  public static void startVeining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
     ServerWorld world = playerEntity.getServerWorld();
     ItemStack stack = playerEntity.getHeldItemMainhand();
     int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeiningEnchantmentMod.VEINING, stack);
-    boolean activate =
-        (playerEntity.isCrouching() && VeiningEnchantmentConfig.Veining.invertActivation) ||
-            (!VeiningEnchantmentConfig.Veining.invertActivation && !playerEntity.isCrouching());
+    boolean enabledByCrouching = VeiningEnchantmentConfig.Veining.enabledByCrouching;
+    boolean disabled = (playerEntity.isCrouching() && !enabledByCrouching) ||
+        (!playerEntity.isCrouching() && enabledByCrouching);
 
-    if (veiningLevels <= 0 || !activate) {
+    if (veiningLevels <= 0 || disabled) {
       return;
     }
     int blocks = 0;
     int maxBlocks = VeiningEnchantmentConfig.Veining.maxBlocksPerLevel * veiningLevels;
     int maxDistance = VeiningEnchantmentConfig.Veining.maxDistancePerLevel * veiningLevels;
-    Set<BlockPos> visited = new HashSet<>();
-    visited.add(pos);
+    Set<BlockPos> visited = Sets.newHashSet(pos);
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
-    search(candidates, pos, 1);
+    addValidNeighbors(candidates, pos, 1);
 
     while (!candidates.isEmpty()) {
       Tuple<BlockPos, Integer> candidate = candidates.poll();
@@ -67,15 +64,15 @@ public class VeiningLogic {
       Block block = world.getBlockState(blockPos).getBlock();
 
       if (blocks < maxBlocks && blockDistance < maxDistance && visited.add(blockPos) &&
-          isValidBlock(block) && matches(source, block) && harvest(playerEntity, blockPos, pos)) {
-        search(candidates, blockPos, blockDistance + 1);
+          BlockChecker.isValidTarget(source, block) && harvest(playerEntity, blockPos, pos)) {
+        addValidNeighbors(candidates, blockPos, blockDistance + 1);
         blocks++;
       }
     }
   }
 
-  private static void search(LinkedList<Tuple<BlockPos, Integer>> candidates, BlockPos source,
-                             int distance) {
+  private static void addValidNeighbors(LinkedList<Tuple<BlockPos, Integer>> candidates,
+                                        BlockPos source, int distance) {
 
     for (Direction direction : CARDINAL_DIRECTIONS) {
       candidates.add(new Tuple<>(source.offset(direction), distance));
@@ -193,51 +190,5 @@ public class VeiningLogic {
       state.getBlock().onPlayerDestroy(world, pos, state);
     }
     return removed;
-  }
-
-  private static boolean isValidBlock(Block block) {
-    Set<String> ids = new HashSet<>();
-    ids.add(Objects.requireNonNull(block.getRegistryName()).toString());
-    block.getTags().forEach(tag -> ids.add(tag.toString()));
-    Set<String> configs = VeiningEnchantmentConfig.Veining.blocks;
-
-    if (VeiningEnchantmentConfig.Veining.blocksPermission ==
-        VeiningEnchantmentConfig.PermissionType.BLACKLIST) {
-
-      for (String id : configs) {
-
-        if (ids.contains(id)) {
-          return false;
-        }
-      }
-      return true;
-    } else {
-
-      for (String id : configs) {
-
-        if (ids.contains(id)) {
-          return true;
-        }
-      }
-      return false;
-    }
-  }
-
-  private static boolean matches(Block origin, Block target) {
-
-    if (origin == target) {
-      return true;
-    } else {
-      Set<ResourceLocation> originTags = origin.getTags();
-      Set<ResourceLocation> targetTags = target.getTags();
-
-      for (ResourceLocation originTag : originTags) {
-
-        if (targetTags.contains(originTag)) {
-          return true;
-        }
-      }
-      return false;
-    }
   }
 }
