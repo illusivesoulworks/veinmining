@@ -10,7 +10,7 @@ import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class VeinMiningEnchantment extends Enchantment {
 
-  private static final String ID = VeinMiningMod.MOD_ID + ":veining";
+  private static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
 
   public VeinMiningEnchantment() {
     super(Rarity.RARE, EnchantmentType.DIGGER,

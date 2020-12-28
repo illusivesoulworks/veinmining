@@ -33,6 +33,8 @@ dependencies {
     include "me.shedaniel.cloth:config-2:${project.cloth_version}"
     include "me.sargunvohra.mcmods:autoconfig1u:${project.autoconfig_version}"
     include fabricApi.module("fabric-api-base", project.fabric_version)
+    include fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
+    include fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
 
     // Optional
     modCompileOnly "io.github.prospector:modmenu:${project.modmenu_version}", {

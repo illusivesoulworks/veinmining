@@ -23,16 +23,16 @@ public class PlayerInteractionManagerMixin {
   @Inject(
       at = @At(value = "HEAD"),
       method = "tryHarvestBlock(Lnet/minecraft/util/math/BlockPos;)Z")
-  private void _veiningenchantment_preHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
+  private void _veinmining_preHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
     source = player.world.getBlockState(pos).getBlock();
   }
 
   @Inject(
       at = @At(
           value = "INVOKE",
-          target = "net/minecraft/block/Block.harvestBlock(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/item/ItemStack;)V"),
+          target = "net/minecraft/item/ItemStack.onBlockDestroyed(Lnet/minecraft/world/World;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)V"),
       method = "tryHarvestBlock(Lnet/minecraft/util/math/BlockPos;)Z")
-  private void _veiningenchantment_tryHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
-    VeinMiningLogic.startVeining(player, pos, source);
+  private void _veinmining_tryHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
+    VeinMiningLogic.startVeinMining(player, pos, source);
   }
 }

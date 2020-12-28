@@ -32,7 +32,7 @@ public class VeinMiningLogic {
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
-  public static void startVeining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
+  public static void startVeinMining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
     ServerWorld world = playerEntity.getServerWorld();
     ItemStack stack = playerEntity.getHeldItemMainhand();
     int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeinMiningMod.VEIN_MINING, stack);
