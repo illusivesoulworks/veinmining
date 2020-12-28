@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import top.theillusivec4.veiningenchantment.veining.logic.VeiningLogic;
+import top.theillusivec4.veiningenchantment.veinmining.logic.VeinMiningLogic;
 
 @Mixin(PlayerInteractionManager.class)
 public class PlayerInteractionManagerMixin {
@@ -33,6 +33,6 @@ public class PlayerInteractionManagerMixin {
           target = "net/minecraft/block/Block.harvestBlock(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/tileentity/TileEntity;Lnet/minecraft/item/ItemStack;)V"),
       method = "tryHarvestBlock(Lnet/minecraft/util/math/BlockPos;)Z")
   private void _veiningenchantment_tryHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
-    VeiningLogic.startVeining(player, pos, source);
+    VeinMiningLogic.startVeining(player, pos, source);
   }
 }

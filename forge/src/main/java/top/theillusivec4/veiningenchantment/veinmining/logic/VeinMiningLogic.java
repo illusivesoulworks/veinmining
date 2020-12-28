@@ -1,4 +1,4 @@
-package top.theillusivec4.veiningenchantment.veining.logic;
+package top.theillusivec4.veiningenchantment.veinmining.logic;
 
 import com.google.common.collect.Sets;
 import java.util.LinkedList;
@@ -23,10 +23,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import top.theillusivec4.veiningenchantment.VeiningEnchantmentMod;
-import top.theillusivec4.veiningenchantment.config.VeiningEnchantmentConfig;
+import top.theillusivec4.veiningenchantment.VeinMiningMod;
+import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
 
-public class VeiningLogic {
+public class VeinMiningLogic {
 
   private static final Direction[] CARDINAL_DIRECTIONS =
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
@@ -35,24 +35,24 @@ public class VeiningLogic {
   public static void startVeining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
     ServerWorld world = playerEntity.getServerWorld();
     ItemStack stack = playerEntity.getHeldItemMainhand();
-    int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeiningEnchantmentMod.VEINING, stack);
+    int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeinMiningMod.VEIN_MINING, stack);
 
     if (veiningLevels <= 0) {
       return;
     }
-    VeiningEnchantmentConfig.ActivationState activationState =
-        VeiningEnchantmentConfig.Veining.activationState;
+    VeinMiningConfig.ActivationState activationState =
+        VeinMiningConfig.VeinMining.activationState;
     boolean disabled = (playerEntity.isCrouching() &&
-        activationState == VeiningEnchantmentConfig.ActivationState.STANDING) ||
+        activationState == VeinMiningConfig.ActivationState.STANDING) ||
         (!playerEntity.isCrouching() &&
-            activationState == VeiningEnchantmentConfig.ActivationState.CROUCHING);
+            activationState == VeinMiningConfig.ActivationState.CROUCHING);
 
     if (disabled) {
       return;
     }
     int blocks = 0;
-    int maxBlocks = VeiningEnchantmentConfig.Veining.maxBlocksPerLevel * veiningLevels;
-    int maxDistance = VeiningEnchantmentConfig.Veining.maxDistancePerLevel * veiningLevels;
+    int maxBlocks = VeinMiningConfig.VeinMining.maxBlocksPerLevel * veiningLevels;
+    int maxDistance = VeinMiningConfig.VeinMining.maxDistancePerLevel * veiningLevels;
     Set<BlockPos> visited = Sets.newHashSet(pos);
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
     addValidNeighbors(candidates, pos, 1);
@@ -79,16 +79,16 @@ public class VeiningLogic {
   }
 
   private static boolean stopVeining(ItemStack stack) {
-    return VeiningEnchantmentConfig.Veining.limitedByDurability &&
+    return VeinMiningConfig.VeinMining.limitedByDurability &&
         (stack.getDamage() == stack.getMaxDamage() ||
-            (VeiningEnchantmentConfig.Veining.preventToolDestruction &&
+            (VeinMiningConfig.VeinMining.preventToolDestruction &&
                 stack.getDamage() == stack.getMaxDamage() - 1));
   }
 
   private static void addValidNeighbors(LinkedList<Tuple<BlockPos, Integer>> candidates,
                                         BlockPos source, int distance) {
 
-    if (VeiningEnchantmentConfig.Veining.diagonalMining) {
+    if (VeinMiningConfig.VeinMining.diagonalMining) {
       BlockPos up = source.up();
       BlockPos down = source.down();
       candidates.add(new Tuple<>(up, distance));
@@ -142,7 +142,7 @@ public class VeiningLogic {
           ItemStack itemstack1 = itemstack.copy();
           boolean flag1 = blockstate.canHarvestBlock(world, pos, player);
 
-          if (VeiningEnchantmentConfig.Veining.addToolDamage) {
+          if (VeinMiningConfig.VeinMining.addToolDamage) {
             onBlockDestroyed(itemstack, world, blockstate, pos, player);
           }
 
@@ -151,7 +151,7 @@ public class VeiningLogic {
                 .onPlayerDestroyItem(player, itemstack1, Hand.MAIN_HAND);
           }
           boolean flag = removeBlock(player, pos, flag1);
-          BlockPos spawnPos = VeiningEnchantmentConfig.Veining.relocateDrops ? originPos : pos;
+          BlockPos spawnPos = VeinMiningConfig.VeinMining.relocateDrops ? originPos : pos;
 
           if (flag && flag1) {
             harvestBlock(block, world, player, pos, spawnPos, blockstate, tileentity, itemstack1);
@@ -170,9 +170,9 @@ public class VeiningLogic {
                                        BlockPos pos, PlayerEntity playerIn) {
 
     if (!worldIn.isRemote && blockIn.getBlockHardness(worldIn, pos) != 0.0F) {
-      int damage = VeiningEnchantmentConfig.Veining.toolDamageMultiplier;
+      int damage = VeinMiningConfig.VeinMining.toolDamageMultiplier;
 
-      if (VeiningEnchantmentConfig.Veining.preventToolDestruction) {
+      if (VeinMiningConfig.VeinMining.preventToolDestruction) {
         damage = Math.min(damage, stack.getMaxDamage() - stack.getDamage() - 1);
       }
 
@@ -188,9 +188,9 @@ public class VeiningLogic {
                                    ItemStack stack) {
     player.addStat(Stats.BLOCK_MINED.get(block));
 
-    if (VeiningEnchantmentConfig.Veining.addPlayerExhaustion) {
+    if (VeinMiningConfig.VeinMining.addPlayerExhaustion) {
       player.addExhaustion(
-          (float) (0.005F * (VeiningEnchantmentConfig.Veining.playerExhaustionMultiplier)));
+          (float) (0.005F * (VeinMiningConfig.VeinMining.playerExhaustionMultiplier)));
     }
 
     if (worldIn instanceof ServerWorld) {

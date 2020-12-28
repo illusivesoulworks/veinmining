@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="[35,)"
 license="LGPL-3.0-or-later"
-issueTrackerURL="https://github.com/TheIllusiveC4/VeiningEnchantment/issues"
+issueTrackerURL="https://github.com/TheIllusiveC4/VeinMining/issues"
 logoFile="${mod_icon}"
 [[mods]]
 modId="${mod_id}"
@@ -12,13 +12,13 @@ authors="${mod_author}"
 description='''
 ${mod_description}
 '''
-[[dependencies.veiningenchantment]]
+[[dependencies.veinmining]]
     modId="forge"
     mandatory=true
     versionRange="[35,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.veiningenchantment]]
+[[dependencies.veinmining]]
     modId="minecraft"
     mandatory=true
     versionRange="[1.16.4,1.17)"

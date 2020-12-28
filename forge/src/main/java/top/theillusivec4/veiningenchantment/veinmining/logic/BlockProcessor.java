@@ -1,4 +1,4 @@
-package top.theillusivec4.veiningenchantment.veining.logic;
+package top.theillusivec4.veiningenchantment.veinmining.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import top.theillusivec4.veiningenchantment.config.VeiningEnchantmentConfig;
+import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
 
 public class BlockProcessor {
 
@@ -52,10 +52,10 @@ public class BlockProcessor {
     Set<String> ids = new HashSet<>();
     ids.add(Objects.requireNonNull(block.getRegistryName()).toString());
     block.getTags().forEach(tag -> ids.add("#" + tag.toString()));
-    Set<String> configs = VeiningEnchantmentConfig.Veining.blocks;
+    Set<String> configs = VeinMiningConfig.VeinMining.blocks;
 
-    if (VeiningEnchantmentConfig.Veining.blocksPermission ==
-        VeiningEnchantmentConfig.PermissionType.BLACKLIST) {
+    if (VeinMiningConfig.VeinMining.blocksPermission ==
+        VeinMiningConfig.PermissionType.BLACKLIST) {
 
       for (String id : configs) {
 

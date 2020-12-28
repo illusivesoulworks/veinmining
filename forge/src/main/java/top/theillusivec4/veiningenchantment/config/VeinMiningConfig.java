@@ -1,7 +1,6 @@
 package top.theillusivec4.veiningenchantment.config;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -12,13 +11,13 @@ import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import org.apache.commons.lang3.tuple.Pair;
-import top.theillusivec4.veiningenchantment.VeiningEnchantmentMod;
+import top.theillusivec4.veiningenchantment.VeinMiningMod;
 
-public class VeiningEnchantmentConfig {
+public class VeinMiningConfig {
 
   public static final ForgeConfigSpec CONFIG_SPEC;
   public static final Config CONFIG;
-  private static final String CONFIG_PREFIX = "gui." + VeiningEnchantmentMod.MOD_ID + ".config.";
+  private static final String CONFIG_PREFIX = "gui." + VeinMiningMod.MOD_ID + ".config.";
 
   static {
     final Pair<Config, ForgeConfigSpec> specPair = new ForgeConfigSpec.Builder()
@@ -29,7 +28,7 @@ public class VeiningEnchantmentConfig {
 
   public static void bake() {
     Enchantment.bake();
-    Veining.bake();
+    VeinMining.bake();
   }
 
   public static class Enchantment {
@@ -56,7 +55,7 @@ public class VeiningEnchantmentConfig {
     }
   }
 
-  public static class Veining {
+  public static class VeinMining {
 
     public static int maxBlocksPerLevel;
     public static int maxDistancePerLevel;
@@ -245,6 +244,7 @@ public class VeiningEnchantmentConfig {
 
   public static List<String> generateDefaultGroups() {
     return Lists.newArrayList(
+        "#forge:obsidian",
         "#forge:ores/coal",
         "#forge:ores/diamond",
         "#forge:ores/emerald",

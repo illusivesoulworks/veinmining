@@ -1,8 +1,8 @@
 {
   "required": true,
-  "package": "top.theillusivec4.veiningenchantment.mixin",
+  "package": "top.theillusivec4.veinmining.mixin",
   "compatibilityLevel": "JAVA_8",
-  "refmap": "veiningenchantment.refmap.json",
+  "refmap": "veinmining.refmap.json",
   "mixins": [
     "PlayerInteractionManagerMixin"
   ],

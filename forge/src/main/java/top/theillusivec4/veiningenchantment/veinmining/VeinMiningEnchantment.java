@@ -1,18 +1,18 @@
-package top.theillusivec4.veiningenchantment.veining;
+package top.theillusivec4.veiningenchantment.veinmining;
 
 import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import top.theillusivec4.veiningenchantment.VeiningEnchantmentMod;
-import top.theillusivec4.veiningenchantment.config.VeiningEnchantmentConfig;
+import top.theillusivec4.veiningenchantment.VeinMiningMod;
+import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
 
-public class VeiningEnchantment extends Enchantment {
+public class VeinMiningEnchantment extends Enchantment {
 
-  private static final String ID = VeiningEnchantmentMod.MOD_ID + ":veining";
+  private static final String ID = VeinMiningMod.MOD_ID + ":veining";
 
-  public VeiningEnchantment() {
+  public VeinMiningEnchantment() {
     super(Rarity.RARE, EnchantmentType.DIGGER,
         new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
     this.setRegistryName(ID);
@@ -21,18 +21,18 @@ public class VeiningEnchantment extends Enchantment {
   @Nonnull
   @Override
   public Rarity getRarity() {
-    return VeiningEnchantmentConfig.Enchantment.rarity;
+    return VeinMiningConfig.Enchantment.rarity;
   }
 
   @Override
   public int getMaxLevel() {
-    return VeiningEnchantmentConfig.Enchantment.levels;
+    return VeinMiningConfig.Enchantment.levels;
   }
 
   @Override
   public int getMinEnchantability(int enchantmentLevel) {
-    return VeiningEnchantmentConfig.Enchantment.minEnchantabilityBase +
-        VeiningEnchantmentConfig.Enchantment.minEnchantabilityPerLevel * (enchantmentLevel - 1);
+    return VeinMiningConfig.Enchantment.minEnchantabilityBase +
+        VeinMiningConfig.Enchantment.minEnchantabilityPerLevel * (enchantmentLevel - 1);
   }
 
   @Override
@@ -42,26 +42,26 @@ public class VeiningEnchantment extends Enchantment {
 
   @Override
   public boolean isTreasureEnchantment() {
-    return VeiningEnchantmentConfig.Enchantment.isTreasure;
+    return VeinMiningConfig.Enchantment.isTreasure;
   }
 
   @Override
   public boolean canVillagerTrade() {
-    return VeiningEnchantmentConfig.Enchantment.isVillagerTrade;
+    return VeinMiningConfig.Enchantment.isVillagerTrade;
   }
 
   @Override
   public boolean canGenerateInLoot() {
-    return VeiningEnchantmentConfig.Enchantment.isLootable;
+    return VeinMiningConfig.Enchantment.isLootable;
   }
 
   @Override
   public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
-    return VeiningEnchantmentConfig.Enchantment.canApplyAtEnchantingTable;
+    return VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
   }
 
   @Override
   public boolean isAllowedOnBooks() {
-    return VeiningEnchantmentConfig.Enchantment.canApplyOnBooks;
+    return VeinMiningConfig.Enchantment.canApplyOnBooks;
   }
 }

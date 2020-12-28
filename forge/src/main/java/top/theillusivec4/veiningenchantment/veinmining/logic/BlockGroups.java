@@ -1,4 +1,4 @@
-package top.theillusivec4.veiningenchantment.veining.logic;
+package top.theillusivec4.veiningenchantment.veinmining.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
-import top.theillusivec4.veiningenchantment.config.VeiningEnchantmentConfig;
+import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
 
 public class BlockGroups {
 
@@ -19,7 +19,7 @@ public class BlockGroups {
   public static void init() {
     blockToGroup.clear();
 
-    for (String group : VeiningEnchantmentConfig.Veining.groups) {
+    for (String group : VeinMiningConfig.VeinMining.groups) {
       String[] ids = group.split(",");
       Set<String> blockGroup = createGroup(ids);
 

@@ -35,7 +35,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                veiningenchantment {
+                veinmining {
                     source sourceSets.main
                 }
             }
@@ -50,7 +50,7 @@ minecraft {
             property 'forge.logging.console.level', 'debug'
 
             mods {
-                veiningenchantment {
+                veinmining {
                     source sourceSets.main
                 }
             }
