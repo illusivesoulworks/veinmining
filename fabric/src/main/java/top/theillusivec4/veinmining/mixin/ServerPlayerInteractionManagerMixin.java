@@ -29,7 +29,7 @@ public class ServerPlayerInteractionManagerMixin {
   @Inject(
       at = @At(
           value = "INVOKE",
-          target = "net/minecraft/block/Block.afterBreak (Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/item/ItemStack;)V"),
+          target = "net/minecraft/item/ItemStack.postMine(Lnet/minecraft/world/World;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)V"),
       method = "tryBreakBlock(Lnet/minecraft/util/math/BlockPos;)Z")
   private void _veinmining_tryHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
     VeinMiningLogic.startVeinMining(player, pos, source);
