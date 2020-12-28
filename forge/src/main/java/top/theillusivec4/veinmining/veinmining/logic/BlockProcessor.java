@@ -1,4 +1,4 @@
-package top.theillusivec4.veiningenchantment.veinmining.logic;
+package top.theillusivec4.veinmining.veinmining.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,7 +9,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
+import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class BlockProcessor {
 

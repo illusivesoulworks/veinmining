@@ -1,4 +1,4 @@
-package top.theillusivec4.veiningenchantment.veinmining.logic;
+package top.theillusivec4.veinmining.veinmining.logic;
 
 import com.google.common.collect.Sets;
 import java.util.LinkedList;
@@ -23,8 +23,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import top.theillusivec4.veiningenchantment.VeinMiningMod;
-import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
+import top.theillusivec4.veinmining.VeinMiningMod;
+import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class VeinMiningLogic {
 

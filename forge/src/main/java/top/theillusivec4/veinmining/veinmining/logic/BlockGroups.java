@@ -1,4 +1,4 @@
-package top.theillusivec4.veiningenchantment.veinmining.logic;
+package top.theillusivec4.veinmining.veinmining.logic;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,7 +10,7 @@ import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ITag;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.registries.ForgeRegistries;
-import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
+import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class BlockGroups {
 

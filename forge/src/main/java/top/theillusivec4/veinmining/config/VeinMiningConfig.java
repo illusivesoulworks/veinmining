@@ -1,4 +1,4 @@
-package top.theillusivec4.veiningenchantment.config;
+package top.theillusivec4.veinmining.config;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import org.apache.commons.lang3.tuple.Pair;
-import top.theillusivec4.veiningenchantment.VeinMiningMod;
+import top.theillusivec4.veinmining.VeinMiningMod;
 
 public class VeinMiningConfig {
 

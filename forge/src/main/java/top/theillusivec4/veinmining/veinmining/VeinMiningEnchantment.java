@@ -1,12 +1,12 @@
-package top.theillusivec4.veiningenchantment.veinmining;
+package top.theillusivec4.veinmining.veinmining;
 
 import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
-import top.theillusivec4.veiningenchantment.VeinMiningMod;
-import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
+import top.theillusivec4.veinmining.VeinMiningMod;
+import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class VeinMiningEnchantment extends Enchantment {
 

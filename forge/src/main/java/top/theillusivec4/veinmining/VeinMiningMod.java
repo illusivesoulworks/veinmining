@@ -1,4 +1,4 @@
-package top.theillusivec4.veiningenchantment;
+package top.theillusivec4.veinmining;
 
 import javax.annotation.Nonnull;
 import net.minecraft.client.resources.ReloadListener;
@@ -15,9 +15,9 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import top.theillusivec4.veiningenchantment.config.VeinMiningConfig;
-import top.theillusivec4.veiningenchantment.veinmining.VeinMiningEnchantment;
-import top.theillusivec4.veiningenchantment.veinmining.logic.BlockProcessor;
+import top.theillusivec4.veinmining.config.VeinMiningConfig;
+import top.theillusivec4.veinmining.veinmining.VeinMiningEnchantment;
+import top.theillusivec4.veinmining.veinmining.logic.BlockProcessor;
 
 @Mod(VeinMiningMod.MOD_ID)
 public class VeinMiningMod {
