@@ -1,0 +1,4 @@
+{
+  "enchantment.veinmining.vein_mining": "Vein Mining",
+  "enchantment.veinmining.vein_mining.desc": "Breaks matching connected blocks when mining."
+}
