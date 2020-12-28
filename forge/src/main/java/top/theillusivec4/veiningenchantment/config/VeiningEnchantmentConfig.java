@@ -1,5 +1,7 @@
 package top.theillusivec4.veiningenchantment.config;
 
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,6 +40,8 @@ public class VeiningEnchantmentConfig {
     public static boolean isLootable;
     public static boolean canApplyAtEnchantingTable;
     public static boolean canApplyOnBooks;
+    public static int minEnchantabilityBase;
+    public static int minEnchantabilityPerLevel;
 
     public static void bake() {
       rarity = CONFIG.rarity.get();
@@ -47,6 +51,8 @@ public class VeiningEnchantmentConfig {
       isLootable = CONFIG.isLootable.get();
       canApplyAtEnchantingTable = CONFIG.canApplyAtEnchantingTable.get();
       canApplyOnBooks = CONFIG.canApplyOnBooks.get();
+      minEnchantabilityBase = CONFIG.minEnchantabilityBase.get();
+      minEnchantabilityPerLevel = CONFIG.minEnchantabilityPerLevel.get();
     }
   }
 
@@ -62,9 +68,10 @@ public class VeiningEnchantmentConfig {
     public static boolean addPlayerExhaustion;
     public static double playerExhaustionMultiplier;
     public static boolean limitedByDurability;
-    public static boolean enabledByCrouching;
-    public static Set<String> blocks;
+    public static ActivationState activationState;
+    public static Set<String> blocks = new HashSet<>();
     public static PermissionType blocksPermission;
+    public static Set<String> groups = new HashSet<>();
 
     public static void bake() {
       maxBlocksPerLevel = CONFIG.maxBlocksPerLevel.get();
@@ -77,10 +84,12 @@ public class VeiningEnchantmentConfig {
       addPlayerExhaustion = CONFIG.addPlayerExhaustion.get();
       playerExhaustionMultiplier = CONFIG.playerExhaustionMultiplier.get();
       limitedByDurability = CONFIG.limitedByDurability.get();
-      enabledByCrouching = CONFIG.enabledByCrouching.get();
+      activationState = CONFIG.activationState.get();
       blocks = new HashSet<>();
       blocks.addAll(CONFIG.blocks.get());
       blocksPermission = CONFIG.blocksPermission.get();
+      groups = new HashSet<>();
+      groups.addAll(CONFIG.groups.get());
     }
   }
 
@@ -93,6 +102,8 @@ public class VeiningEnchantmentConfig {
     public final BooleanValue isLootable;
     public final BooleanValue canApplyAtEnchantingTable;
     public final BooleanValue canApplyOnBooks;
+    public final IntValue minEnchantabilityBase;
+    public final IntValue minEnchantabilityPerLevel;
 
     public final IntValue maxBlocksPerLevel;
     public final IntValue maxDistancePerLevel;
@@ -104,9 +115,11 @@ public class VeiningEnchantmentConfig {
     public final BooleanValue addPlayerExhaustion;
     public final DoubleValue playerExhaustionMultiplier;
     public final BooleanValue limitedByDurability;
-    public final BooleanValue enabledByCrouching;
+    public final EnumValue<ActivationState> activationState;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> blocks;
     public final EnumValue<PermissionType> blocksPermission;
+
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> groups;
 
     public Config(ForgeConfigSpec.Builder builder) {
       builder.push("enchantment");
@@ -141,14 +154,23 @@ public class VeiningEnchantmentConfig {
           .translation(CONFIG_PREFIX + "canApplyOnBooks")
           .define("canApplyOnBooks", true);
 
+      minEnchantabilityBase =
+          builder.comment("The minimum enchantability requirement for the first enchantment level")
+              .translation(CONFIG_PREFIX + "minEnchantabilityBase")
+              .defineInRange("minEnchantabilityBase", 15, 1, 100);
+
+      minEnchantabilityPerLevel = builder.comment(
+          "The additional enchantability requirement for each enchantment level after the first")
+          .translation(CONFIG_PREFIX + "minEnchantabilityPerLevel")
+          .defineInRange("minEnchantabilityPerLevel", 5, 1, 100);
+
       builder.pop();
 
-      builder.push("veining");
+      builder.push("vein mining");
 
-      enabledByCrouching = builder.comment(
-          "Set to true to activate veining when crouching, false to disable veining when crouching")
-          .translation(CONFIG_PREFIX + "enabledByCrouching")
-          .define("enabledByCrouching", false);
+      activationState = builder.comment("Whether to activate vein mining by standing or crouching")
+          .translation(CONFIG_PREFIX + "activationState")
+          .defineEnum("activationState", ActivationState.STANDING);
 
       maxBlocksPerLevel =
           builder.comment("The maximum number of blocks to mine per level of the enchantment")
@@ -158,45 +180,45 @@ public class VeiningEnchantmentConfig {
       maxDistancePerLevel =
           builder.comment("The maximum distance from the source block per level of the enchantment")
               .translation(CONFIG_PREFIX + "maxDistancePerLevel")
-              .defineInRange("maxDistancePerLevel", 10, 1, 100);
+              .defineInRange("maxDistancePerLevel", 15, 1, 100);
 
       diagonalMining =
-          builder.comment("Whether or not to mine diagonally, note this may lead to hidden drops")
+          builder.comment(
+              "Whether or not to vein mine diagonally, note this may lead to hidden drops if relocateDrops is false")
               .translation(CONFIG_PREFIX + "diagonalMining")
-              .define("diagonalMining", false);
+              .define("diagonalMining", true);
 
       limitedByDurability =
-          builder.comment("Whether or not to stop the veining when the tool can no longer be used")
+          builder.comment("Whether or not to stop vein mining when the tool can no longer be used")
               .translation(CONFIG_PREFIX + "limitedByDurability")
               .define("limitedByDurability", true);
 
-      relocateDrops = builder.comment(
-          "Whether or not to move the drops from veining to the same location as the original block")
+      relocateDrops = builder.comment("Whether or not to move all drops to the same location")
           .translation(CONFIG_PREFIX + "relocateDrops")
           .define("relocateDrops", true);
 
       preventToolDestruction =
-          builder.comment("Whether or not to stop veining before the tool breaks")
+          builder.comment("Whether or not the tool can break while mining additional blocks")
               .translation(CONFIG_PREFIX + "preventToolDestruction")
-              .define("preventToolDestruction", false);
+              .define("preventToolDestruction", true);
 
       addToolDamage =
-          builder.comment("Whether or not the tool takes additional damage from veining")
+          builder.comment("Whether or not the tool takes damage from mining additional blocks")
               .translation(CONFIG_PREFIX + "addToolDamage")
               .define("addToolDamage", true);
 
       toolDamageMultiplier =
-          builder.comment("The multiplier to additional tool damage from veining")
+          builder.comment("The multiplier to tool damage from mining additional blocks")
               .translation(CONFIG_PREFIX + "toolDamageMultiplier")
               .defineInRange("toolDamageMultiplier", 1, 0, 1000);
 
       addPlayerExhaustion =
-          builder.comment("Whether or not the player gets additional exhaustion from veining")
+          builder.comment("Whether or not the player gets exhaustion from mining additional blocks")
               .translation(CONFIG_PREFIX + "addPlayerExhaustion")
               .define("addPlayerExhaustion", true);
 
       playerExhaustionMultiplier =
-          builder.comment("The multiplier to additional player exhaustion from veining")
+          builder.comment("The multiplier to player exhaustion from mining additional blocks")
               .translation(CONFIG_PREFIX + "playerExhaustionMultiplier")
               .defineInRange("playerExhaustionMultiplier", 1.0F, 0.0F, 1000.0F);
 
@@ -210,11 +232,54 @@ public class VeiningEnchantmentConfig {
               .defineEnum("blocksPermission", PermissionType.BLACKLIST);
 
       builder.pop();
+
+      builder.push("groups");
+
+      groups = builder.comment("List of groupings by block IDs or block tags, comma-separated")
+          .translation(CONFIG_PREFIX + "groups")
+          .defineList("groups", generateDefaultGroups(), s -> s instanceof String);
+
+      builder.pop();
     }
+  }
+
+  public static List<String> generateDefaultGroups() {
+    return Lists.newArrayList(
+        "#forge:ores/coal",
+        "#forge:ores/diamond",
+        "#forge:ores/emerald",
+        "#forge:ores/gold",
+        "#forge:ores/iron",
+        "#forge:ores/lapis",
+        "#forge:ores/redstone",
+        "#forge:ores/quartz",
+        "#forge:ores/netherite_scrap",
+        "#forge:ores/copper",
+        "#forge:ores/tin",
+        "#forge:ores/osmium",
+        "#forge:ores/uranium",
+        "#forge:ores/fluorite",
+        "#forge:ores/lead",
+        "#forge:ores/zinc",
+        "#forge:ores/aluminum",
+        "#forge:ores/nickel",
+        "#forge:ores/silver",
+        "#forge:ores/apatite",
+        "#forge:ores/cinnabar",
+        "#forge:ores/niter",
+        "#forge:ores/ruby",
+        "#forge:ores/sapphire",
+        "#forge:ores/sulfur"
+    );
   }
 
   public enum PermissionType {
     BLACKLIST,
     WHITELIST
+  }
+
+  public enum ActivationState {
+    STANDING,
+    CROUCHING
   }
 }

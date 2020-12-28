@@ -36,11 +36,18 @@ public class VeiningLogic {
     ServerWorld world = playerEntity.getServerWorld();
     ItemStack stack = playerEntity.getHeldItemMainhand();
     int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeiningEnchantmentMod.VEINING, stack);
-    boolean enabledByCrouching = VeiningEnchantmentConfig.Veining.enabledByCrouching;
-    boolean disabled = (playerEntity.isCrouching() && !enabledByCrouching) ||
-        (!playerEntity.isCrouching() && enabledByCrouching);
 
-    if (veiningLevels <= 0 || disabled) {
+    if (veiningLevels <= 0) {
+      return;
+    }
+    VeiningEnchantmentConfig.ActivationState activationState =
+        VeiningEnchantmentConfig.Veining.activationState;
+    boolean disabled = (playerEntity.isCrouching() &&
+        activationState == VeiningEnchantmentConfig.ActivationState.STANDING) ||
+        (!playerEntity.isCrouching() &&
+            activationState == VeiningEnchantmentConfig.ActivationState.CROUCHING);
+
+    if (disabled) {
       return;
     }
     int blocks = 0;
@@ -50,45 +57,58 @@ public class VeiningLogic {
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
     addValidNeighbors(candidates, pos, 1);
 
-    while (!candidates.isEmpty()) {
+    while (!candidates.isEmpty() && blocks < maxBlocks) {
       Tuple<BlockPos, Integer> candidate = candidates.poll();
       BlockPos blockPos = candidate.getA();
       int blockDistance = candidate.getB();
 
-      if (VeiningEnchantmentConfig.Veining.limitedByDurability &&
-          (stack.getDamage() == stack.getMaxDamage() ||
-              (VeiningEnchantmentConfig.Veining.preventToolDestruction &&
-                  stack.getDamage() == stack.getMaxDamage() - 1))) {
+      if (stopVeining(stack)) {
         return;
       }
-      Block block = world.getBlockState(blockPos).getBlock();
+      BlockState state = world.getBlockState(blockPos);
 
-      if (blocks < maxBlocks && blockDistance < maxDistance && visited.add(blockPos) &&
-          BlockChecker.isValidTarget(source, block) && harvest(playerEntity, blockPos, pos)) {
-        addValidNeighbors(candidates, blockPos, blockDistance + 1);
+      if (visited.add(blockPos) && BlockProcessor.isValidTarget(state, world, blockPos, source) &&
+          harvest(playerEntity, blockPos, pos)) {
+
+        if (blockDistance < maxDistance) {
+          addValidNeighbors(candidates, blockPos, blockDistance + 1);
+        }
         blocks++;
       }
     }
   }
 
+  private static boolean stopVeining(ItemStack stack) {
+    return VeiningEnchantmentConfig.Veining.limitedByDurability &&
+        (stack.getDamage() == stack.getMaxDamage() ||
+            (VeiningEnchantmentConfig.Veining.preventToolDestruction &&
+                stack.getDamage() == stack.getMaxDamage() - 1));
+  }
+
   private static void addValidNeighbors(LinkedList<Tuple<BlockPos, Integer>> candidates,
                                         BlockPos source, int distance) {
 
-    for (Direction direction : CARDINAL_DIRECTIONS) {
-      candidates.add(new Tuple<>(source.offset(direction), distance));
-    }
-
     if (VeiningEnchantmentConfig.Veining.diagonalMining) {
-      BlockPos up = source.offset(Direction.UP);
-      BlockPos down = source.offset(Direction.DOWN);
-      Direction[] yOffsets =
-          new Direction[] {Direction.SOUTH, Direction.SOUTH, Direction.NORTH, Direction.NORTH};
-      Direction[] xOffsets =
-          new Direction[] {Direction.EAST, Direction.WEST, Direction.EAST, Direction.WEST};
+      BlockPos up = source.up();
+      BlockPos down = source.down();
+      candidates.add(new Tuple<>(up, distance));
+      candidates.add(new Tuple<>(down, distance));
+      BlockPos[] blockPositions = new BlockPos[] {up, down, source};
 
-      for (int i = 0; i < yOffsets.length; i++) {
-        candidates.add(new Tuple<>(up.offset(yOffsets[i]).offset(xOffsets[i]), distance));
-        candidates.add(new Tuple<>(down.offset(yOffsets[i]).offset(xOffsets[i]), distance));
+      for (BlockPos blockPos : blockPositions) {
+        candidates.add(new Tuple<>(blockPos.west(), distance));
+        candidates.add(new Tuple<>(blockPos.east(), distance));
+        candidates.add(new Tuple<>(blockPos.north(), distance));
+        candidates.add(new Tuple<>(blockPos.south(), distance));
+        candidates.add(new Tuple<>(blockPos.north().west(), distance));
+        candidates.add(new Tuple<>(blockPos.north().east(), distance));
+        candidates.add(new Tuple<>(blockPos.south().west(), distance));
+        candidates.add(new Tuple<>(blockPos.south().east(), distance));
+      }
+    } else {
+
+      for (Direction direction : CARDINAL_DIRECTIONS) {
+        candidates.add(new Tuple<>(source.offset(direction), distance));
       }
     }
   }

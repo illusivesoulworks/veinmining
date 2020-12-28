@@ -31,7 +31,8 @@ public class VeiningEnchantment extends Enchantment {
 
   @Override
   public int getMinEnchantability(int enchantmentLevel) {
-    return 1 + 10 * (enchantmentLevel - 1);
+    return VeiningEnchantmentConfig.Enchantment.minEnchantabilityBase +
+        VeiningEnchantmentConfig.Enchantment.minEnchantabilityPerLevel * (enchantmentLevel - 1);
   }
 
   @Override
