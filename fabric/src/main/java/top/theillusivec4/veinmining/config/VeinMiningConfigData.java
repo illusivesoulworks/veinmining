@@ -6,23 +6,19 @@ import java.util.List;
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
-import me.sargunvohra.mcmods.autoconfig1u.serializer.PartitioningSerializer;
 import me.sargunvohra.mcmods.autoconfig1u.shadowed.blue.endless.jankson.Comment;
 import top.theillusivec4.veinmining.VeinMiningMod;
 
 @Config(name = VeinMiningMod.MOD_ID)
-public class VeinMiningConfigData extends PartitioningSerializer.GlobalData {
+public class VeinMiningConfigData implements ConfigData {
 
-  @ConfigEntry.Category("enchantment")
   @ConfigEntry.Gui.CollapsibleObject
   Enchantment enchantment = new Enchantment();
 
-  @ConfigEntry.Category("vein_mining")
   @ConfigEntry.Gui.CollapsibleObject
   VeinMining veinMining = new VeinMining();
 
-  @Config(name = "enchantment")
-  public static class Enchantment implements ConfigData {
+  public static class Enchantment {
 
     @ConfigEntry.Gui.Tooltip
     @Comment("The rarity of the enchantment")
@@ -57,8 +53,7 @@ public class VeinMiningConfigData extends PartitioningSerializer.GlobalData {
     public int minPowerPerLevel = 5;
   }
 
-  @Config(name = "vein_mining")
-  public static class VeinMining implements ConfigData {
+  public static class VeinMining {
 
     @ConfigEntry.Gui.Tooltip
     @ConfigEntry.BoundedDiscrete(min = 1, max = 1000)
