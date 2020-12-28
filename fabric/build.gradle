@@ -48,6 +48,8 @@ dependencies {
 processResources {
     inputs.property "version", project.version
 
+    from("CHANGELOG.md")
+
     from(sourceSets.main.resources.srcDirs) {
         include "fabric.mod.json"
         expand 'version': project.version
@@ -70,7 +72,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 sourceSets {
     main {
         resources {
-            srcDirs += 'docs'
+            srcDirs += '../docs'
         }
     }
 }

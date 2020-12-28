@@ -60,12 +60,14 @@ minecraft {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${version_forge}"
+
+    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
 }
 
 sourceSets {
     main {
         resources {
-            srcDirs += 'docs'
+            srcDirs += '../docs'
         }
     }
 }
@@ -95,6 +97,8 @@ tasks.build.dependsOn sourcesJar
 
 processResources {
 
+    from('CHANGELOG.md')
+
     from(sourceSets.main.resources.srcDirs) {
         include 'META-INF/mods.toml'
         expand 'version': project.version, 'mod_id' : mod_id, 'mod_name': mod_name, 'mod_url': mod_url, 'mod_author': mod_author, 'mod_description': mod_description, 'mod_icon': mod_icon
@@ -113,7 +117,7 @@ curseforge {
         id = "${curse_id}"
         releaseType = "${curse_release}"
         changelogType = 'markdown'
-        changelog = file('docs/CHANGELOG.md')
+        changelog = file('CHANGELOG.md')
         addArtifact(sourcesJar)
     }
 }
