@@ -6,7 +6,7 @@
   "description": "A lightweight, highly configurable Vein Mining enchantment for tools.",
   "authors": ["C4"],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/vein-mining",
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/vein-mining-fabric",
     "sources": "https://github.com/TheIllusiveC4/VeinMining",
     "issues": "https://github.com/TheIllusiveC4/VeinMining/issues"
   },
