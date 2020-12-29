@@ -83,7 +83,7 @@ curseforge {
         id = "${curse_id}"
         releaseType = "${curse_release}"
         changelogType = 'markdown'
-        changelog = file('docs/CHANGELOG.md')
+        changelog = file('CHANGELOG.md')
         addGameVersion "Java 8"
         addGameVersion "Fabric"
         addGameVersion project.minecraft_version
