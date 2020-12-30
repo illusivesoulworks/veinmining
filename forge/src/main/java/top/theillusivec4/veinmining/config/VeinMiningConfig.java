@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
@@ -49,7 +50,7 @@ public class VeinMiningConfig {
   }
 
   public static class Enchantment {
-    public static net.minecraft.enchantment.Enchantment.Rarity rarity;
+    public static net.minecraft.enchantment.Enchantment.Rarity rarity = net.minecraft.enchantment.Enchantment.Rarity.RARE;
     public static int levels;
     public static boolean isTreasure;
     public static boolean isVillagerTrade;
@@ -84,9 +85,9 @@ public class VeinMiningConfig {
     public static boolean addPlayerExhaustion;
     public static double playerExhaustionMultiplier;
     public static boolean limitedByDurability;
-    public static ActivationState activationState;
+    public static ActivationState activationState = ActivationState.STANDING;
     public static Set<String> blocks = new HashSet<>();
-    public static PermissionType blocksPermission;
+    public static PermissionType blocksPermission = PermissionType.BLACKLIST;
     public static Set<String> groups = new HashSet<>();
 
     public static void bake() {
