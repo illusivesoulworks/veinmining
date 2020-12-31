@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
@@ -50,7 +49,8 @@ public class VeinMiningConfig {
   }
 
   public static class Enchantment {
-    public static net.minecraft.enchantment.Enchantment.Rarity rarity = net.minecraft.enchantment.Enchantment.Rarity.RARE;
+    public static net.minecraft.enchantment.Enchantment.Rarity rarity =
+        net.minecraft.enchantment.Enchantment.Rarity.RARE;
     public static int levels;
     public static boolean isTreasure;
     public static boolean isVillagerTrade;
@@ -75,6 +75,8 @@ public class VeinMiningConfig {
 
   public static class VeinMining {
 
+    public static int maxBlocksBase;
+    public static int maxDistanceBase;
     public static int maxBlocksPerLevel;
     public static int maxDistancePerLevel;
     public static boolean diagonalMining;
@@ -91,6 +93,8 @@ public class VeinMiningConfig {
     public static Set<String> groups = new HashSet<>();
 
     public static void bake() {
+      maxBlocksBase = CONFIG.maxBlocksBase.get();
+      maxDistanceBase = CONFIG.maxDistanceBase.get();
       maxBlocksPerLevel = CONFIG.maxBlocksPerLevel.get();
       maxDistancePerLevel = CONFIG.maxDistancePerLevel.get();
       diagonalMining = CONFIG.diagonalMining.get();
@@ -122,6 +126,8 @@ public class VeinMiningConfig {
     public final IntValue minEnchantabilityBase;
     public final IntValue minEnchantabilityPerLevel;
 
+    public final IntValue maxBlocksBase;
+    public final IntValue maxDistanceBase;
     public final IntValue maxBlocksPerLevel;
     public final IntValue maxDistancePerLevel;
     public final BooleanValue diagonalMining;
@@ -188,6 +194,16 @@ public class VeinMiningConfig {
       activationState = builder.comment("Whether to activate vein mining by standing or crouching")
           .translation(CONFIG_PREFIX + "activationState")
           .defineEnum("activationState", ActivationState.STANDING);
+
+      maxBlocksBase =
+          builder.comment("The maximum number of blocks to mine without the enchantment")
+              .translation(CONFIG_PREFIX + "maxBlocksBase")
+              .defineInRange("maxBlocksBase", 0, 0, 1000);
+
+      maxDistanceBase =
+          builder.comment("The maximum distance from the source block without the enchantment")
+              .translation(CONFIG_PREFIX + "maxDistanceBase")
+              .defineInRange("maxDistanceBase", 0, 0, 1000);
 
       maxBlocksPerLevel =
           builder.comment("The maximum number of blocks to mine per level of the enchantment")

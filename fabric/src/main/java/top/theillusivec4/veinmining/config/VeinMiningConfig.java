@@ -51,6 +51,9 @@ public class VeinMiningConfig {
   }
 
   public static class VeinMining {
+
+    public static int maxBlocksBase = 0;
+    public static int maxDistanceBase = 10;
     public static int maxBlocksPerLevel = 50;
     public static int maxDistancePerLevel = 15;
     public static boolean diagonalMining = true;
@@ -68,6 +71,8 @@ public class VeinMiningConfig {
 
     public static void bake(VeinMiningConfigData configData) {
       VeinMiningConfigData.VeinMining veinMining = configData.veinMining;
+      maxBlocksBase = veinMining.maxBlocksBase;
+      maxDistanceBase = veinMining.maxDistanceBase;
       maxBlocksPerLevel = veinMining.maxBlocksPerLevel;
       maxDistancePerLevel = veinMining.maxDistancePerLevel;
       diagonalMining = veinMining.diagonalMining;

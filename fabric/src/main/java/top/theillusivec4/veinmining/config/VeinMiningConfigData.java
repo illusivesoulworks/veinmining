@@ -73,6 +73,16 @@ public class VeinMiningConfigData implements ConfigData {
   public static class VeinMining {
 
     @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 1000)
+    @Comment("The maximum number of blocks to mine without the enchantment")
+    public int maxBlocksBase = 0;
+
+    @ConfigEntry.Gui.Tooltip
+    @ConfigEntry.BoundedDiscrete(min = 0, max = 1000)
+    @Comment("The maximum distance from the source block without the enchantment")
+    public int maxDistanceBase = 0;
+
+    @ConfigEntry.Gui.Tooltip
     @ConfigEntry.BoundedDiscrete(min = 1, max = 1000)
     @Comment("The maximum number of blocks to mine per level of the enchantment")
     public int maxBlocksPerLevel = 50;

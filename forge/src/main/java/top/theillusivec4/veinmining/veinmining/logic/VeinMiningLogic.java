@@ -52,11 +52,6 @@ public class VeinMiningLogic {
   public static void startVeinMining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
     ServerWorld world = playerEntity.getServerWorld();
     ItemStack stack = playerEntity.getHeldItemMainhand();
-    int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeinMiningMod.VEIN_MINING, stack);
-
-    if (veiningLevels <= 0) {
-      return;
-    }
     VeinMiningConfig.ActivationState activationState =
         VeinMiningConfig.VeinMining.activationState;
     boolean disabled = (playerEntity.isCrouching() &&
@@ -67,9 +62,16 @@ public class VeinMiningLogic {
     if (disabled) {
       return;
     }
+    int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeinMiningMod.VEIN_MINING, stack);
+    int maxBlocks = VeinMiningConfig.VeinMining.maxBlocksBase +
+        VeinMiningConfig.VeinMining.maxBlocksPerLevel * veiningLevels;
+    int maxDistance = VeinMiningConfig.VeinMining.maxDistanceBase +
+        VeinMiningConfig.VeinMining.maxDistancePerLevel * veiningLevels;
+
+    if (maxBlocks <= 0 || maxDistance <= 0) {
+      return;
+    }
     int blocks = 0;
-    int maxBlocks = VeinMiningConfig.VeinMining.maxBlocksPerLevel * veiningLevels;
-    int maxDistance = VeinMiningConfig.VeinMining.maxDistancePerLevel * veiningLevels;
     Set<BlockPos> visited = Sets.newHashSet(pos);
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
     addValidNeighbors(candidates, pos, 1);

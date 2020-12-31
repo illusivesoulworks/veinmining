@@ -27,6 +27,8 @@ players and modpack developers find their preferred method of balance.
 ![](https://i.ibb.co/4NC5JcR/veinmining.gif)
 
 **Configuration Options**
+- Max Blocks Base (without enchantment)
+- Max Distance Base (without enchantment)
 - Max Blocks per Enchantment Level
 - Max Distance per Enchantment Level
 - Diagonal Mining
