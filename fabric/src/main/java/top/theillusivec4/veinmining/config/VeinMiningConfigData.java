@@ -18,8 +18,11 @@
 package top.theillusivec4.veinmining.config;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
@@ -34,6 +37,83 @@ public class VeinMiningConfigData implements ConfigData {
 
   @ConfigEntry.Gui.CollapsibleObject
   VeinMining veinMining = new VeinMining();
+
+  @Override
+  public void validatePostLoad() {
+    Set<String> validatedGroups = new HashSet<>();
+
+    if (veinMining.groups.isEmpty()) {
+      List<String> defaults = Lists.newArrayList(
+          "#c:adamantite_ores",
+          "#c:aetherium_ores",
+          "#c:aluminum_ores",
+          "#c:amethyst_ores",
+          "#c:antimony_ores",
+          "#c:aquarium_ores",
+          "#c:asterite_ores",
+          "#c:banglum_ores",
+          "#c:bauxite_ores",
+          "#c:carmot_ores",
+          "#c:certus_quartz_ores",
+          "#c:cinnabar_ores",
+          "#c:coal_ores",
+          "#c:cobalt_ores",
+          "#c:copper_ores",
+          "#c:diamond_ores",
+          "#c:emerald_ores",
+          "#c:galaxium_ores",
+          "#c:galena_ores",
+          "#c:gold_ores,#minecraft:gold_ores",
+          "#c:iridium_ores",
+          "#c:iron_ores",
+          "#c:kyber_ores",
+          "#c:lapis_ores",
+          "#c:lead_ores",
+          "#c:lunum_ores",
+          "#c:lutetium_ores",
+          "#c:manganese_ores",
+          "#c:metite_ores",
+          "#c:mythril_ores",
+          "#c:nickel_ores",
+          "#c:orichalcum_ores",
+          "#c:osmium_ores",
+          "#c:palladium_ores",
+          "#c:peridot_ores",
+          "#c:platinum_ores",
+          "#c:prometheum_ores",
+          "#c:pyrite_ores",
+          "#c:quadrillum_ores",
+          "#c:quartz_ores",
+          "#c:redstone_ores",
+          "#c:ruby_ores",
+          "#c:runite_ores",
+          "#c:salt_ores",
+          "#c:sapphire_ores",
+          "#c:sheldonite_ores",
+          "#c:silver_ores",
+          "#c:sodalite_ores",
+          "#c:sphalerite_ores",
+          "#c:starrite_ores",
+          "#c:stellum_ores",
+          "#c:stormyx_ores",
+          "#c:sulfur_ores",
+          "#c:tantalite_ores",
+          "#c:tin_ores",
+          "#c:titanium_ores",
+          "#c:topaz_ores",
+          "#c:truesilver_ores",
+          "#c:tungsten_ores",
+          "#c:unobtainium_ores",
+          "#c:ur_ores",
+          "#c:uranium_ores",
+          "#c:vermiculite_ores",
+          "#c:zinc_ores"
+      );
+      validatedGroups.addAll(defaults);
+    }
+    validatedGroups.addAll(veinMining.groups);
+    veinMining.groups = Lists.newArrayList(validatedGroups);
+  }
 
   public static class Enchantment {
 
@@ -145,71 +225,6 @@ public class VeinMiningConfigData implements ConfigData {
 
     @ConfigEntry.Gui.Tooltip
     @Comment("List of groupings by block IDs or block tags, comma-separated")
-    public List<String> groups = Lists.newArrayList(
-        "#c:adamantite_ores",
-        "#c:aetherium_ores",
-        "#c:aluminum_ores",
-        "#c:amethyst_ores",
-        "#c:antimony_ores",
-        "#c:aquarium_ores",
-        "#c:asterite_ores",
-        "#c:banglum_ores",
-        "#c:bauxite_ores",
-        "#c:carmot_ores",
-        "#c:certus_quartz_ores",
-        "#c:cinnabar_ores",
-        "#c:coal_ores",
-        "#c:cobalt_ores",
-        "#c:copper_ores",
-        "#c:diamond_ores",
-        "#c:emerald_ores",
-        "#c:galaxium_ores",
-        "#c:galena_ores",
-        "#c:gold_ores,#minecraft:gold_ores",
-        "#c:iridium_ores",
-        "#c:iron_ores",
-        "#c:kyber_ores",
-        "#c:lapis_ores",
-        "#c:lead_ores",
-        "#c:lunum_ores",
-        "#c:lutetium_ores",
-        "#c:manganese_ores",
-        "#c:metite_ores",
-        "#c:mythril_ores",
-        "#c:nickel_ores",
-        "#c:orichalcum_ores",
-        "#c:osmium_ores",
-        "#c:palladium_ores",
-        "#c:peridot_ores",
-        "#c:platinum_ores",
-        "#c:prometheum_ores",
-        "#c:pyrite_ores",
-        "#c:quadrillum_ores",
-        "#c:quartz_ores",
-        "#c:redstone_ores",
-        "#c:ruby_ores",
-        "#c:runite_ores",
-        "#c:salt_ores",
-        "#c:sapphire_ores",
-        "#c:sheldonite_ores",
-        "#c:silver_ores",
-        "#c:sodalite_ores",
-        "#c:sphalerite_ores",
-        "#c:starrite_ores",
-        "#c:stellum_ores",
-        "#c:stormyx_ores",
-        "#c:sulfur_ores",
-        "#c:tantalite_ores",
-        "#c:tin_ores",
-        "#c:titanium_ores",
-        "#c:topaz_ores",
-        "#c:truesilver_ores",
-        "#c:tungsten_ores",
-        "#c:unobtainium_ores",
-        "#c:ur_ores",
-        "#c:uranium_ores",
-        "#c:vermiculite_ores",
-        "#c:zinc_ores"
-    );
+    public List<String> groups = new ArrayList<>();
   }
 }
