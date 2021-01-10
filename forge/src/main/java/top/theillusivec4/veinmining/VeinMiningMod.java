@@ -53,7 +53,7 @@ public class VeinMiningMod {
   }
 
   private void registerEnchantment(final RegistryEvent.Register<Enchantment> evt) {
-    evt.getRegistry().register(VEIN_MINING);
+    evt.getRegistry().register(VEIN_MINING.setRegistryName(VeinMiningEnchantment.ID));
   }
 
   private void config(final ModConfig.ModConfigEvent evt) {

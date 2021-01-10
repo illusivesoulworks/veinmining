@@ -27,12 +27,11 @@ import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class VeinMiningEnchantment extends Enchantment {
 
-  private static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
+  public static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
 
   public VeinMiningEnchantment() {
     super(Rarity.RARE, EnchantmentType.DIGGER,
         new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
-    this.setRegistryName(ID);
   }
 
   @Nonnull
@@ -74,7 +73,8 @@ public class VeinMiningEnchantment extends Enchantment {
 
   @Override
   public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
-    return super.canApplyAtEnchantingTable(stack) && VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
+    return super.canApplyAtEnchantingTable(stack) &&
+        VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
   }
 
   @Override
