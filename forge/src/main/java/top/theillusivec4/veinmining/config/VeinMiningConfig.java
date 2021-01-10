@@ -75,6 +75,7 @@ public class VeinMiningConfig {
 
   public static class VeinMining {
 
+    public static boolean requireEffectiveTool;
     public static int maxBlocksBase;
     public static int maxDistanceBase;
     public static int maxBlocksPerLevel;
@@ -93,6 +94,7 @@ public class VeinMiningConfig {
     public static Set<String> groups = new HashSet<>();
 
     public static void bake() {
+      requireEffectiveTool = CONFIG.requireEffectiveTool.get();
       maxBlocksBase = CONFIG.maxBlocksBase.get();
       maxDistanceBase = CONFIG.maxDistanceBase.get();
       maxBlocksPerLevel = CONFIG.maxBlocksPerLevel.get();
@@ -126,6 +128,7 @@ public class VeinMiningConfig {
     public final IntValue minEnchantabilityBase;
     public final IntValue minEnchantabilityPerLevel;
 
+    public final BooleanValue requireEffectiveTool;
     public final IntValue maxBlocksBase;
     public final IntValue maxDistanceBase;
     public final IntValue maxBlocksPerLevel;
@@ -190,6 +193,11 @@ public class VeinMiningConfig {
       builder.pop();
 
       builder.push("vein mining");
+
+      requireEffectiveTool =
+          builder.comment("Whether or not to require an effective tool to vein mine blocks")
+              .translation(CONFIG_PREFIX + "requireEffectiveTool")
+              .define("requireEffectiveTool", false);
 
       activationState = builder.comment("Whether to activate vein mining by standing or crouching")
           .translation(CONFIG_PREFIX + "activationState")

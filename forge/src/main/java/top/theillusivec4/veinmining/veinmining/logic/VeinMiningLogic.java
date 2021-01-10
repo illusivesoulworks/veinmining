@@ -62,6 +62,13 @@ public class VeinMiningLogic {
     if (disabled) {
       return;
     }
+    BlockState state = world.getBlockState(pos);
+    boolean ineffective = VeinMiningConfig.VeinMining.requireEffectiveTool &&
+        stack.getToolTypes().stream().noneMatch(state::isToolEffective);
+
+    if (ineffective) {
+      return;
+    }
     int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeinMiningMod.VEIN_MINING, stack);
     int maxBlocks = VeinMiningConfig.VeinMining.maxBlocksBase +
         VeinMiningConfig.VeinMining.maxBlocksPerLevel * veiningLevels;
@@ -84,9 +91,10 @@ public class VeinMiningLogic {
       if (stopVeining(stack)) {
         return;
       }
-      BlockState state = world.getBlockState(blockPos);
+      BlockState blockState = world.getBlockState(blockPos);
 
-      if (visited.add(blockPos) && BlockProcessor.isValidTarget(state, world, blockPos, source) &&
+      if (visited.add(blockPos) &&
+          BlockProcessor.isValidTarget(blockState, world, blockPos, source) &&
           harvest(playerEntity, blockPos, pos)) {
 
         if (blockDistance < maxDistance) {

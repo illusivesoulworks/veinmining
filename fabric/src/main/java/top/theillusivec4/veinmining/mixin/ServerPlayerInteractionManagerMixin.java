@@ -17,7 +17,7 @@
 
 package top.theillusivec4.veinmining.mixin;
 
-import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.network.ServerPlayerInteractionManager;
 import net.minecraft.util.math.BlockPos;
@@ -34,13 +34,13 @@ public class ServerPlayerInteractionManagerMixin {
   @Shadow
   public ServerPlayerEntity player;
 
-  private Block source;
+  private BlockState source;
 
   @Inject(
       at = @At(value = "HEAD"),
       method = "tryBreakBlock(Lnet/minecraft/util/math/BlockPos;)Z")
   private void _veinmining_preHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
-    source = player.world.getBlockState(pos).getBlock();
+    source = player.world.getBlockState(pos);
   }
 
   @Inject(

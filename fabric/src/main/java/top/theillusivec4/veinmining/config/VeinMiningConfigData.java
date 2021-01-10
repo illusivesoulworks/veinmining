@@ -73,6 +73,10 @@ public class VeinMiningConfigData implements ConfigData {
   public static class VeinMining {
 
     @ConfigEntry.Gui.Tooltip
+    @Comment("The maximum number of blocks to mine without the enchantment")
+    public boolean requireEffectiveTool = false;
+
+    @ConfigEntry.Gui.Tooltip
     @ConfigEntry.BoundedDiscrete(min = 0, max = 1000)
     @Comment("The maximum number of blocks to mine without the enchantment")
     public int maxBlocksBase = 0;

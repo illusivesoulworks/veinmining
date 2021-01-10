@@ -52,6 +52,7 @@ public class VeinMiningConfig {
 
   public static class VeinMining {
 
+    public static boolean requireEffectiveTool = false;
     public static int maxBlocksBase = 0;
     public static int maxDistanceBase = 10;
     public static int maxBlocksPerLevel = 50;
@@ -71,6 +72,7 @@ public class VeinMiningConfig {
 
     public static void bake(VeinMiningConfigData configData) {
       VeinMiningConfigData.VeinMining veinMining = configData.veinMining;
+      requireEffectiveTool = veinMining.requireEffectiveTool;
       maxBlocksBase = veinMining.maxBlocksBase;
       maxDistanceBase = veinMining.maxDistanceBase;
       maxBlocksPerLevel = veinMining.maxBlocksPerLevel;

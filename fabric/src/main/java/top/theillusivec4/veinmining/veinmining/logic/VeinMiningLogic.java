@@ -48,7 +48,8 @@ public class VeinMiningLogic {
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
-  public static void startVeinMining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
+  public static void startVeinMining(ServerPlayerEntity playerEntity, BlockPos pos,
+                                     BlockState source) {
     ServerWorld world = playerEntity.getServerWorld();
     ItemStack stack = playerEntity.getMainHandStack();
     VeinMiningConfig.ActivationState activationState = VeinMiningConfig.VeinMining.activationState;
@@ -58,6 +59,12 @@ public class VeinMiningLogic {
             activationState == VeinMiningConfig.ActivationState.CROUCHING);
 
     if (disabled) {
+      return;
+    }
+    boolean ineffective = VeinMiningConfig.VeinMining.requireEffectiveTool &&
+        stack.getMiningSpeedMultiplier(source) <= 1.0F;
+
+    if (ineffective) {
       return;
     }
     int veiningLevels = EnchantmentHelper.getLevel(VeinMiningMod.VEIN_MINING, stack);
@@ -73,6 +80,7 @@ public class VeinMiningLogic {
     Set<BlockPos> visited = Sets.newHashSet(pos);
     LinkedList<Pair<BlockPos, Integer>> candidates = new LinkedList<>();
     addValidNeighbors(candidates, pos, 1);
+    Block sourceBlock = source.getBlock();
 
     while (!candidates.isEmpty() && blocks < maxBlocks) {
       Pair<BlockPos, Integer> candidate = candidates.poll();
@@ -84,7 +92,8 @@ public class VeinMiningLogic {
       }
       BlockState state = world.getBlockState(blockPos);
 
-      if (visited.add(blockPos) && BlockProcessor.isValidTarget(state, world, blockPos, source) &&
+      if (visited.add(blockPos) &&
+          BlockProcessor.isValidTarget(state, world, blockPos, sourceBlock) &&
           harvest(playerEntity, blockPos, pos)) {
 
         if (blockDistance < maxDistance) {
