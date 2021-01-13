@@ -51,14 +51,14 @@ public class VeinMiningConfig {
   public static class Enchantment {
     public static net.minecraft.enchantment.Enchantment.Rarity rarity =
         net.minecraft.enchantment.Enchantment.Rarity.RARE;
-    public static int levels;
-    public static boolean isTreasure;
-    public static boolean isVillagerTrade;
-    public static boolean isLootable;
-    public static boolean canApplyAtEnchantingTable;
-    public static boolean canApplyOnBooks;
-    public static int minEnchantabilityBase;
-    public static int minEnchantabilityPerLevel;
+    public static int levels = 1;
+    public static boolean isTreasure = false;
+    public static boolean isVillagerTrade = true;
+    public static boolean isLootable = true;
+    public static boolean canApplyAtEnchantingTable = true;
+    public static boolean canApplyOnBooks = true;
+    public static int minEnchantabilityBase = 15;
+    public static int minEnchantabilityPerLevel = 5;
 
     public static void bake() {
       rarity = CONFIG.rarity.get();

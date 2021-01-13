@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.16.4-0.6] - 2021.01.12
+### Added
+- Added Brazilian Portuguese translation (thanks Mikeliro!)
+### Fixed
+- Fixed Vein Mining enchantment book not appearing in Creative search
+
 ## [1.16.4-0.5] - 2021.01.10
 ### Added
 - Added configuration option for requireEffectiveTool to limit vein mining only to blocks that the

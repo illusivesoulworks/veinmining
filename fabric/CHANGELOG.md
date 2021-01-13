@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.4-1.16.4] - 2021.01.12
+### Added
+- Added partial Brazilian Portuguese translation (thanks Mikeliro!)
+
 ## [0.0.3-1.16.4] - 2021.01.10
 ### Added
 - Added configuration option for requireEffectiveTool to limit vein mining only to blocks that the
