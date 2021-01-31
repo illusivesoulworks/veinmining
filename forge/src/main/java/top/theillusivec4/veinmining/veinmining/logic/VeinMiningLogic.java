@@ -63,8 +63,9 @@ public class VeinMiningLogic {
       return;
     }
     BlockState state = world.getBlockState(pos);
-    boolean ineffective = VeinMiningConfig.VeinMining.requireEffectiveTool &&
-        stack.getToolTypes().stream().noneMatch(state::isToolEffective);
+    boolean ineffective =
+        VeinMiningConfig.VeinMining.requireEffectiveTool && state.getHarvestTool() != null &&
+            stack.getToolTypes().stream().noneMatch(state::isToolEffective);
 
     if (ineffective) {
       return;

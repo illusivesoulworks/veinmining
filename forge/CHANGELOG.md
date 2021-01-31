@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.16.5-0.7] - 2021.01.31
+### Added
+- Added Chinese translation (thanks EnterFor!)
+### Fixed
+- Fixed `requireEffectiveTool` config option not working properly for blocks that do not specify a
+harvest tool
+
 ## [1.16.4-0.6] - 2021.01.12
 ### Added
 - Added Brazilian Portuguese translation (thanks Mikeliro!)
