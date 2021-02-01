@@ -22,6 +22,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
@@ -69,6 +70,17 @@ public class VeinMiningEnchantment extends Enchantment {
   @Override
   public boolean canGenerateInLoot() {
     return VeinMiningConfig.Enchantment.isLootable;
+  }
+
+  @Override
+  protected boolean canApplyTogether(Enchantment ench) {
+    ResourceLocation rl = ench.getRegistryName();
+
+    if (rl != null &&
+        VeinMiningConfig.Enchantment.incompatibleEnchantments.contains(rl.toString())) {
+      return false;
+    }
+    return super.canApplyTogether(ench);
   }
 
   @Override

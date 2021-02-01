@@ -37,6 +37,7 @@ public class VeinMiningConfig {
     public static boolean isAvailableOnBooks = true;
     public static int minPowerBase = 15;
     public static int minPowerPerLevel = 5;
+    public static Set<String> incompatibleEnchantments = new HashSet<>();
 
     public static void bake(VeinMiningConfigData configData) {
       VeinMiningConfigData.Enchantment enchantment = configData.enchantment;
@@ -47,6 +48,8 @@ public class VeinMiningConfig {
       isAvailableOnBooks = enchantment.isAvailableOnBooks;
       minPowerBase = enchantment.minPowerBase;
       minPowerPerLevel = enchantment.minPowerPerLevel;
+      incompatibleEnchantments.clear();
+      incompatibleEnchantments.addAll(enchantment.incompatibleEnchantments);
     }
   }
 

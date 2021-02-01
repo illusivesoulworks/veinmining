@@ -46,7 +46,8 @@ public class VeinMiningMod {
   public VeinMiningMod() {
     IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
     eventBus.addGenericListener(Enchantment.class, this::registerEnchantment);
-    eventBus.addListener(this::config);
+    eventBus.addListener(this::configLoading);
+    eventBus.addListener(this::configReloading);
     MinecraftForge.EVENT_BUS.addListener(this::reload);
     ModLoadingContext.get()
         .registerConfig(ModConfig.Type.SERVER, VeinMiningConfig.CONFIG_SPEC);
@@ -56,7 +57,15 @@ public class VeinMiningMod {
     evt.getRegistry().register(VEIN_MINING.setRegistryName(VeinMiningEnchantment.ID));
   }
 
-  private void config(final ModConfig.ModConfigEvent evt) {
+  private void configLoading(final ModConfig.Loading evt) {
+    this.bakeConfigs(evt);
+  }
+
+  private void configReloading(final ModConfig.Reloading evt) {
+    this.bakeConfigs(evt);
+  }
+
+  private void bakeConfigs(final ModConfig.ModConfigEvent evt) {
 
     if (evt.getConfig().getModId().equals(MOD_ID)) {
       VeinMiningConfig.bake();

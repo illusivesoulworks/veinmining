@@ -22,11 +22,13 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
 import net.minecraftforge.common.ForgeConfigSpec.EnumValue;
 import net.minecraftforge.common.ForgeConfigSpec.IntValue;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.veinmining.VeinMiningMod;
 
@@ -59,6 +61,7 @@ public class VeinMiningConfig {
     public static boolean canApplyOnBooks = true;
     public static int minEnchantabilityBase = 15;
     public static int minEnchantabilityPerLevel = 5;
+    public static Set<String> incompatibleEnchantments = new HashSet<>();
 
     public static void bake() {
       rarity = CONFIG.rarity.get();
@@ -70,6 +73,14 @@ public class VeinMiningConfig {
       canApplyOnBooks = CONFIG.canApplyOnBooks.get();
       minEnchantabilityBase = CONFIG.minEnchantabilityBase.get();
       minEnchantabilityPerLevel = CONFIG.minEnchantabilityPerLevel.get();
+      incompatibleEnchantments.clear();
+
+      for (String enchantment : CONFIG.incompatibleEnchantments.get()) {
+
+        if (ForgeRegistries.ENCHANTMENTS.containsKey(new ResourceLocation(enchantment))) {
+          incompatibleEnchantments.add(enchantment);
+        }
+      }
     }
   }
 
@@ -127,6 +138,7 @@ public class VeinMiningConfig {
     public final BooleanValue canApplyOnBooks;
     public final IntValue minEnchantabilityBase;
     public final IntValue minEnchantabilityPerLevel;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> incompatibleEnchantments;
 
     public final BooleanValue requireEffectiveTool;
     public final IntValue maxBlocksBase;
@@ -189,6 +201,11 @@ public class VeinMiningConfig {
           "The additional enchantability requirement for each enchantment level after the first")
           .translation(CONFIG_PREFIX + "minEnchantabilityPerLevel")
           .defineInRange("minEnchantabilityPerLevel", 5, 1, 100);
+
+      incompatibleEnchantments = builder
+          .comment("List of enchantments that cannot be applied together with this enchantment")
+          .translation(CONFIG_PREFIX + "incompatibleEnchantments")
+          .defineList("incompatibleEnchantments", new ArrayList<>(), s -> s instanceof String);
 
       builder.pop();
 

@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.6-1.16.5] - 2021.01.31
+### Added
+- Added `incompatibleEnchantments` config option
+
 ## [0.0.5-1.16.5] - 2021.01.31
 ### Added
 - Added partial Chinese translation (thanks EnterFor!)

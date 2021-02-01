@@ -18,7 +18,6 @@
 package top.theillusivec4.veinmining.config;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -27,6 +26,8 @@ import me.sargunvohra.mcmods.autoconfig1u.ConfigData;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.Config;
 import me.sargunvohra.mcmods.autoconfig1u.annotation.ConfigEntry;
 import me.sargunvohra.mcmods.autoconfig1u.shadowed.blue.endless.jankson.Comment;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import top.theillusivec4.veinmining.VeinMiningMod;
 
 @Config(name = VeinMiningMod.MOD_ID)
@@ -113,6 +114,16 @@ public class VeinMiningConfigData implements ConfigData {
     }
     validatedGroups.addAll(veinMining.groups);
     veinMining.groups = Lists.newArrayList(validatedGroups);
+
+    Set<String> validatedEnchantments = new HashSet<>();
+
+    for (String enchantment : enchantment.incompatibleEnchantments) {
+
+      if (Registry.ENCHANTMENT.containsId(new Identifier(enchantment))) {
+        validatedEnchantments.add(enchantment);
+      }
+    }
+    enchantment.incompatibleEnchantments = Lists.newArrayList(validatedEnchantments);
   }
 
   public static class Enchantment {
@@ -148,6 +159,10 @@ public class VeinMiningConfigData implements ConfigData {
     @ConfigEntry.BoundedDiscrete(min = 1, max = 100)
     @Comment("The additional enchanting power requirement for each enchantment level after the first")
     public int minPowerPerLevel = 5;
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("List of enchantments that cannot be applied together with this enchantment")
+    public List<String> incompatibleEnchantments = new ArrayList<>();
   }
 
   public static class VeinMining {
