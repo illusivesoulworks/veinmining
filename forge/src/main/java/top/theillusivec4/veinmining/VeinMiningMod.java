@@ -27,13 +27,18 @@ import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
+import top.theillusivec4.veinmining.network.VeinMiningNetwork;
 import top.theillusivec4.veinmining.veinmining.VeinMiningEnchantment;
+import top.theillusivec4.veinmining.veinmining.VeinMiningKey;
 import top.theillusivec4.veinmining.veinmining.logic.BlockProcessor;
 
 @Mod(VeinMiningMod.MOD_ID)
@@ -48,9 +53,19 @@ public class VeinMiningMod {
     eventBus.addGenericListener(Enchantment.class, this::registerEnchantment);
     eventBus.addListener(this::configLoading);
     eventBus.addListener(this::configReloading);
+    eventBus.addListener(this::commonSetup);
+    eventBus.addListener(this::clientSetup);
     MinecraftForge.EVENT_BUS.addListener(this::reload);
     ModLoadingContext.get()
         .registerConfig(ModConfig.Type.SERVER, VeinMiningConfig.CONFIG_SPEC);
+  }
+
+  private void commonSetup(final FMLCommonSetupEvent evt) {
+    VeinMiningNetwork.register();
+  }
+
+  private void clientSetup(final FMLClientSetupEvent evt) {
+    ClientRegistry.registerKeyBinding(VeinMiningKey.get());
   }
 
   private void registerEnchantment(final RegistryEvent.Register<Enchantment> evt) {

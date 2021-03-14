@@ -216,7 +216,8 @@ public class VeinMiningConfig {
               .translation(CONFIG_PREFIX + "requireEffectiveTool")
               .define("requireEffectiveTool", false);
 
-      activationState = builder.comment("Whether to activate vein mining by standing or crouching")
+      activationState = builder.comment(
+          "Whether to activate vein mining by standing, crouching, or holding down the keybind")
           .translation(CONFIG_PREFIX + "activationState")
           .defineEnum("activationState", ActivationState.STANDING);
 
@@ -339,6 +340,7 @@ public class VeinMiningConfig {
 
   public enum ActivationState {
     STANDING,
-    CROUCHING
+    CROUCHING,
+    KEYBINDING
   }
 }
