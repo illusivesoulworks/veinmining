@@ -236,6 +236,10 @@ public class VeinMiningLogic {
 
     if (removed) {
       state.getBlock().onPlayerDestroy(world, pos, state);
+
+      if (!world.getBlockState(pos).isAir(world, pos)) {
+        world.removeBlock(pos, false);
+      }
     }
     return removed;
   }
