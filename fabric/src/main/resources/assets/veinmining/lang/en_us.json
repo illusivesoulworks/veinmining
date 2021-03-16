@@ -49,7 +49,7 @@
   "text.autoconfig.veinmining.option.veinMining.limitedByDurability": "Limited By Durability",
   "text.autoconfig.veinmining.option.veinMining.limitedByDurability.@Tooltip": "Whether or not to stop vein mining when the tool can no longer be used",
   "text.autoconfig.veinmining.option.veinMining.activationState": "Activation Method",
-  "text.autoconfig.veinmining.option.veinMining.activationState.@Tooltip": "Whether to activate vein mining by standing or crouching",
+  "text.autoconfig.veinmining.option.veinMining.activationState.@Tooltip": "Whether to activate vein mining by standing, crouching, or holding down the keybind",
   "text.autoconfig.veinmining.option.veinMining.blocks": "Blocks",
   "text.autoconfig.veinmining.option.veinMining.blocks.@Tooltip": "List of whitelisted/blacklisted blocks or block tags",
   "text.autoconfig.veinmining.option.veinMining.blocksPermission": "Blocks Permission",

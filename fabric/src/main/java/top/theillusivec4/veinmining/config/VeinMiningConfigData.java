@@ -225,7 +225,7 @@ public class VeinMiningConfigData implements ConfigData {
     public boolean limitedByDurability = true;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("Whether to activate vein mining by standing or crouching")
+    @Comment("Whether to activate vein mining by standing, crouching, or holding down the keybind")
     public VeinMiningConfig.ActivationState activationState =
         VeinMiningConfig.ActivationState.STANDING;
 
