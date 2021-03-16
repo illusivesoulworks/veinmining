@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.16.5-0.9] - 2021.03.16
+### Added
+- Added `KEYBINDING` to activation method config option [#7](https://github.com/TheIllusiveC4/VeinMining/issues/7)
+### Fixed
+- Fixed vein mining sometimes resulting in duplicate blocks [#11](https://github.com/TheIllusiveC4/VeinMining/issues/11)
+
 ## [1.16.5-0.8] - 2021.01.31
 ### Added
 - Added `incompatibleEnchantments` config option
