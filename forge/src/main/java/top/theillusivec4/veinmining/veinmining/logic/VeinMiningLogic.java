@@ -42,6 +42,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
+import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 
 public class VeinMiningLogic {
 
@@ -52,14 +53,8 @@ public class VeinMiningLogic {
   public static void startVeinMining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
     ServerWorld world = playerEntity.getServerWorld();
     ItemStack stack = playerEntity.getHeldItemMainhand();
-    VeinMiningConfig.ActivationState activationState =
-        VeinMiningConfig.VeinMining.activationState;
-    boolean disabled = (playerEntity.isCrouching() &&
-        activationState == VeinMiningConfig.ActivationState.STANDING) ||
-        (!playerEntity.isCrouching() &&
-            activationState == VeinMiningConfig.ActivationState.CROUCHING);
 
-    if (disabled) {
+    if (!VeinMiningPlayers.canVeinMine(playerEntity)) {
       return;
     }
     BlockState state = world.getBlockState(pos);

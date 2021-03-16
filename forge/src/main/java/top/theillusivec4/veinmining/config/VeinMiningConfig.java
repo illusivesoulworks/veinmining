@@ -99,7 +99,6 @@ public class VeinMiningConfig {
     public static boolean addPlayerExhaustion;
     public static double playerExhaustionMultiplier;
     public static boolean limitedByDurability;
-    public static ActivationState activationState = ActivationState.STANDING;
     public static Set<String> blocks = new HashSet<>();
     public static PermissionType blocksPermission = PermissionType.BLACKLIST;
     public static Set<String> groups = new HashSet<>();
@@ -118,7 +117,6 @@ public class VeinMiningConfig {
       addPlayerExhaustion = CONFIG.addPlayerExhaustion.get();
       playerExhaustionMultiplier = CONFIG.playerExhaustionMultiplier.get();
       limitedByDurability = CONFIG.limitedByDurability.get();
-      activationState = CONFIG.activationState.get();
       blocks = new HashSet<>();
       blocks.addAll(CONFIG.blocks.get());
       blocksPermission = CONFIG.blocksPermission.get();
@@ -153,7 +151,6 @@ public class VeinMiningConfig {
     public final BooleanValue addPlayerExhaustion;
     public final DoubleValue playerExhaustionMultiplier;
     public final BooleanValue limitedByDurability;
-    public final EnumValue<ActivationState> activationState;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> blocks;
     public final EnumValue<PermissionType> blocksPermission;
 
@@ -215,11 +212,6 @@ public class VeinMiningConfig {
           builder.comment("Whether or not to require an effective tool to vein mine blocks")
               .translation(CONFIG_PREFIX + "requireEffectiveTool")
               .define("requireEffectiveTool", false);
-
-      activationState = builder.comment(
-          "Whether to activate vein mining by standing, crouching, or holding down the keybind")
-          .translation(CONFIG_PREFIX + "activationState")
-          .defineEnum("activationState", ActivationState.STANDING);
 
       maxBlocksBase =
           builder.comment("The maximum number of blocks to mine without the enchantment")

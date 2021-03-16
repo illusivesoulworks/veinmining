@@ -18,9 +18,12 @@
 package top.theillusivec4.veinmining.network;
 
 import java.util.function.Supplier;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.network.PacketBuffer;
 import net.minecraftforge.fml.network.NetworkEvent;
+import net.minecraftforge.fml.network.PacketDistributor;
+import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 
 public class CPacketState {
 
@@ -28,6 +31,10 @@ public class CPacketState {
 
   public CPacketState(boolean activate) {
     this.activate = activate;
+  }
+
+  public static void send(boolean activate) {
+    VeinMiningNetwork.INSTANCE.send(PacketDistributor.SERVER.noArg(), new CPacketState(activate));
   }
 
   public static void encode(CPacketState msg, PacketBuffer buf) {
@@ -42,6 +49,14 @@ public class CPacketState {
     ctx.get().enqueueWork(() -> {
       ServerPlayerEntity sender = ctx.get().getSender();
 
+      if (sender != null) {
+
+        if (msg.activate) {
+          VeinMiningPlayers.startVeinMining(sender, sender.world.getGameTime());
+        } else {
+          VeinMiningPlayers.stopVeinMining(sender);
+        }
+      }
     });
     ctx.get().setPacketHandled(true);
   }

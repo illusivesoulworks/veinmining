@@ -17,13 +17,8 @@
 
 package top.theillusivec4.veinmining;
 
-import javax.annotation.Nonnull;
-import net.minecraft.client.resources.ReloadListener;
 import net.minecraft.enchantment.Enchantment;
-import net.minecraft.profiler.IProfiler;
-import net.minecraft.resources.IResourceManager;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
@@ -35,10 +30,13 @@ import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import top.theillusivec4.veinmining.config.ClientVeinMiningConfig;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 import top.theillusivec4.veinmining.network.VeinMiningNetwork;
 import top.theillusivec4.veinmining.veinmining.VeinMiningEnchantment;
 import top.theillusivec4.veinmining.veinmining.VeinMiningKey;
+import top.theillusivec4.veinmining.veinmining.event.VeinMiningClientEventsListener;
+import top.theillusivec4.veinmining.veinmining.event.VeinMiningEventsListener;
 import top.theillusivec4.veinmining.veinmining.logic.BlockProcessor;
 
 @Mod(VeinMiningMod.MOD_ID)
@@ -55,17 +53,20 @@ public class VeinMiningMod {
     eventBus.addListener(this::configReloading);
     eventBus.addListener(this::commonSetup);
     eventBus.addListener(this::clientSetup);
-    MinecraftForge.EVENT_BUS.addListener(this::reload);
     ModLoadingContext.get()
         .registerConfig(ModConfig.Type.SERVER, VeinMiningConfig.CONFIG_SPEC);
+    ModLoadingContext.get()
+        .registerConfig(ModConfig.Type.CLIENT, ClientVeinMiningConfig.CONFIG_SPEC);
   }
 
   private void commonSetup(final FMLCommonSetupEvent evt) {
     VeinMiningNetwork.register();
+    MinecraftForge.EVENT_BUS.register(new VeinMiningEventsListener());
   }
 
   private void clientSetup(final FMLClientSetupEvent evt) {
     ClientRegistry.registerKeyBinding(VeinMiningKey.get());
+    MinecraftForge.EVENT_BUS.register(new VeinMiningClientEventsListener());
   }
 
   private void registerEnchantment(final RegistryEvent.Register<Enchantment> evt) {
@@ -81,28 +82,16 @@ public class VeinMiningMod {
   }
 
   private void bakeConfigs(final ModConfig.ModConfigEvent evt) {
+    ModConfig config = evt.getConfig();
 
-    if (evt.getConfig().getModId().equals(MOD_ID)) {
-      VeinMiningConfig.bake();
-      BlockProcessor.rebuild();
-    }
-  }
+    if (config.getModId().equals(MOD_ID)) {
 
-  private void reload(final AddReloadListenerEvent evt) {
-    evt.addListener(new ReloadListener<Void>() {
-
-      @Nonnull
-      @Override
-      protected Void prepare(@Nonnull IResourceManager resourceManagerIn,
-                             @Nonnull IProfiler profilerIn) {
-        return null;
-      }
-
-      @Override
-      protected void apply(@Nonnull Void objectIn, @Nonnull IResourceManager resourceManagerIn,
-                           @Nonnull IProfiler profilerIn) {
+      if (config.getType() == ModConfig.Type.CLIENT) {
+        ClientVeinMiningConfig.bake();
+      } else {
+        VeinMiningConfig.bake();
         BlockProcessor.rebuild();
       }
-    });
+    }
   }
 }
