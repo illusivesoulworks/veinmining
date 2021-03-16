@@ -17,6 +17,9 @@
     "main": [
       "top.theillusivec4.veinmining.VeinMiningMod"
     ],
+    "client": [
+      "top.theillusivec4.veinmining.ClientVeinMiningMod"
+    ],
     "modmenu": [
       "top.theillusivec4.veinmining.integration.VeinMiningModMenu"
     ]

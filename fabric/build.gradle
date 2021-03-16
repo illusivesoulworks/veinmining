@@ -28,6 +28,8 @@ dependencies {
     modImplementation fabricApi.module("fabric-api-base", project.fabric_version)
     modImplementation fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
     modImplementation fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
+    modImplementation fabricApi.module("fabric-networking-api-v1", project.fabric_version)
+    modImplementation fabricApi.module("fabric-key-binding-api-v1", project.fabric_version)
 
     // Embedded
     include "me.shedaniel.cloth:config-2:${project.cloth_version}"
@@ -35,6 +37,8 @@ dependencies {
     include fabricApi.module("fabric-api-base", project.fabric_version)
     include fabricApi.module("fabric-lifecycle-events-v1", project.fabric_version)
     include fabricApi.module("fabric-resource-loader-v0", project.fabric_version)
+    include fabricApi.module("fabric-networking-api-v1", project.fabric_version)
+    include fabricApi.module("fabric-key-binding-api-v1", project.fabric_version)
 
     // Optional
     modCompileOnly "io.github.prospector:modmenu:${project.modmenu_version}", {

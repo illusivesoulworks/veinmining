@@ -21,6 +21,8 @@ import me.sargunvohra.mcmods.autoconfig1u.AutoConfig;
 import me.sargunvohra.mcmods.autoconfig1u.serializer.JanksonConfigSerializer;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
+import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -28,7 +30,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 import top.theillusivec4.veinmining.config.VeinMiningConfigData;
+import top.theillusivec4.veinmining.network.VeinMiningNetwork;
 import top.theillusivec4.veinmining.veinmining.VeinMiningEnchantment;
+import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 import top.theillusivec4.veinmining.veinmining.logic.BlockProcessor;
 
 public class VeinMiningMod implements ModInitializer {
@@ -52,5 +56,9 @@ public class VeinMiningMod implements ModInitializer {
           VeinMiningConfig.bake(configData);
           BlockProcessor.rebuild();
         });
+    ServerTickEvents.END_WORLD_TICK
+        .register((world) -> VeinMiningPlayers.validate(world.getTime()));
+    ServerPlayNetworking
+        .registerGlobalReceiver(VeinMiningNetwork.SEND_STATE, VeinMiningNetwork::handleState);
   }
 }

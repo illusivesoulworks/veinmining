@@ -104,6 +104,7 @@ public class VeinMiningConfig {
 
   public enum ActivationState {
     STANDING,
-    CROUCHING
+    CROUCHING,
+    KEYBINDING
   }
 }
