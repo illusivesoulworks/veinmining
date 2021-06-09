@@ -19,13 +19,9 @@ package top.theillusivec4.veinmining.config;
 
 import java.util.HashSet;
 import java.util.Set;
+import net.fabricmc.loader.api.FabricLoader;
 
 public class VeinMiningConfig {
-
-  public static void bake(VeinMiningConfigData configData) {
-    Enchantment.bake(configData);
-    VeinMining.bake(configData);
-  }
 
   public static class Enchantment {
 

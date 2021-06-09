@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.8-1.17] - 2021.06.08
+### Changed
+- Updated to Minecraft 1.17
+- Cloth Config is now an optional dependency
+
 ## [0.0.7-1.16.5] - 2021.03.16
 ### Added
 - Added `KEYBINDING` to activation method config option [#7](https://github.com/TheIllusiveC4/VeinMining/issues/7)

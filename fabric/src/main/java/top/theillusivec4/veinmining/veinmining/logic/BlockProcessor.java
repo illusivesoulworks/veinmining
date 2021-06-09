@@ -101,7 +101,7 @@ public class BlockProcessor {
   }
 
   private static Set<String> getTagsFor(ServerWorld world, Block block) {
-    TagGroup<Block> tagGroup = world.getTagManager().getBlocks();
+    TagGroup<Block> tagGroup = world.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
     Set<String> tags = new HashSet<>();
 
     for (Map.Entry<Identifier, Tag<Block>> entry : tagGroup.getTags().entrySet()) {
