@@ -40,6 +40,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.common.ToolType;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
@@ -59,10 +60,8 @@ public class VeinMiningLogic {
       return;
     }
     BlockState state = world.getBlockState(pos);
-    ToolType toolType = state.getBlock().getHarvestTool(state);
     boolean ineffective =
-        VeinMiningConfig.VeinMining.requireEffectiveTool &&
-            stack.getToolTypes().stream().noneMatch((type) -> type == toolType);
+        VeinMiningConfig.VeinMining.requireEffectiveTool && !ForgeHooks.canHarvestBlock(state, playerEntity, world, pos);
 
     if (ineffective) {
       return;
