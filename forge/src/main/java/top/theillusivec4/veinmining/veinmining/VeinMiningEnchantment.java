@@ -17,11 +17,21 @@
 
 package top.theillusivec4.veinmining.veinmining;
 
+import com.google.common.collect.ImmutableMap;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.HoeItem;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.PickaxeItem;
+import net.minecraft.item.ShovelItem;
+import net.minecraft.item.ToolItem;
 import net.minecraft.util.ResourceLocation;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
@@ -29,10 +39,36 @@ import top.theillusivec4.veinmining.config.VeinMiningConfig;
 public class VeinMiningEnchantment extends Enchantment {
 
   public static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
+  public static final EnchantmentType TYPE =
+      EnchantmentType.create(ID, VeinMiningEnchantment::canEnchantItem);
+  public static final Map<String, Predicate<Item>> PREDICATE_MAP;
+
+  static {
+    Map<String, Predicate<Item>> temp = new HashMap<>();
+    temp.put("is:tool", item -> item instanceof ToolItem);
+    temp.put("is:pickaxe", item -> item instanceof PickaxeItem);
+    temp.put("is:axe", item -> item instanceof AxeItem);
+    temp.put("is:hoe", item -> item instanceof HoeItem);
+    temp.put("is:shovel", item -> item instanceof ShovelItem);
+    PREDICATE_MAP = ImmutableMap.copyOf(temp);
+  }
 
   public VeinMiningEnchantment() {
-    super(Rarity.RARE, EnchantmentType.DIGGER,
-        new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
+    super(Rarity.RARE, TYPE, new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
+  }
+
+  private static boolean canEnchantItem(Item item) {
+
+    for (String entry : VeinMiningConfig.Enchantment.items) {
+
+      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(item)) {
+        return true;
+      } else if (item.getRegistryName() != null &&
+          item.getRegistryName().toString().equals(entry)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   @Nonnull

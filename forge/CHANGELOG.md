@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.16.5-0.12] - 2021.06.22
+### Added
+- Added config option for `items` that the enchantment can be applied to [#16](https://github.com/TheIllusiveC4/VeinMining/issues/16)
+- Added Quark compatibility for Pickarang and Flamarang [#15](https://github.com/TheIllusiveC4/VeinMining/issues/15)
+
 ## [1.16.5-0.11] - 2021.06.15
 ### Fixed
 - Fixed certain blocks such as Nether Quartz Ore not working properly with the `requireEffectiveTool` config option [#21](https://github.com/TheIllusiveC4/VeinMining/issues/21)

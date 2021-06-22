@@ -19,6 +19,7 @@ package top.theillusivec4.veinmining.config;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -31,6 +32,7 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.veinmining.VeinMiningMod;
+import top.theillusivec4.veinmining.veinmining.VeinMiningEnchantment;
 
 public class VeinMiningConfig {
 
@@ -62,6 +64,7 @@ public class VeinMiningConfig {
     public static int minEnchantabilityBase = 15;
     public static int minEnchantabilityPerLevel = 5;
     public static Set<String> incompatibleEnchantments = new HashSet<>();
+    public static Set<String> items = new HashSet<>();
 
     public static void bake() {
       rarity = CONFIG.rarity.get();
@@ -79,6 +82,15 @@ public class VeinMiningConfig {
 
         if (ForgeRegistries.ENCHANTMENTS.containsKey(new ResourceLocation(enchantment))) {
           incompatibleEnchantments.add(enchantment);
+        }
+      }
+      items.clear();
+
+      for (String item : CONFIG.items.get()) {
+
+        if (VeinMiningEnchantment.PREDICATE_MAP.containsKey(item) ||
+            ForgeRegistries.ITEMS.containsKey(new ResourceLocation(item))) {
+          items.add(item);
         }
       }
     }
@@ -137,6 +149,7 @@ public class VeinMiningConfig {
     public final IntValue minEnchantabilityBase;
     public final IntValue minEnchantabilityPerLevel;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> incompatibleEnchantments;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> items;
 
     public final BooleanValue requireEffectiveTool;
     public final IntValue maxBlocksBase;
@@ -203,6 +216,11 @@ public class VeinMiningConfig {
           .comment("List of enchantments that cannot be applied together with this enchantment")
           .translation(CONFIG_PREFIX + "incompatibleEnchantments")
           .defineList("incompatibleEnchantments", new ArrayList<>(), s -> s instanceof String);
+
+      items = builder.comment("List of items that the enchantment can be applied on")
+          .translation(CONFIG_PREFIX + "items")
+          .defineList("items", Arrays.asList("is:tool", "quark:pickarang", "quark:flamarang"),
+              s -> s instanceof String);
 
       builder.pop();
 
