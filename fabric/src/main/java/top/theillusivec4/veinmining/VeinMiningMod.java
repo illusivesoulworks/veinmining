@@ -24,6 +24,7 @@ import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
@@ -47,15 +48,18 @@ public class VeinMiningMod implements ModInitializer {
     Registry.register(Registry.ENCHANTMENT, new Identifier(MOD_ID, "vein_mining"), VEIN_MINING);
     configData =
         AutoConfig.register(VeinMiningConfigData.class, JanksonConfigSerializer::new).getConfig();
+    VeinMiningConfig.bake(configData);
+    AutoConfig.getConfigHolder(VeinMiningConfigData.class)
+        .registerSaveListener((configHolder, veinMiningConfigData) -> {
+          VeinMiningConfig.bake(configData);
+          return ActionResult.PASS;
+        });
     ServerLifecycleEvents.SERVER_STARTED.register(minecraftServer -> {
       VeinMiningConfig.bake(configData);
       BlockProcessor.rebuild();
     });
     ServerLifecycleEvents.END_DATA_PACK_RELOAD
-        .register((minecraftServer, serverResourceManager, b) -> {
-          VeinMiningConfig.bake(configData);
-          BlockProcessor.rebuild();
-        });
+        .register((minecraftServer, serverResourceManager, b) -> BlockProcessor.rebuild());
     ServerTickEvents.END_WORLD_TICK
         .register((world) -> VeinMiningPlayers.validate(world.getTime()));
     ServerPlayNetworking
