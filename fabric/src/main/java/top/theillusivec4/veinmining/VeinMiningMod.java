@@ -28,7 +28,6 @@ import net.minecraft.util.registry.Registry;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.veinmining.config.AutoConfigPlugin;
-import top.theillusivec4.veinmining.config.VeinMiningConfig;
 import top.theillusivec4.veinmining.network.VeinMiningNetwork;
 import top.theillusivec4.veinmining.veinmining.VeinMiningEnchantment;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
@@ -53,18 +52,12 @@ public class VeinMiningMod implements ModInitializer {
     ServerLifecycleEvents.SERVER_STARTED.register(minecraftServer -> {
 
       if (isConfigLoaded) {
-        AutoConfigPlugin.bake();
+        AutoConfigPlugin.readConfigData();
       }
       BlockProcessor.rebuild();
     });
     ServerLifecycleEvents.END_DATA_PACK_RELOAD
-        .register((minecraftServer, serverResourceManager, b) -> {
-
-          if (isConfigLoaded) {
-            AutoConfigPlugin.bake();
-          }
-          BlockProcessor.rebuild();
-        });
+        .register((minecraftServer, serverResourceManager, b) -> BlockProcessor.rebuild());
     ServerTickEvents.END_WORLD_TICK
         .register((world) -> VeinMiningPlayers.validate(world.getTime()));
     ServerPlayNetworking

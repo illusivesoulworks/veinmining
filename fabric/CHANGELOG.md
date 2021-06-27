@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.10-1.17] - 2021.06.27
+### Fixed
+- Fixed config syncing [#22](https://github.com/TheIllusiveC4/VeinMining/issues/22)
+
 ## [0.0.9-1.17] - 2021.06.13
 ### Added
 - Added vanilla ores to the `c:ores` tag for convenience, modded ores will still need to be added manually to the tag by the user or developer
