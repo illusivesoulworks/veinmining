@@ -1,28 +1,33 @@
 /*
- * Copyright (c) 2020 C4
+ * Copyright (C) 2020-2021 C4
  *
- * This file is part of Vein Mining, a mod made for Minecraft.
+ * This file is part of Vein Mining.
  *
- * Vein Mining is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or any later version.
+ * Vein Mining is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Vein Mining is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * Vein Mining is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with Vein Mining.
+ * You should have received a copy of the GNU General Public License
+ * and the GNU Lesser General Public License along with Vein Mining.
  * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 package top.theillusivec4.veinmining.config;
 
 import com.google.common.collect.Lists;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.ForgeConfigSpec.BooleanValue;
 import net.minecraftforge.common.ForgeConfigSpec.DoubleValue;
@@ -31,6 +36,7 @@ import net.minecraftforge.common.ForgeConfigSpec.IntValue;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.veinmining.VeinMiningMod;
+import top.theillusivec4.veinmining.veinmining.VeinMiningEnchantment;
 
 public class VeinMiningConfig {
 
@@ -51,8 +57,8 @@ public class VeinMiningConfig {
   }
 
   public static class Enchantment {
-    public static net.minecraft.enchantment.Enchantment.Rarity rarity =
-        net.minecraft.enchantment.Enchantment.Rarity.RARE;
+    public static net.minecraft.world.item.enchantment.Enchantment.Rarity rarity =
+        net.minecraft.world.item.enchantment.Enchantment.Rarity.RARE;
     public static int levels = 1;
     public static boolean isTreasure = false;
     public static boolean isVillagerTrade = true;
@@ -62,6 +68,7 @@ public class VeinMiningConfig {
     public static int minEnchantabilityBase = 15;
     public static int minEnchantabilityPerLevel = 5;
     public static Set<String> incompatibleEnchantments = new HashSet<>();
+    public static Set<String> items = new HashSet<>();
 
     public static void bake() {
       rarity = CONFIG.rarity.get();
@@ -79,6 +86,15 @@ public class VeinMiningConfig {
 
         if (ForgeRegistries.ENCHANTMENTS.containsKey(new ResourceLocation(enchantment))) {
           incompatibleEnchantments.add(enchantment);
+        }
+      }
+      items.clear();
+
+      for (String item : CONFIG.items.get()) {
+
+        if (VeinMiningEnchantment.PREDICATE_MAP.containsKey(item) ||
+            ForgeRegistries.ITEMS.containsKey(new ResourceLocation(item))) {
+          items.add(item);
         }
       }
     }
@@ -127,7 +143,7 @@ public class VeinMiningConfig {
 
   public static class Config {
 
-    public final EnumValue<net.minecraft.enchantment.Enchantment.Rarity> rarity;
+    public final EnumValue<net.minecraft.world.item.enchantment.Enchantment.Rarity> rarity;
     public final IntValue levels;
     public final BooleanValue isTreasure;
     public final BooleanValue isVillagerTrade;
@@ -137,6 +153,7 @@ public class VeinMiningConfig {
     public final IntValue minEnchantabilityBase;
     public final IntValue minEnchantabilityPerLevel;
     public final ForgeConfigSpec.ConfigValue<List<? extends String>> incompatibleEnchantments;
+    public final ForgeConfigSpec.ConfigValue<List<? extends String>> items;
 
     public final BooleanValue requireEffectiveTool;
     public final IntValue maxBlocksBase;
@@ -161,7 +178,7 @@ public class VeinMiningConfig {
 
       rarity = builder.comment("The rarity of the enchantment")
           .translation(CONFIG_PREFIX + "rarity")
-          .defineEnum("rarity", net.minecraft.enchantment.Enchantment.Rarity.RARE);
+          .defineEnum("rarity", net.minecraft.world.item.enchantment.Enchantment.Rarity.RARE);
 
       levels = builder.comment("The number of levels of the enchantment")
           .translation(CONFIG_PREFIX + "levels")
@@ -195,7 +212,7 @@ public class VeinMiningConfig {
               .defineInRange("minEnchantabilityBase", 15, 1, 100);
 
       minEnchantabilityPerLevel = builder.comment(
-          "The additional enchantability requirement for each enchantment level after the first")
+              "The additional enchantability requirement for each enchantment level after the first")
           .translation(CONFIG_PREFIX + "minEnchantabilityPerLevel")
           .defineInRange("minEnchantabilityPerLevel", 5, 1, 100);
 
@@ -203,6 +220,11 @@ public class VeinMiningConfig {
           .comment("List of enchantments that cannot be applied together with this enchantment")
           .translation(CONFIG_PREFIX + "incompatibleEnchantments")
           .defineList("incompatibleEnchantments", new ArrayList<>(), s -> s instanceof String);
+
+      items = builder.comment("List of items that the enchantment can be applied on")
+          .translation(CONFIG_PREFIX + "items")
+          .defineList("items", Arrays.asList("is:tool", "quark:pickarang", "quark:flamarang"),
+              s -> s instanceof String);
 
       builder.pop();
 
@@ -235,7 +257,7 @@ public class VeinMiningConfig {
 
       diagonalMining =
           builder.comment(
-              "Whether or not to vein mine diagonally, note this may lead to hidden drops if relocateDrops is false")
+                  "Whether or not to vein mine diagonally, note this may lead to hidden drops if relocateDrops is false")
               .translation(CONFIG_PREFIX + "diagonalMining")
               .define("diagonalMining", true);
 

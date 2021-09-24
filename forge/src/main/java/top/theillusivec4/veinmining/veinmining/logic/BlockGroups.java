@@ -1,18 +1,22 @@
 /*
- * Copyright (c) 2020 C4
+ * Copyright (C) 2020-2021 C4
  *
- * This file is part of Vein Mining, a mod made for Minecraft.
+ * This file is part of Vein Mining.
  *
- * Vein Mining is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or any later version.
+ * Vein Mining is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Vein Mining is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * Vein Mining is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with Vein Mining.
+ * You should have received a copy of the GNU General Public License
+ * and the GNU Lesser General Public License along with Vein Mining.
  * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 package top.theillusivec4.veinmining.veinmining.logic;
@@ -22,10 +26,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import net.minecraft.block.Block;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.tags.Tag;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
@@ -60,20 +64,20 @@ public class BlockGroups {
       boolean isTag = id.charAt(0) == '#';
 
       if (isTag) {
-        ResourceLocation rl = ResourceLocation.tryCreate(id.substring(1));
+        ResourceLocation rl = ResourceLocation.tryParse(id.substring(1));
 
         if (rl != null) {
-          ITag<Block> tag = BlockTags.getCollection().get(rl);
+          Tag<Block> tag = BlockTags.getAllTags().getTag(rl);
 
           if (tag != null) {
 
-            for (Block block : tag.getAllElements()) {
+            for (Block block : tag.getValues()) {
               newGroup.add(Objects.requireNonNull(block.getRegistryName()).toString());
             }
           }
         }
       } else {
-        ResourceLocation rl = ResourceLocation.tryCreate(id);
+        ResourceLocation rl = ResourceLocation.tryParse(id);
 
         if (rl != null) {
           if (ForgeRegistries.BLOCKS.containsKey(rl)) {

@@ -1,18 +1,22 @@
 /*
- * Copyright (c) 2020 C4
+ * Copyright (C) 2020-2021 C4
  *
- * This file is part of Vein Mining, a mod made for Minecraft.
+ * This file is part of Vein Mining.
  *
- * Vein Mining is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or any later version.
+ * Vein Mining is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Vein Mining is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * Vein Mining is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with Vein Mining.
+ * You should have received a copy of the GNU General Public License
+ * and the GNU Lesser General Public License along with Vein Mining.
  * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 package top.theillusivec4.veinmining.veinmining.logic;
@@ -21,26 +25,26 @@ import com.google.common.collect.Sets;
 import java.util.LinkedList;
 import java.util.Set;
 import javax.annotation.Nullable;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.CommandBlockBlock;
-import net.minecraft.block.JigsawBlock;
-import net.minecraft.block.StructureBlock;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.stats.Stats;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.Hand;
 import net.minecraft.util.Tuple;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.GameType;
-import net.minecraft.world.World;
-import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.common.ToolType;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.CommandBlock;
+import net.minecraft.world.level.block.JigsawBlock;
+import net.minecraft.world.level.block.StructureBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.ForgeHooks;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
@@ -51,23 +55,22 @@ public class VeinMiningLogic {
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
-  public static void startVeinMining(ServerPlayerEntity playerEntity, BlockPos pos, Block source) {
-    ServerWorld world = playerEntity.getServerWorld();
-    ItemStack stack = playerEntity.getHeldItemMainhand();
+  public static void startVeinMining(ServerPlayer playerEntity, BlockPos pos, Block source) {
+    ServerLevel world = playerEntity.getLevel();
+    ItemStack stack = playerEntity.getMainHandItem();
 
     if (!VeinMiningPlayers.canVeinMine(playerEntity)) {
       return;
     }
     BlockState state = world.getBlockState(pos);
-    ToolType toolType = state.getBlock().getHarvestTool(state);
     boolean ineffective =
         VeinMiningConfig.VeinMining.requireEffectiveTool &&
-            stack.getToolTypes().stream().noneMatch((type) -> type == toolType);
+            !ForgeHooks.isCorrectToolForDrops(state, playerEntity);
 
     if (ineffective) {
       return;
     }
-    int veiningLevels = EnchantmentHelper.getEnchantmentLevel(VeinMiningMod.VEIN_MINING, stack);
+    int veiningLevels = EnchantmentHelper.getItemEnchantmentLevel(VeinMiningMod.VEIN_MINING, stack);
     int maxBlocks = VeinMiningConfig.VeinMining.maxBlocksBase +
         VeinMiningConfig.VeinMining.maxBlocksPerLevel * veiningLevels;
     int maxDistance = VeinMiningConfig.VeinMining.maxDistanceBase +
@@ -105,17 +108,17 @@ public class VeinMiningLogic {
 
   private static boolean stopVeining(ItemStack stack) {
     return VeinMiningConfig.VeinMining.limitedByDurability &&
-        (stack.getDamage() == stack.getMaxDamage() ||
+        (stack.getDamageValue() == stack.getMaxDamage() ||
             (VeinMiningConfig.VeinMining.preventToolDestruction &&
-                stack.getDamage() == stack.getMaxDamage() - 1));
+                stack.getDamageValue() == stack.getMaxDamage() - 1));
   }
 
   private static void addValidNeighbors(LinkedList<Tuple<BlockPos, Integer>> candidates,
                                         BlockPos source, int distance) {
 
     if (VeinMiningConfig.VeinMining.diagonalMining) {
-      BlockPos up = source.up();
-      BlockPos down = source.down();
+      BlockPos up = source.above();
+      BlockPos down = source.below();
       candidates.add(new Tuple<>(up, distance));
       candidates.add(new Tuple<>(down, distance));
       BlockPos[] blockPositions = new BlockPos[] {up, down, source};
@@ -133,28 +136,28 @@ public class VeinMiningLogic {
     } else {
 
       for (Direction direction : CARDINAL_DIRECTIONS) {
-        candidates.add(new Tuple<>(source.offset(direction), distance));
+        candidates.add(new Tuple<>(source.relative(direction), distance));
       }
     }
   }
 
-  public static boolean harvest(ServerPlayerEntity player, BlockPos pos, BlockPos originPos) {
-    ServerWorld world = player.getServerWorld();
+  public static boolean harvest(ServerPlayer player, BlockPos pos, BlockPos originPos) {
+    ServerLevel world = player.getLevel();
     BlockState blockstate = world.getBlockState(pos);
-    GameType gameType = player.interactionManager.getGameType();
+    GameType gameType = player.gameMode.getGameModeForPlayer();
     int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(world, gameType, player, pos);
 
     if (exp == -1) {
       return false;
     } else {
-      TileEntity tileentity = world.getTileEntity(pos);
+      BlockEntity tileentity = world.getBlockEntity(pos);
       Block block = blockstate.getBlock();
 
-      if ((block instanceof CommandBlockBlock || block instanceof StructureBlock ||
-          block instanceof JigsawBlock) && !player.canUseCommandBlock()) {
-        world.notifyBlockUpdate(pos, blockstate, blockstate, 3);
+      if ((block instanceof CommandBlock || block instanceof StructureBlock ||
+          block instanceof JigsawBlock) && !player.canUseGameMasterBlocks()) {
+        world.sendBlockUpdated(pos, blockstate, blockstate, 3);
         return false;
-      } else if (player.getHeldItemMainhand().onBlockStartBreak(pos, player)) {
+      } else if (player.getMainHandItem().onBlockStartBreak(pos, player)) {
         return false;
       } else if (player.blockActionRestricted(world, pos, gameType)) {
         return false;
@@ -163,7 +166,7 @@ public class VeinMiningLogic {
         if (gameType.isCreative()) {
           removeBlock(player, pos, false);
         } else {
-          ItemStack itemstack = player.getHeldItemMainhand();
+          ItemStack itemstack = player.getMainHandItem();
           ItemStack itemstack1 = itemstack.copy();
           boolean flag1 = blockstate.canHarvestBlock(world, pos, player);
 
@@ -173,7 +176,7 @@ public class VeinMiningLogic {
 
           if (itemstack.isEmpty() && !itemstack1.isEmpty()) {
             net.minecraftforge.event.ForgeEventFactory
-                .onPlayerDestroyItem(player, itemstack1, Hand.MAIN_HAND);
+                .onPlayerDestroyItem(player, itemstack1, InteractionHand.MAIN_HAND);
           }
           boolean flag = removeBlock(player, pos, flag1);
           BlockPos spawnPos = VeinMiningConfig.VeinMining.relocateDrops ? originPos : pos;
@@ -183,7 +186,7 @@ public class VeinMiningLogic {
           }
 
           if (flag && exp > 0) {
-            blockstate.getBlock().dropXpOnBlockBreak(world, spawnPos, exp);
+            blockstate.getBlock().popExperience(world, spawnPos, exp);
           }
         }
         return true;
@@ -191,50 +194,50 @@ public class VeinMiningLogic {
     }
   }
 
-  private static void onBlockDestroyed(ItemStack stack, World worldIn, BlockState blockIn,
-                                       BlockPos pos, PlayerEntity playerIn) {
+  private static void onBlockDestroyed(ItemStack stack, Level worldIn, BlockState blockIn,
+                                       BlockPos pos, Player playerIn) {
 
-    if (!worldIn.isRemote && blockIn.getBlockHardness(worldIn, pos) != 0.0F) {
+    if (!worldIn.isClientSide && blockIn.getDestroySpeed(worldIn, pos) != 0.0F) {
       int damage = VeinMiningConfig.VeinMining.toolDamageMultiplier;
 
       if (VeinMiningConfig.VeinMining.preventToolDestruction) {
-        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamage() - 1);
+        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamageValue() - 1);
       }
 
       if (damage > 0) {
-        stack.damageItem(damage, playerIn,
-            (entity) -> entity.sendBreakAnimation(EquipmentSlotType.MAINHAND));
+        stack.hurtAndBreak(damage, playerIn,
+            (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
       }
     }
   }
 
-  private static void harvestBlock(Block block, World worldIn, PlayerEntity player, BlockPos pos,
-                                   BlockPos spawnPos, BlockState state, @Nullable TileEntity te,
+  private static void harvestBlock(Block block, Level worldIn, Player player, BlockPos pos,
+                                   BlockPos spawnPos, BlockState state, @Nullable BlockEntity te,
                                    ItemStack stack) {
-    player.addStat(Stats.BLOCK_MINED.get(block));
+    player.awardStat(Stats.BLOCK_MINED.get(block));
 
     if (VeinMiningConfig.VeinMining.addPlayerExhaustion) {
-      player.addExhaustion(
+      player.causeFoodExhaustion(
           (float) (0.005F * (VeinMiningConfig.VeinMining.playerExhaustionMultiplier)));
     }
 
-    if (worldIn instanceof ServerWorld) {
-      Block.getDrops(state, (ServerWorld) worldIn, pos, te, player, stack)
-          .forEach((stackToSpawn) -> Block.spawnAsEntity(worldIn, spawnPos, stackToSpawn));
-      state.spawnAdditionalDrops((ServerWorld) worldIn, pos, stack);
+    if (worldIn instanceof ServerLevel) {
+      Block.getDrops(state, (ServerLevel) worldIn, pos, te, player, stack)
+          .forEach((stackToSpawn) -> Block.popResource(worldIn, spawnPos, stackToSpawn));
+      state.spawnAfterBreak((ServerLevel) worldIn, pos, stack);
     }
   }
 
-  private static boolean removeBlock(PlayerEntity player, BlockPos pos, boolean canHarvest) {
-    World world = player.getEntityWorld();
+  private static boolean removeBlock(Player player, BlockPos pos, boolean canHarvest) {
+    Level world = player.getCommandSenderWorld();
     BlockState state = world.getBlockState(pos);
     boolean removed =
         state.removedByPlayer(world, pos, player, canHarvest, world.getFluidState(pos));
 
     if (removed) {
-      state.getBlock().onPlayerDestroy(world, pos, state);
+      state.getBlock().destroy(world, pos, state);
 
-      if (!world.getBlockState(pos).isAir(world, pos)) {
+      if (!world.getBlockState(pos).isAir()) {
         world.removeBlock(pos, false);
       }
     }

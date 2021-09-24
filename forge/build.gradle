@@ -1,41 +1,44 @@
 buildscript {
     repositories {
         maven { url = 'https://files.minecraftforge.net/maven' }
-        maven { url 'https://plugins.gradle.org/m2/' }
+		maven { url = 'https://maven.parchmentmc.org' }
+        maven { url = 'https://plugins.gradle.org/m2/' }
         maven {
-            url "https://repo.spongepowered.org/repository/maven-public/"
+            url = "https://repo.spongepowered.org/repository/maven-public/"
             content { includeGroup "org.spongepowered" }
         }
-        jcenter()
         mavenCentral()
     }
     dependencies {
-        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '3.+', changing: true
+        classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+        classpath group: 'gradle.plugin.com.matthewprenger', name: 'CurseGradle', version: '1.4.0'
         classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
-        classpath 'gradle.plugin.com.matthewprenger:CurseGradle:1.4.0'
+        classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'com.matthewprenger.cursegradle'
 apply plugin: 'org.spongepowered.mixin'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 
 version = "${mod_version}"
-group = "${mod_group}"
-archivesBaseName = "${mod_id}-forge"
+group = 'top.theillusivec4.veinmining'
+archivesBaseName = 'veinmining-forge'
 
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8'
+java.toolchain.languageVersion = JavaLanguageVersion.of(16)
 
 minecraft {
-    mappings channel: 'snapshot', version: "${version_mcp}".toString()
+    mappings channel: 'parchment', version: '2021.09.05-1.17.1'
 
     runs {
         client {
             workingDirectory project.file('run')
-            arg "-mixin.config=" + "${mod_id}".toString() + ".mixins.json"
-            jvmArg "-Dmixin.env.disableRefMap=true"
+            
+			arg "-mixin.config=veinmining.mixins.json"
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+			property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 veinmining {
@@ -46,11 +49,12 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-            arg "-mixin.config=" + "${mod_id}".toString() + ".mixins.json"
-            jvmArg "-Dmixin.env.disableRefMap=true"
+
+			arg "-mixin.config=veinmining.mixins.json"
 
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
+			property 'mixin.env.disableRefMap', 'true'
 
             mods {
                 veinmining {
@@ -61,9 +65,32 @@ minecraft {
     }
 }
 
+mixin {
+    add sourceSets.main, 'veinmining.refmap.json'
+}
+
 dependencies {
-    minecraft "net.minecraftforge:forge:${version_forge}"
-    annotationProcessor 'org.spongepowered:mixin:0.8.2:processor'
+    minecraft "net.minecraftforge:forge:${forge_version}"
+
+	annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+}
+
+def replaceResources = tasks.register("replaceResources", Copy) {
+    it.outputs.upToDateWhen { false }
+
+    it.from(sourceSets.main.resources) {
+        include "META-INF/mods.toml"
+        expand 'version': version, 'mc_version_range': mc_version_range, 'forge_version_range': forge_version_range, "loader_version": loader_version
+    }
+    it.into "$buildDir/resources/main/"
+}
+
+processResources {
+    from("CHANGELOG.md")
+    from("../LICENSE")
+    duplicatesStrategy(DuplicatesStrategy.FAIL)
+    exclude('META-INF/mods.toml')
+    configure { finalizedBy(replaceResources) }
 }
 
 sourceSets {
@@ -74,20 +101,16 @@ sourceSets {
     }
 }
 
-mixin {
-    add sourceSets.main, "${mod_id}.refmap.json"
-}
-
 jar {
     manifest {
-        attributes(["Specification-Title": "${mod_name}",
-                    "Specification-Vendor": "${mod_author}",
-                    "Specification-Version": "${getArchiveVersion()}",
-                    "Implementation-Title": "${mod_name}",
-                    "Implementation-Version": "${getArchiveVersion()}",
-                    "Implementation-Vendor" :"${mod_author}",
+        attributes(["Specification-Title"     : "Vein Mining",
+                    "Specification-Vendor"    : "C4",
+                    "Specification-Version"   : "1",
+                    "Implementation-Title"    : "Vein Mining",
+                    "Implementation-Version"  : "${getArchiveVersion()}",
+                    "Implementation-Vendor"   : "C4",
                     "Implementation-Timestamp": new Date().format("yyyy-MM-dd'T'HH:mm:ssZ"),
-                    "MixinConfigs": "${mod_id}.mixins.json"],)
+                    "MixinConfigs"            : "veinmining.mixins.json"],)
     }
 }
 
@@ -96,28 +119,19 @@ task sourcesJar(type: Jar) {
     from sourceSets.main.allJava
 }
 
-tasks.build.dependsOn sourcesJar
-
-processResources {
-
-    from('CHANGELOG.md')
-
-    from(sourceSets.main.resources.srcDirs) {
-        include 'META-INF/mods.toml'
-        expand 'version': project.version, 'mod_id' : mod_id, 'mod_name': mod_name, 'mod_url': mod_url, 'mod_author': mod_author, 'mod_description': mod_description, 'mod_icon': mod_icon
-    }
-
-    from(sourceSets.main.resources.srcDirs) {
-        exclude 'META-INF/mods.toml'
-    }
+artifacts {
+    archives sourcesJar
 }
 
+jar.finalizedBy('reobfJar')
+
+tasks.build.dependsOn sourcesJar
 
 curseforge {
 
     project {
         apiKey = findProperty('curseKey') ?: 0
-        id = "${curse_id}"
+        id = "431611"
         releaseType = "${curse_release}"
         changelogType = 'markdown'
         changelog = file('CHANGELOG.md')

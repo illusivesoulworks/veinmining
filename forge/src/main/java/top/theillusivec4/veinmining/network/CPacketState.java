@@ -1,28 +1,30 @@
 /*
- * Copyright (c) 2021 C4
+ * Copyright (C) 2020-2021 C4
  *
- * This file is part of Vein Mining, a mod made for Minecraft.
+ * This file is part of Vein Mining.
  *
- * Vein Mining is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or any later version.
+ * Vein Mining is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Vein Mining is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * Vein Mining is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with Vein Mining.
+ * You should have received a copy of the GNU General Public License
+ * and the GNU Lesser General Public License along with Vein Mining.
  * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 package top.theillusivec4.veinmining.network;
 
 import java.util.function.Supplier;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.network.PacketBuffer;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.PacketDistributor;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 
 public class CPacketState {
@@ -33,26 +35,22 @@ public class CPacketState {
     this.activate = activate;
   }
 
-  public static void send(boolean activate) {
-    VeinMiningNetwork.INSTANCE.send(PacketDistributor.SERVER.noArg(), new CPacketState(activate));
-  }
-
-  public static void encode(CPacketState msg, PacketBuffer buf) {
+  public static void encode(CPacketState msg, FriendlyByteBuf buf) {
     buf.writeBoolean(msg.activate);
   }
 
-  public static CPacketState decode(PacketBuffer buf) {
+  public static CPacketState decode(FriendlyByteBuf buf) {
     return new CPacketState(buf.readBoolean());
   }
 
   public static void handle(CPacketState msg, Supplier<NetworkEvent.Context> ctx) {
     ctx.get().enqueueWork(() -> {
-      ServerPlayerEntity sender = ctx.get().getSender();
+      ServerPlayer sender = ctx.get().getSender();
 
       if (sender != null) {
 
         if (msg.activate) {
-          VeinMiningPlayers.startVeinMining(sender, sender.world.getGameTime());
+          VeinMiningPlayers.startVeinMining(sender, sender.level.getGameTime());
         } else {
           VeinMiningPlayers.stopVeinMining(sender);
         }

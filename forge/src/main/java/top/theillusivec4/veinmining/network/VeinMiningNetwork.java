@@ -1,18 +1,22 @@
 /*
- * Copyright (c) 2021 C4
+ * Copyright (C) 2020-2021 C4
  *
- * This file is part of Vein Mining, a mod made for Minecraft.
+ * This file is part of Vein Mining.
  *
- * Vein Mining is free software: you can redistribute it and/or modify it under the terms of the GNU
- * Lesser General Public License as published by the Free Software Foundation, either version 3 of
- * the License, or any later version.
+ * Vein Mining is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- * Vein Mining is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without
- * even the implied warranty of MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE. See the GNU
- * Lesser General Public License for more details.
+ * Vein Mining is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License along with Vein Mining.
+ * You should have received a copy of the GNU General Public License
+ * and the GNU Lesser General Public License along with Vein Mining.
  * If not, see <https://www.gnu.org/licenses/>.
+ *
  */
 
 package top.theillusivec4.veinmining.network;
@@ -20,23 +24,23 @@ package top.theillusivec4.veinmining.network;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.fmllegacy.network.NetworkRegistry;
+import net.minecraftforge.fmllegacy.network.PacketDistributor;
+import net.minecraftforge.fmllegacy.network.simple.SimpleChannel;
 import top.theillusivec4.veinmining.VeinMiningMod;
 
 public class VeinMiningNetwork {
 
   private static final String PTC_VERSION = "1";
 
-  public static SimpleChannel INSTANCE;
-
+  private static SimpleChannel instance;
   private static int id = 0;
 
   public static void register() {
-    INSTANCE =
+    instance =
         NetworkRegistry.ChannelBuilder.named(new ResourceLocation(VeinMiningMod.MOD_ID, "main"))
             .networkProtocolVersion(() -> PTC_VERSION).clientAcceptedVersions(PTC_VERSION::equals)
             .serverAcceptedVersions(PTC_VERSION::equals).simpleChannel();
@@ -44,9 +48,14 @@ public class VeinMiningNetwork {
         CPacketState::handle);
   }
 
-  private static <M> void registerMessage(Class<M> messageType, BiConsumer<M, PacketBuffer> encoder,
-                                          Function<PacketBuffer, M> decoder,
+  private static <M> void registerMessage(Class<M> messageType,
+                                          BiConsumer<M, FriendlyByteBuf> encoder,
+                                          Function<FriendlyByteBuf, M> decoder,
                                           BiConsumer<M, Supplier<NetworkEvent.Context>> messageConsumer) {
-    INSTANCE.registerMessage(id++, messageType, encoder, decoder, messageConsumer);
+    instance.registerMessage(id++, messageType, encoder, decoder, messageConsumer);
+  }
+
+  public static void sendC2SState(boolean activate) {
+    VeinMiningNetwork.instance.send(PacketDistributor.SERVER.noArg(), new CPacketState(activate));
   }
 }
