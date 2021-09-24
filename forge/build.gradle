@@ -69,10 +69,21 @@ mixin {
     add sourceSets.main, 'veinmining.refmap.json'
 }
 
+repositories {
+    maven {
+        url = 'https://cursemaven.com'
+        content {
+            includeGroup 'curse.maven'
+        }
+    }
+}
+
 dependencies {
     minecraft "net.minecraftforge:forge:${forge_version}"
 
 	annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
+
+    runtimeOnly fg.deobf("curse.maven:jei-238222:3448057")
 }
 
 def replaceResources = tasks.register("replaceResources", Copy) {
