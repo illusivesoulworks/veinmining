@@ -17,7 +17,7 @@
 
 package top.theillusivec4.veinmining.veinmining;
 
-import net.minecraft.client.options.KeyBinding;
+import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
 
 public class VeinMiningKey {

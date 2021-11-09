@@ -13,6 +13,15 @@ group = project.maven_group
 minecraft {
 }
 
+repositories {
+    maven {
+        url = "https://maven.terraformersmc.com/"
+    }
+    maven {
+        url "https://maven.shedaniel.me/"
+    }
+}
+
 dependencies {
     minecraft "com.mojang:minecraft:${project.minecraft_version}"
     mappings "net.fabricmc:yarn:${project.yarn_mappings}:v2"
@@ -41,10 +50,10 @@ dependencies {
     include fabricApi.module("fabric-key-binding-api-v1", project.fabric_version)
 
     // Optional
-    modCompileOnly "io.github.prospector:modmenu:${project.modmenu_version}", {
+    modCompileOnly "com.terraformersmc:modmenu:${project.modmenu_version}", {
         exclude group: "net.fabricmc.fabric-api"
     }
-    modRuntime "io.github.prospector:modmenu:${project.modmenu_version}", {
+    modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}", {
         exclude group: "net.fabricmc.fabric-api"
     }
 }
