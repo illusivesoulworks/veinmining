@@ -33,6 +33,7 @@ import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ShovelItem;
 import net.minecraft.item.ToolItem;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.ToolType;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
@@ -41,15 +42,15 @@ public class VeinMiningEnchantment extends Enchantment {
   public static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
   public static final EnchantmentType TYPE =
       EnchantmentType.create(ID, VeinMiningEnchantment::canEnchantItem);
-  public static final Map<String, Predicate<Item>> PREDICATE_MAP;
+  public static final Map<String, Predicate<ItemStack>> PREDICATE_MAP;
 
   static {
-    Map<String, Predicate<Item>> temp = new HashMap<>();
-    temp.put("is:tool", item -> item instanceof ToolItem);
-    temp.put("is:pickaxe", item -> item instanceof PickaxeItem);
-    temp.put("is:axe", item -> item instanceof AxeItem);
-    temp.put("is:hoe", item -> item instanceof HoeItem);
-    temp.put("is:shovel", item -> item instanceof ShovelItem);
+    Map<String, Predicate<ItemStack>> temp = new HashMap<>();
+    temp.put("is:tool", stack -> !stack.getToolTypes().isEmpty());
+    temp.put("is:pickaxe", stack -> isToolType(ToolType.PICKAXE, stack));
+    temp.put("is:axe", stack -> isToolType(ToolType.AXE, stack));
+    temp.put("is:hoe", stack -> isToolType(ToolType.HOE, stack));
+    temp.put("is:shovel", stack -> isToolType(ToolType.SHOVEL, stack));
     PREDICATE_MAP = ImmutableMap.copyOf(temp);
   }
 
@@ -57,11 +58,15 @@ public class VeinMiningEnchantment extends Enchantment {
     super(Rarity.RARE, TYPE, new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
   }
 
+  private static boolean isToolType(ToolType type, ItemStack stack) {
+    return stack.getToolTypes().contains(type);
+  }
+
   private static boolean canEnchantItem(Item item) {
 
     for (String entry : VeinMiningConfig.Enchantment.items) {
 
-      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(item)) {
+      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(new ItemStack(item))) {
         return true;
       } else if (item.getRegistryName() != null &&
           item.getRegistryName().toString().equals(entry)) {
