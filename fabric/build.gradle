@@ -43,6 +43,7 @@ dependencies {
     }
     modRuntime "me.shedaniel.cloth:cloth-config-fabric:${project.cloth_version}"
     modRuntime "com.terraformersmc:modmenu:${project.modmenu_version}"
+    modRuntime "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 }
 
 processResources {

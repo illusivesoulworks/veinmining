@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.11-1.17.1] - 2021.11.08
+### Changed
+- Changed `rarity`, `activationState`, and `blocksPermission` config values to include possible values in the json5
+comments [#31](https://github.com/TheIllusiveC4/VeinMining/issues/31)
+### Fixed
+- Fixed `preventToolDestruction` config not being applied correctly [#32](https://github.com/TheIllusiveC4/VeinMining/issues/32)
+
 ## [0.0.10-1.17] - 2021.06.27
 ### Fixed
 - Fixed config syncing [#22](https://github.com/TheIllusiveC4/VeinMining/issues/22)

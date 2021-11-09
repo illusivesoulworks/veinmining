@@ -186,7 +186,7 @@ public class VeinMiningLogic {
       int damage = VeinMiningConfig.VeinMining.toolDamageMultiplier;
 
       if (VeinMiningConfig.VeinMining.preventToolDestruction) {
-        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamage() - 1);
+        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamage() - 2);
       }
 
       if (damage > 0) {
