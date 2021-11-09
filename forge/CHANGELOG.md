@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.16.5-0.13] - 2021.11.08
+### Changed
+- Changed `compatibleItems` logic to support more types of modded items
+### Fixed
+- Fixed `preventToolDestruction` config not being applied correctly [#32](https://github.com/TheIllusiveC4/VeinMining/issues/32)
+
 ## [1.16.5-0.12] - 2021.06.22
 ### Added
 - Added config option for `items` that the enchantment can be applied to [#16](https://github.com/TheIllusiveC4/VeinMining/issues/16)
