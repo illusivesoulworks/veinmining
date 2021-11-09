@@ -163,7 +163,7 @@ public class VeinMiningLogic {
         if (gameMode != GameMode.CREATIVE) {
           ItemStack itemStack = player.getMainHandStack();
           ItemStack itemStack2 = itemStack.copy();
-          boolean bl2 = player.isUsingEffectiveTool(blockState);
+          boolean bl2 = player.canHarvest(blockState);
 
           if (VeinMiningConfig.VeinMining.addToolDamage) {
             postMine(itemStack, world, blockState, pos, player);
@@ -186,7 +186,7 @@ public class VeinMiningLogic {
       int damage = VeinMiningConfig.VeinMining.toolDamageMultiplier;
 
       if (VeinMiningConfig.VeinMining.preventToolDestruction) {
-        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamage() - 1);
+        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamage() - 2);
       }
 
       if (damage > 0) {
