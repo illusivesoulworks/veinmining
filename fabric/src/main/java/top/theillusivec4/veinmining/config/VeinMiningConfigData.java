@@ -129,7 +129,7 @@ public class VeinMiningConfigData implements ConfigData {
   public static class Enchantment {
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("The rarity of the enchantment")
+    @Comment("The rarity of the enchantment (\"COMMON\", \"UNCOMMON\", \"RARE\", \"VERY_RARE\")")
     public net.minecraft.enchantment.Enchantment.Rarity rarity =
         net.minecraft.enchantment.Enchantment.Rarity.RARE;
 
