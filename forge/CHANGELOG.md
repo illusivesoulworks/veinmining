@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.17.1-0.13] - 2021.11.08
+### Changed
+- Changed `compatibleItems` logic to support more types of modded items
+### Fixed
+- Fixed `preventToolDestruction` config not being applied correctly [#32](https://github.com/TheIllusiveC4/VeinMining/issues/32)
+
 ## [1.17.1-0.12] - 2021.09.24
 ### Changed
 - Updated to Minecraft 1.17.1
