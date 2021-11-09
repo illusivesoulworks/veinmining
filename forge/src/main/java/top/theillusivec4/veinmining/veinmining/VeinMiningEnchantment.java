@@ -24,19 +24,17 @@ package top.theillusivec4.veinmining.veinmining;
 import com.google.common.collect.ImmutableMap;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.AxeItem;
-import net.minecraft.world.item.DiggerItem;
-import net.minecraft.world.item.HoeItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.PickaxeItem;
-import net.minecraft.world.item.ShovelItem;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
+import net.minecraftforge.common.ToolAction;
+import net.minecraftforge.common.ToolActions;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
@@ -46,15 +44,15 @@ public class VeinMiningEnchantment extends Enchantment {
 
   public static final EnchantmentCategory TYPE =
       EnchantmentCategory.create(ID, VeinMiningEnchantment::canEnchantItem);
-  public static final Map<String, Predicate<Item>> PREDICATE_MAP;
+  public static final Map<String, Predicate<ItemStack>> PREDICATE_MAP;
 
   static {
-    Map<String, Predicate<Item>> temp = new HashMap<>();
-    temp.put("is:tool", item -> item instanceof DiggerItem);
-    temp.put("is:pickaxe", item -> item instanceof PickaxeItem);
-    temp.put("is:axe", item -> item instanceof AxeItem);
-    temp.put("is:hoe", item -> item instanceof HoeItem);
-    temp.put("is:shovel", item -> item instanceof ShovelItem);
+    Map<String, Predicate<ItemStack>> temp = new HashMap<>();
+    temp.put("is:tool", VeinMiningEnchantment::canToolAction);
+    temp.put("is:pickaxe", stack -> canToolAction(ToolActions.PICKAXE_DIG, stack));
+    temp.put("is:axe", stack -> canToolAction(ToolActions.AXE_DIG, stack));
+    temp.put("is:hoe", stack -> canToolAction(ToolActions.HOE_DIG, stack));
+    temp.put("is:shovel", stack -> canToolAction(ToolActions.SHOVEL_DIG, stack));
     PREDICATE_MAP = ImmutableMap.copyOf(temp);
   }
 
@@ -62,11 +60,29 @@ public class VeinMiningEnchantment extends Enchantment {
     super(Rarity.RARE, TYPE, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
   }
 
+  private static boolean canToolAction(ItemStack stack) {
+    Set<ToolAction> actions =
+        Set.of(ToolActions.PICKAXE_DIG, ToolActions.AXE_DIG, ToolActions.HOE_DIG,
+            ToolActions.SHOVEL_DIG);
+
+    for (ToolAction action : actions) {
+
+      if (stack.canPerformAction(action)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private static boolean canToolAction(ToolAction toolAction, ItemStack stack) {
+    return stack.canPerformAction(toolAction);
+  }
+
   private static boolean canEnchantItem(Item item) {
 
     for (String entry : VeinMiningConfig.Enchantment.items) {
 
-      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(item)) {
+      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(new ItemStack(item))) {
         return true;
       } else if (item.getRegistryName() != null &&
           item.getRegistryName().toString().equals(entry)) {
