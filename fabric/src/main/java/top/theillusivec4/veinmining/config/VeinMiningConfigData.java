@@ -225,7 +225,7 @@ public class VeinMiningConfigData implements ConfigData {
     public boolean limitedByDurability = true;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("Whether to activate vein mining by standing, crouching, or holding down the keybind")
+    @Comment("Whether to activate vein mining by standing, crouching, or holding down the keybind (\"STANDING\", \"CROUCHING\", \"KEYBINDING\")")
     public VeinMiningConfig.ActivationState activationState =
         VeinMiningConfig.ActivationState.STANDING;
 
@@ -234,7 +234,7 @@ public class VeinMiningConfigData implements ConfigData {
     public List<String> blocks = new ArrayList<>();
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("Whether the blocks configuration is a whitelist or a blacklist")
+    @Comment("Whether the blocks configuration is a whitelist or a blacklist (\"WHITELIST\", \"BLACKLIST\")")
     public VeinMiningConfig.PermissionType blocksPermission =
         VeinMiningConfig.PermissionType.BLACKLIST;
 
