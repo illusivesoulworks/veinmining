@@ -141,9 +141,13 @@ public class VeinMiningEnchantment extends Enchantment {
   }
 
   @Override
+  public boolean canEnchant(ItemStack pStack) {
+    return pStack.canApplyAtEnchantingTable(this);
+  }
+
+  @Override
   public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
-    return super.canApplyAtEnchantingTable(stack) &&
-        VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
+    return this.canEnchant(stack) && VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
   }
 
   @Override
