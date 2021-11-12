@@ -25,13 +25,8 @@ import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.AxeItem;
-import net.minecraft.item.HoeItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.PickaxeItem;
-import net.minecraft.item.ShovelItem;
-import net.minecraft.item.ToolItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ToolType;
 import top.theillusivec4.veinmining.VeinMiningMod;
@@ -125,9 +120,13 @@ public class VeinMiningEnchantment extends Enchantment {
   }
 
   @Override
+  public boolean canApply(@Nonnull ItemStack stack) {
+    return stack.canApplyAtEnchantingTable(this);
+  }
+
+  @Override
   public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
-    return super.canApplyAtEnchantingTable(stack) &&
-        VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
+    return this.canApply(stack) && VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
   }
 
   @Override
