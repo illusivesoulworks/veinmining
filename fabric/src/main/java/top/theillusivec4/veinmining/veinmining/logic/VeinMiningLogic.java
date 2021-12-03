@@ -51,7 +51,7 @@ public class VeinMiningLogic {
 
   public static void startVeinMining(ServerPlayerEntity playerEntity, BlockPos pos,
                                      BlockState source) {
-    ServerWorld world = playerEntity.getServerWorld();
+    ServerWorld world = playerEntity.getWorld();
     ItemStack stack = playerEntity.getMainHandStack();
 
     if (!VeinMiningPlayers.canVeinMine(playerEntity)) {
@@ -136,7 +136,7 @@ public class VeinMiningLogic {
   }
 
   public static boolean harvest(ServerPlayerEntity player, BlockPos pos, BlockPos originPos) {
-    ServerWorld world = player.getServerWorld();
+    ServerWorld world = player.getWorld();
     BlockState blockState = world.getBlockState(pos);
     GameMode gameMode = player.interactionManager.getGameMode();
 
