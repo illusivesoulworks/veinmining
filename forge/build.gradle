@@ -25,10 +25,10 @@ version = "${mod_version}"
 group = 'top.theillusivec4.veinmining'
 archivesBaseName = 'veinmining-forge'
 
-java.toolchain.languageVersion = JavaLanguageVersion.of(16)
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'parchment', version: '2021.09.05-1.17.1'
+    mappings channel: 'parchment', version: '2021.10.31-1.17.1'
 
     runs {
         client {
@@ -83,7 +83,7 @@ dependencies {
 
 	annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
-    runtimeOnly fg.deobf("curse.maven:jei-238222:3448057")
+//    runtimeOnly fg.deobf("curse.maven:jei-238222:3448057")
 }
 
 def replaceResources = tasks.register("replaceResources", Copy) {

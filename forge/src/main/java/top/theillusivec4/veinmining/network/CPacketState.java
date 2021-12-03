@@ -24,7 +24,7 @@ package top.theillusivec4.veinmining.network;
 import java.util.function.Supplier;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraftforge.fmllegacy.network.NetworkEvent;
+import net.minecraftforge.network.NetworkEvent;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 
 public class CPacketState {
