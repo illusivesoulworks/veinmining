@@ -44,15 +44,15 @@ public class VeinMiningEnchantment extends Enchantment {
 
   public static final EnchantmentCategory TYPE =
       EnchantmentCategory.create(ID, VeinMiningEnchantment::canEnchantItem);
-  public static final Map<String, Predicate<ItemStack>> PREDICATE_MAP;
+  public static final Map<String, Predicate<Item>> PREDICATE_MAP;
 
   static {
-    Map<String, Predicate<ItemStack>> temp = new HashMap<>();
+    Map<String, Predicate<Item>> temp = new HashMap<>();
     temp.put("is:tool", VeinMiningEnchantment::canToolAction);
-    temp.put("is:pickaxe", stack -> canToolAction(ToolActions.PICKAXE_DIG, stack));
-    temp.put("is:axe", stack -> canToolAction(ToolActions.AXE_DIG, stack));
-    temp.put("is:hoe", stack -> canToolAction(ToolActions.HOE_DIG, stack));
-    temp.put("is:shovel", stack -> canToolAction(ToolActions.SHOVEL_DIG, stack));
+    temp.put("is:pickaxe", item -> canToolAction(ToolActions.PICKAXE_DIG, item));
+    temp.put("is:axe", item -> canToolAction(ToolActions.AXE_DIG, item));
+    temp.put("is:hoe", item -> canToolAction(ToolActions.HOE_DIG, item));
+    temp.put("is:shovel", item -> canToolAction(ToolActions.SHOVEL_DIG, item));
     PREDICATE_MAP = ImmutableMap.copyOf(temp);
   }
 
@@ -60,29 +60,29 @@ public class VeinMiningEnchantment extends Enchantment {
     super(Rarity.RARE, TYPE, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
   }
 
-  private static boolean canToolAction(ItemStack stack) {
+  private static boolean canToolAction(Item item) {
     Set<ToolAction> actions =
         Set.of(ToolActions.PICKAXE_DIG, ToolActions.AXE_DIG, ToolActions.HOE_DIG,
             ToolActions.SHOVEL_DIG);
 
     for (ToolAction action : actions) {
 
-      if (stack.canPerformAction(action)) {
+      if (item.canPerformAction(ItemStack.EMPTY, action)) {
         return true;
       }
     }
     return false;
   }
 
-  private static boolean canToolAction(ToolAction toolAction, ItemStack stack) {
-    return stack.canPerformAction(toolAction);
+  private static boolean canToolAction(ToolAction toolAction, Item item) {
+    return item.canPerformAction(ItemStack.EMPTY, toolAction);
   }
 
   private static boolean canEnchantItem(Item item) {
 
     for (String entry : VeinMiningConfig.Enchantment.items) {
 
-      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(new ItemStack(item))) {
+      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(item)) {
         return true;
       } else if (item.getRegistryName() != null &&
           item.getRegistryName().toString().equals(entry)) {
