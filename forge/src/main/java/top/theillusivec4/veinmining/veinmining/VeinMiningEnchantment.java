@@ -25,7 +25,6 @@ import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ToolType;
@@ -35,36 +34,35 @@ import top.theillusivec4.veinmining.config.VeinMiningConfig;
 public class VeinMiningEnchantment extends Enchantment {
 
   public static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
-  public static final EnchantmentType TYPE =
-      EnchantmentType.create(ID, VeinMiningEnchantment::canEnchantItem);
-  public static final Map<String, Predicate<Item>> PREDICATE_MAP;
+  public static final Map<String, Predicate<ItemStack>> PREDICATE_MAP;
 
   static {
-    Map<String, Predicate<Item>> temp = new HashMap<>();
-    temp.put("is:tool", item -> !item.getToolTypes(ItemStack.EMPTY).isEmpty());
-    temp.put("is:pickaxe", item -> isToolType(ToolType.PICKAXE, item));
-    temp.put("is:axe", item -> isToolType(ToolType.AXE, item));
-    temp.put("is:hoe", item -> isToolType(ToolType.HOE, item));
-    temp.put("is:shovel", item -> isToolType(ToolType.SHOVEL, item));
+    Map<String, Predicate<ItemStack>> temp = new HashMap<>();
+    temp.put("is:tool", stack -> !stack.getToolTypes().isEmpty());
+    temp.put("is:pickaxe", stack -> isToolType(ToolType.PICKAXE, stack));
+    temp.put("is:axe", stack -> isToolType(ToolType.AXE, stack));
+    temp.put("is:hoe", stack -> isToolType(ToolType.HOE, stack));
+    temp.put("is:shovel", stack -> isToolType(ToolType.SHOVEL, stack));
     PREDICATE_MAP = ImmutableMap.copyOf(temp);
   }
 
   public VeinMiningEnchantment() {
-    super(Rarity.RARE, TYPE, new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
+    super(Rarity.RARE, EnchantmentType.DIGGER,
+        new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
   }
 
-  private static boolean isToolType(ToolType type, Item item) {
-    return item.getToolTypes(ItemStack.EMPTY).contains(type);
+  private static boolean isToolType(ToolType type, ItemStack stack) {
+    return stack.getToolTypes().contains(type);
   }
 
-  private static boolean canEnchantItem(Item item) {
+  private static boolean canEnchantItem(ItemStack stack) {
 
     for (String entry : VeinMiningConfig.Enchantment.items) {
 
-      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(item)) {
+      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(stack)) {
         return true;
-      } else if (item.getRegistryName() != null &&
-          item.getRegistryName().toString().equals(entry)) {
+      } else if (stack.getItem().getRegistryName() != null &&
+          stack.getItem().getRegistryName().toString().equals(entry)) {
         return true;
       }
     }
@@ -121,7 +119,7 @@ public class VeinMiningEnchantment extends Enchantment {
 
   @Override
   public boolean canApply(@Nonnull ItemStack stack) {
-    return stack.canApplyAtEnchantingTable(this);
+    return canEnchantItem(stack) && stack.canApplyAtEnchantingTable(this);
   }
 
   @Override
