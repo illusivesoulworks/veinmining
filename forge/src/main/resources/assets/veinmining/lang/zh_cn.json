@@ -1,4 +1,6 @@
 {
   "enchantment.veinmining.vein_mining": "连锁采集",
-  "enchantment.veinmining.vein_mining.desc": "连锁采集挖掘的方块"
+  "enchantment.veinmining.vein_mining.desc": "使用时连锁破坏相邻的方块",
+  "key.veinmining.category": "连锁采集",
+  "key.veinmining.activate.desc": "激活"
 }
