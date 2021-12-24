@@ -29,7 +29,6 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -41,51 +40,48 @@ import top.theillusivec4.veinmining.config.VeinMiningConfig;
 public class VeinMiningEnchantment extends Enchantment {
 
   public static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
-
-  public static final EnchantmentCategory TYPE =
-      EnchantmentCategory.create(ID, VeinMiningEnchantment::canEnchantItem);
-  public static final Map<String, Predicate<Item>> PREDICATE_MAP;
+  public static final Map<String, Predicate<ItemStack>> PREDICATE_MAP;
 
   static {
-    Map<String, Predicate<Item>> temp = new HashMap<>();
+    Map<String, Predicate<ItemStack>> temp = new HashMap<>();
     temp.put("is:tool", VeinMiningEnchantment::canToolAction);
-    temp.put("is:pickaxe", item -> canToolAction(ToolActions.PICKAXE_DIG, item));
-    temp.put("is:axe", item -> canToolAction(ToolActions.AXE_DIG, item));
-    temp.put("is:hoe", item -> canToolAction(ToolActions.HOE_DIG, item));
-    temp.put("is:shovel", item -> canToolAction(ToolActions.SHOVEL_DIG, item));
+    temp.put("is:pickaxe", stack -> canToolAction(ToolActions.PICKAXE_DIG, stack));
+    temp.put("is:axe", stack -> canToolAction(ToolActions.AXE_DIG, stack));
+    temp.put("is:hoe", stack -> canToolAction(ToolActions.HOE_DIG, stack));
+    temp.put("is:shovel", stack -> canToolAction(ToolActions.SHOVEL_DIG, stack));
     PREDICATE_MAP = ImmutableMap.copyOf(temp);
   }
 
   public VeinMiningEnchantment() {
-    super(Rarity.RARE, TYPE, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
+    super(Rarity.RARE, EnchantmentCategory.DIGGER, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
   }
 
-  private static boolean canToolAction(Item item) {
+  private static boolean canToolAction(ItemStack stack) {
     Set<ToolAction> actions =
         Set.of(ToolActions.PICKAXE_DIG, ToolActions.AXE_DIG, ToolActions.HOE_DIG,
             ToolActions.SHOVEL_DIG);
 
     for (ToolAction action : actions) {
 
-      if (item.canPerformAction(ItemStack.EMPTY, action)) {
+      if (stack.canPerformAction(action)) {
         return true;
       }
     }
     return false;
   }
 
-  private static boolean canToolAction(ToolAction toolAction, Item item) {
-    return item.canPerformAction(ItemStack.EMPTY, toolAction);
+  private static boolean canToolAction(ToolAction toolAction, ItemStack stack) {
+    return stack.canPerformAction(toolAction);
   }
 
-  private static boolean canEnchantItem(Item item) {
+  private static boolean canEnchantItem(ItemStack stack) {
 
     for (String entry : VeinMiningConfig.Enchantment.items) {
 
-      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(item)) {
+      if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(stack)) {
         return true;
-      } else if (item.getRegistryName() != null &&
-          item.getRegistryName().toString().equals(entry)) {
+      } else if (stack.getItem().getRegistryName() != null &&
+          stack.getItem().getRegistryName().toString().equals(entry)) {
         return true;
       }
     }
@@ -142,7 +138,7 @@ public class VeinMiningEnchantment extends Enchantment {
 
   @Override
   public boolean canEnchant(ItemStack pStack) {
-    return pStack.canApplyAtEnchantingTable(this);
+    return canEnchantItem(pStack) && pStack.canApplyAtEnchantingTable(this);
   }
 
   @Override
