@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.18.1-0.17] - 2022.02.09
+### Fixed
+- Fixed ConcurrentModificationException on world load [#46](https://github.com/TheIllusiveC4/VeinMining/issues/46)
+- Fixed certain items not being enchantable even though they are listed in the configuration file
+- Fixed default Quark item in configuration list listed as `quark:flamarang` instead of `quark:flamerang`
+
 ## [1.18.1-0.16] - 2021.12.23
 ### Changed
 - Updated zh_cn localization (thanks EnterFor!) [#37](https://github.com/TheIllusiveC4/VeinMining/pull/37)
