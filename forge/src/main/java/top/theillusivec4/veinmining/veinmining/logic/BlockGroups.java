@@ -37,7 +37,7 @@ public class BlockGroups {
 
   private static final Map<String, Set<String>> blockToGroup = new HashMap<>();
 
-  public static void init() {
+  public static synchronized void init() {
     blockToGroup.clear();
 
     for (String group : VeinMiningConfig.VeinMining.groups) {
@@ -80,6 +80,7 @@ public class BlockGroups {
         ResourceLocation rl = ResourceLocation.tryParse(id);
 
         if (rl != null) {
+
           if (ForgeRegistries.BLOCKS.containsKey(rl)) {
             newGroup.add(id);
           }

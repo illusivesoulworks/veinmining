@@ -37,7 +37,7 @@ public class BlockProcessor {
   private static final Map<String, Boolean> checkedBlocks = new HashMap<>();
   private static final Map<String, Map<String, Boolean>> checkedPairs = new HashMap<>();
 
-  public static void rebuild() {
+  public static synchronized void rebuild() {
     checkedBlocks.clear();
     checkedPairs.clear();
     BlockGroups.init();
