@@ -29,6 +29,8 @@ import java.util.function.Predicate;
 import javax.annotation.Nonnull;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.DiggerItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
@@ -41,6 +43,8 @@ public class VeinMiningEnchantment extends Enchantment {
 
   public static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
   public static final Map<String, Predicate<ItemStack>> PREDICATE_MAP;
+  public static final EnchantmentCategory CATEGORY =
+      EnchantmentCategory.create(ID, VeinMiningEnchantment::canEnchantItem);
 
   static {
     Map<String, Predicate<ItemStack>> temp = new HashMap<>();
@@ -53,7 +57,7 @@ public class VeinMiningEnchantment extends Enchantment {
   }
 
   public VeinMiningEnchantment() {
-    super(Rarity.RARE, EnchantmentCategory.DIGGER, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
+    super(Rarity.RARE, CATEGORY, new EquipmentSlot[] {EquipmentSlot.MAINHAND});
   }
 
   private static boolean canToolAction(ItemStack stack) {
@@ -72,6 +76,17 @@ public class VeinMiningEnchantment extends Enchantment {
 
   private static boolean canToolAction(ToolAction toolAction, ItemStack stack) {
     return stack.canPerformAction(toolAction);
+  }
+
+  private static boolean canEnchantItem(Item item) {
+
+    for (String entry : VeinMiningConfig.Enchantment.items) {
+
+      if (item.getRegistryName() != null && item.getRegistryName().toString().equals(entry)) {
+        return true;
+      }
+    }
+    return item instanceof DiggerItem;
   }
 
   private static boolean canEnchantItem(ItemStack stack) {
@@ -137,13 +152,13 @@ public class VeinMiningEnchantment extends Enchantment {
   }
 
   @Override
-  public boolean canEnchant(ItemStack pStack) {
-    return canEnchantItem(pStack) && pStack.canApplyAtEnchantingTable(this);
+  public boolean canEnchant(@Nonnull ItemStack pStack) {
+    return canEnchantItem(pStack);
   }
 
   @Override
-  public boolean canApplyAtEnchantingTable(@Nonnull ItemStack stack) {
-    return this.canEnchant(stack) && VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
+  public boolean canApplyAtEnchantingTable(@Nonnull ItemStack pStack) {
+    return this.canEnchant(pStack) && VeinMiningConfig.Enchantment.canApplyAtEnchantingTable;
   }
 
   @Override

@@ -223,7 +223,7 @@ public class VeinMiningConfig {
 
       items = builder.comment("List of items that the enchantment can be applied on")
           .translation(CONFIG_PREFIX + "items")
-          .defineList("items", Arrays.asList("is:tool", "quark:pickarang", "quark:flamarang"),
+          .defineList("items", Arrays.asList("is:tool", "quark:pickarang", "quark:flamerang"),
               s -> s instanceof String);
 
       builder.pop();
