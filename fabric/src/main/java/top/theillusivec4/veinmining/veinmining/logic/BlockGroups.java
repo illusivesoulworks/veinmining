@@ -22,10 +22,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import net.minecraft.block.Block;
-import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryEntry;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class BlockGroups {
@@ -62,14 +62,14 @@ public class BlockGroups {
         Identifier identifier = Identifier.tryParse(id.substring(1));
 
         if (identifier != null) {
-          Tag<Block> tag = BlockTags.getTagGroup().getTag(identifier);
+          Registry.BLOCK.getEntryList(TagKey.of(Registry.BLOCK_KEY, identifier))
+              .ifPresent(registryEntries -> {
 
-          if (tag != null) {
-
-            for (Block block : tag.values()) {
-              newGroup.add(Registry.BLOCK.getId(block).toString());
-            }
-          }
+                for (RegistryEntry<Block> registryEntry : registryEntries) {
+                  registryEntry.getKey().ifPresent(
+                      blockRegistryKey -> newGroup.add(blockRegistryKey.getValue().toString()));
+                }
+              });
         }
       } else {
         Identifier identifier = Identifier.tryParse(id);

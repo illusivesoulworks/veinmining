@@ -17,6 +17,7 @@
 
 package top.theillusivec4.veinmining;
 
+import com.mojang.logging.LogUtils;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -25,8 +26,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
 import top.theillusivec4.veinmining.config.AutoConfigPlugin;
 import top.theillusivec4.veinmining.network.VeinMiningNetwork;
 import top.theillusivec4.veinmining.veinmining.VeinMiningEnchantment;
@@ -36,7 +36,7 @@ import top.theillusivec4.veinmining.veinmining.logic.BlockProcessor;
 public class VeinMiningMod implements ModInitializer {
 
   public static final String MOD_ID = "veinmining";
-  public static final Logger LOGGER = LogManager.getLogger();
+  public static final Logger LOGGER = LogUtils.getLogger();
   public static final Enchantment VEIN_MINING = new VeinMiningEnchantment();
 
   public static boolean isConfigLoaded = false;

@@ -24,9 +24,6 @@ import java.util.Set;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.tag.Tag;
-import net.minecraft.tag.TagGroup;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
@@ -48,7 +45,7 @@ public class BlockProcessor {
                                       Block source) {
     Block block = world.getBlockState(pos).getBlock();
     return !state.isAir() && checkedBlocks.computeIfAbsent(Registry.BLOCK.getId(block).toString(),
-        (name) -> BlockProcessor.checkBlock(world, block)) && matches(source, block);
+        (name) -> BlockProcessor.checkBlock(state)) && matches(source, block);
   }
 
   private static boolean matches(Block origin, Block target) {
@@ -70,11 +67,11 @@ public class BlockProcessor {
     }
   }
 
-  private static boolean checkBlock(ServerWorld world, Block block) {
+  private static boolean checkBlock(BlockState blockState) {
     Set<String> ids = new HashSet<>();
-    String blockId = Registry.BLOCK.getId(block).toString();
+    String blockId = Registry.BLOCK.getId(blockState.getBlock()).toString();
     ids.add(blockId);
-    Set<String> tags = checkedTags.computeIfAbsent(blockId, (name) -> getTagsFor(world, block));
+    Set<String> tags = checkedTags.computeIfAbsent(blockId, (name) -> getTagsFor(blockState));
     tags.forEach(tag -> ids.add("#" + tag));
     Set<String> configs = VeinMiningConfig.VeinMining.blocks;
 
@@ -100,16 +97,14 @@ public class BlockProcessor {
     }
   }
 
-  private static Set<String> getTagsFor(ServerWorld world, Block block) {
-    TagGroup<Block> tagGroup = world.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY);
+  private static Set<String> getTagsFor(BlockState blockState) {
     Set<String> tags = new HashSet<>();
+    Registry.BLOCK.streamTags().forEach(blockTagKey -> {
 
-    for (Map.Entry<Identifier, Tag<Block>> entry : tagGroup.getTags().entrySet()) {
-
-      if ((entry.getValue()).contains(block)) {
-        tags.add(entry.getKey().toString());
+      if (blockState.isIn(blockTagKey)) {
+        tags.add(blockTagKey.id().toString());
       }
-    }
+    });
     return tags;
   }
 
