@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,10 +37,12 @@ public class BlockProcessor {
 
   private static final Map<String, Boolean> checkedBlocks = new HashMap<>();
   private static final Map<String, Map<String, Boolean>> checkedPairs = new HashMap<>();
+  private static final Map<String, Set<String>> checkedTags = new HashMap<>();
 
   public static synchronized void rebuild() {
     checkedBlocks.clear();
     checkedPairs.clear();
+    checkedTags.clear();
     BlockGroups.init();
   }
 
@@ -47,7 +50,7 @@ public class BlockProcessor {
     Block block = state.getBlock();
     return !state.isAir() &&
         checkedBlocks.computeIfAbsent(Objects.requireNonNull(block.getRegistryName()).toString(),
-            (name) -> BlockProcessor.checkBlock(block)) && matches(source, block);
+            (name) -> BlockProcessor.checkBlock(state)) && matches(source, block);
   }
 
   private static boolean matches(Block origin, Block target) {
@@ -69,10 +72,12 @@ public class BlockProcessor {
     }
   }
 
-  private static boolean checkBlock(Block block) {
+  private static boolean checkBlock(BlockState blockState) {
     Set<String> ids = new HashSet<>();
-    ids.add(Objects.requireNonNull(block.getRegistryName()).toString());
-    block.getTags().forEach(tag -> ids.add("#" + tag.toString()));
+    String blockId = Objects.requireNonNull(blockState.getBlock().getRegistryName()).toString();
+    ids.add(blockId);
+    Set<String> tags = checkedTags.computeIfAbsent(blockId, (name) -> getTagsFor(blockState));
+    tags.forEach(tag -> ids.add("#" + tag));
     Set<String> configs = VeinMiningConfig.VeinMining.blocks;
 
     if (VeinMiningConfig.VeinMining.blocksPermission ==
@@ -95,6 +100,17 @@ public class BlockProcessor {
       }
       return false;
     }
+  }
+
+  private static Set<String> getTagsFor(BlockState blockState) {
+    Set<String> tags = new HashSet<>();
+    Registry.BLOCK.getTagNames().forEach(blockTagKey -> {
+
+      if (blockState.is(blockTagKey)) {
+        tags.add(blockTagKey.location().toString());
+      }
+    });
+    return tags;
   }
 
   private static boolean checkMatch(Block origin, Block target) {

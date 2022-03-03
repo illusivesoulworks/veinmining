@@ -26,9 +26,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import net.minecraft.core.Holder;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
@@ -67,14 +68,12 @@ public class BlockGroups {
         ResourceLocation rl = ResourceLocation.tryParse(id.substring(1));
 
         if (rl != null) {
-          Tag<Block> tag = BlockTags.getAllTags().getTag(rl);
+          Registry.BLOCK.getTag(TagKey.create(Registry.BLOCK_REGISTRY, rl)).ifPresent(holders -> {
 
-          if (tag != null) {
-
-            for (Block block : tag.getValues()) {
-              newGroup.add(Objects.requireNonNull(block.getRegistryName()).toString());
+            for (Holder<Block> holder : holders) {
+              newGroup.add(Objects.requireNonNull(holder.value().getRegistryName()).toString());
             }
-          }
+          });
         }
       } else {
         ResourceLocation rl = ResourceLocation.tryParse(id);

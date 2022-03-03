@@ -56,7 +56,7 @@ public class VeinMiningLogic {
           Direction.NORTH, Direction.SOUTH};
 
   public static void startVeinMining(ServerPlayer playerEntity, BlockPos pos, Block source) {
-    ServerLevel world = playerEntity.m_183503_();
+    ServerLevel world = playerEntity.getLevel();
     ItemStack stack = playerEntity.getMainHandItem();
 
     if (!VeinMiningPlayers.canVeinMine(playerEntity)) {
@@ -142,7 +142,7 @@ public class VeinMiningLogic {
   }
 
   public static boolean harvest(ServerPlayer player, BlockPos pos, BlockPos originPos) {
-    ServerLevel world = player.m_183503_();
+    ServerLevel world = player.getLevel();
     BlockState blockstate = world.getBlockState(pos);
     GameType gameType = player.gameMode.getGameModeForPlayer();
     int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(world, gameType, player, pos);
