@@ -213,7 +213,7 @@ public class VeinMiningLogic {
     if (world instanceof ServerWorld) {
       Block.getDroppedStacks(state, (ServerWorld) world, pos, blockEntity, entity, stack)
           .forEach((itemStack) -> Block.dropStack(world, spawnPos, itemStack));
-      state.onStacksDropped((ServerWorld) world, pos, stack);
+      state.onStacksDropped((ServerWorld) world, pos, stack, true);
     }
   }
 }
