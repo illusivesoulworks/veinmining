@@ -17,16 +17,16 @@
 
 package top.theillusivec4.veinmining.veinmining;
 
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.entity.player.PlayerEntity;
 
 public class VeinMiningPlayers {
 
   private static final long DIFF = 20;
-  private static final Map<UUID, Long> players = new HashMap<>();
+  private static final Map<UUID, Long> players = new ConcurrentHashMap<>();
 
   public static void validate(long worldTime) {
     Iterator<Map.Entry<UUID, Long>> entries = players.entrySet().iterator();
