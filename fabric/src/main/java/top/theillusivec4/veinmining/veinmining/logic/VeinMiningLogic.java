@@ -58,7 +58,7 @@ public class VeinMiningLogic {
       return;
     }
     boolean ineffective = VeinMiningConfig.VeinMining.requireEffectiveTool &&
-        stack.getMiningSpeedMultiplier(source) <= 1.0F;
+        !playerEntity.canHarvest(source);
 
     if (ineffective) {
       return;
