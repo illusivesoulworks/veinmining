@@ -21,6 +21,7 @@
 
 package top.theillusivec4.veinmining.veinmining.logic;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -60,7 +61,6 @@ public class BlockGroups {
 
   private static Set<String> createGroup(String[] ids) {
     Set<String> newGroup = new HashSet<>();
-
     for (String id : ids) {
       boolean isTag = id.charAt(0) == '#';
 
@@ -71,7 +71,7 @@ public class BlockGroups {
           Registry.BLOCK.getTag(TagKey.create(Registry.BLOCK_REGISTRY, rl)).ifPresent(holders -> {
 
             for (Holder<Block> holder : holders) {
-              newGroup.add(Objects.requireNonNull(holder.value().getRegistryName()).toString());
+              newGroup.add(ForgeRegistries.BLOCKS.getKey(holder.value()).toString());
             }
           });
         }

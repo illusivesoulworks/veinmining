@@ -36,6 +36,7 @@ import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.common.ToolAction;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
@@ -82,7 +83,7 @@ public class VeinMiningEnchantment extends Enchantment {
 
     for (String entry : VeinMiningConfig.Enchantment.items) {
 
-      if (item.getRegistryName() != null && item.getRegistryName().toString().equals(entry)) {
+      if (item.toString().equals(entry)) {
         return true;
       }
     }
@@ -90,16 +91,21 @@ public class VeinMiningEnchantment extends Enchantment {
   }
 
   private static boolean canEnchantItem(ItemStack stack) {
-
+    System.out.println("\n\n== ENCHANT CHECK - " + stack);
     for (String entry : VeinMiningConfig.Enchantment.items) {
-
+      System.out.println("\tCheck entry " + entry);
       if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(stack)) {
+        System.out.println("\t CHECK OK - Can do action!");
         return true;
-      } else if (stack.getItem().getRegistryName() != null &&
-          stack.getItem().getRegistryName().toString().equals(entry)) {
-        return true;
+      } else{
+        if (ForgeRegistries.ITEMS.getKey(stack.getItem()) != null &&
+          ForgeRegistries.ITEMS.getKey(stack.getItem()).toString().equals(entry)) {
+          System.out.println("\tCHECK OK! " + ForgeRegistries.ITEMS.getKey(stack.getItem()) + " equal to " + entry);
+          return true;
+        }
       }
     }
+    System.out.println("\tCheck failed, no enchant");
     return false;
   }
 
@@ -142,12 +148,13 @@ public class VeinMiningEnchantment extends Enchantment {
 
   @Override
   protected boolean checkCompatibility(Enchantment ench) {
-    ResourceLocation rl = ench.getRegistryName();
+    ResourceLocation rl = ForgeRegistries.ENCHANTMENTS.getKey(ench);
 
     if (rl != null &&
         VeinMiningConfig.Enchantment.incompatibleEnchantments.contains(rl.toString())) {
       return false;
     }
+    System.out.println("== Super compatibility check " + ench + " ==");
     return super.checkCompatibility(ench);
   }
 

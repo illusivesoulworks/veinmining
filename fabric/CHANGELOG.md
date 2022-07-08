@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.1.0-1.19] - 2022.07.07
+### Changed
+- Updated to Minecraft 1.19
+
 ## [0.0.13-1.18.2] - 2022.06.30
 ### Changed
 - Changed `requireEffectiveTool` configuration feature so that any time blocks can be harvest correctly is counted as being effective

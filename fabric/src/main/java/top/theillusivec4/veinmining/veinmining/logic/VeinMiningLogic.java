@@ -210,10 +210,10 @@ public class VeinMiningLogic {
   private static void dropStacks(BlockState state, World world, BlockPos pos, BlockPos spawnPos,
                                  BlockEntity blockEntity, Entity entity, ItemStack stack) {
 
-    if (world instanceof ServerWorld) {
-      Block.getDroppedStacks(state, (ServerWorld) world, pos, blockEntity, entity, stack)
+    if (world instanceof ServerWorld serverWorld) {
+      Block.getDroppedStacks(state, serverWorld, pos, blockEntity, entity, stack)
           .forEach((itemStack) -> Block.dropStack(world, spawnPos, itemStack));
-      state.onStacksDropped((ServerWorld) world, pos, stack);
+      state.onStacksDropped(serverWorld, pos, stack, true);
     }
   }
 }

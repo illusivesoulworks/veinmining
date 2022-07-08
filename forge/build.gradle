@@ -28,7 +28,7 @@ archivesBaseName = 'veinmining-forge'
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.18.2'
+    mappings channel: 'official', version: '1.19'
 
     runs {
         client {
@@ -83,7 +83,7 @@ dependencies {
 
 	annotationProcessor 'org.spongepowered:mixin:0.8.4:processor'
 
-    runtimeOnly fg.deobf("curse.maven:jei-238222:3670531")
+    //runtimeOnly fg.deobf("curse.maven:jei-238222:3670531")
 }
 
 def replaceResources = tasks.register("replaceResources", Copy) {

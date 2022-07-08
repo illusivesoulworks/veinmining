@@ -21,18 +21,27 @@
 
 package top.theillusivec4.veinmining;
 
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.enchantment.Enchantment;
+import net.minecraft.world.item.enchantment.EnchantmentCategory;
 import net.minecraftforge.client.ClientRegistry;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.DeferredRegister;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.ForgeRegistries.Keys;
+import net.minecraftforge.registries.RegisterEvent;
+import net.minecraftforge.registries.RegistryObject;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import top.theillusivec4.veinmining.config.ClientVeinMiningConfig;
@@ -44,49 +53,56 @@ import top.theillusivec4.veinmining.veinmining.event.VeinMiningClientEventsListe
 import top.theillusivec4.veinmining.veinmining.event.VeinMiningEventsListener;
 import top.theillusivec4.veinmining.veinmining.logic.BlockProcessor;
 
+@Mod.EventBusSubscriber(modid = VeinMiningMod.MOD_ID, bus = Bus.MOD)
 @Mod(VeinMiningMod.MOD_ID)
 public class VeinMiningMod {
 
   public static final String MOD_ID = "veinmining";
   public static final Logger LOGGER = LogManager.getLogger();
   public static final Enchantment VEIN_MINING = new VeinMiningEnchantment();
+  public static final DeferredRegister<Enchantment> ENCHANTMENTS =
+    DeferredRegister.create(ForgeRegistries.ENCHANTMENTS, VeinMiningMod.MOD_ID);
 
-  public VeinMiningMod() {
+  public static RegistryObject<Enchantment> VEIN_MINING_OBJECT =
+    ENCHANTMENTS.register("vein_mining", () -> VEIN_MINING);
+
+  static {
+    ModLoadingContext.get().registerConfig(ModConfig.Type.SERVER, VeinMiningConfig.CONFIG_SPEC);
+    ModLoadingContext.get().registerConfig(ModConfig.Type.CLIENT, ClientVeinMiningConfig.CONFIG_SPEC);
     IEventBus eventBus = FMLJavaModLoadingContext.get().getModEventBus();
-    eventBus.addGenericListener(Enchantment.class, this::registerEnchantment);
-    eventBus.addListener(this::configLoading);
-    eventBus.addListener(this::configReloading);
-    eventBus.addListener(this::commonSetup);
-    eventBus.addListener(this::clientSetup);
-    ModLoadingContext.get()
-        .registerConfig(ModConfig.Type.SERVER, VeinMiningConfig.CONFIG_SPEC);
-    ModLoadingContext.get()
-        .registerConfig(ModConfig.Type.CLIENT, ClientVeinMiningConfig.CONFIG_SPEC);
+    ENCHANTMENTS.register(eventBus);
   }
 
-  private void commonSetup(final FMLCommonSetupEvent evt) {
+  @SubscribeEvent
+  public static void commonSetup(final FMLCommonSetupEvent evt) {
     VeinMiningNetwork.register();
     MinecraftForge.EVENT_BUS.register(new VeinMiningEventsListener());
   }
 
-  private void clientSetup(final FMLClientSetupEvent evt) {
+  @SubscribeEvent
+  public static void clientSetup(final FMLClientSetupEvent evt) {
     ClientRegistry.registerKeyBinding(VeinMiningKey.get());
     MinecraftForge.EVENT_BUS.register(new VeinMiningClientEventsListener());
   }
 
-  private void registerEnchantment(final RegistryEvent.Register<Enchantment> evt) {
-    evt.getRegistry().register(VEIN_MINING.setRegistryName(VeinMiningEnchantment.ID));
+//  @SubscribeEvent
+//  public static void registerEnchantment(RegisterEvent event) {
+//    event.register(Keys.ENCHANTMENTS, helper -> {
+//      helper.register(new ResourceLocation(VeinMiningEnchantment.ID), VEIN_MINING);
+//    });
+//  }
+
+  @SubscribeEvent
+  public static void configLoading(final ModConfigEvent.Loading evt) {
+    bakeConfigs(evt);
   }
 
-  private void configLoading(final ModConfigEvent.Loading evt) {
-    this.bakeConfigs(evt);
+  @SubscribeEvent
+  public static void configReloading(final ModConfigEvent.Reloading evt) {
+    bakeConfigs(evt);
   }
 
-  private void configReloading(final ModConfigEvent.Reloading evt) {
-    this.bakeConfigs(evt);
-  }
-
-  private void bakeConfigs(final ModConfigEvent evt) {
+  private static void bakeConfigs(final ModConfigEvent evt) {
     ModConfig config = evt.getConfig();
 
     if (config.getModId().equals(MOD_ID)) {

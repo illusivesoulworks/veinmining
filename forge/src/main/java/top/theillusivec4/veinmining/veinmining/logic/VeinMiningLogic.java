@@ -224,7 +224,7 @@ public class VeinMiningLogic {
     if (worldIn instanceof ServerLevel) {
       Block.getDrops(state, (ServerLevel) worldIn, pos, te, player, stack)
           .forEach((stackToSpawn) -> Block.popResource(worldIn, spawnPos, stackToSpawn));
-      state.spawnAfterBreak((ServerLevel) worldIn, pos, stack);
+      state.spawnAfterBreak((ServerLevel) worldIn, pos, stack, true);
     }
   }
 

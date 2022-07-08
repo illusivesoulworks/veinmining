@@ -31,6 +31,7 @@ import net.minecraft.core.Registry;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.registries.ForgeRegistries;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class BlockProcessor {
@@ -49,7 +50,7 @@ public class BlockProcessor {
   public static boolean isValidTarget(BlockState state, Level world, BlockPos pos, Block source) {
     Block block = state.getBlock();
     return !state.isAir() &&
-        checkedBlocks.computeIfAbsent(Objects.requireNonNull(block.getRegistryName()).toString(),
+        checkedBlocks.computeIfAbsent(Objects.requireNonNull(block.getName()).toString(),
             (name) -> BlockProcessor.checkBlock(state)) && matches(source, block);
   }
 
@@ -58,8 +59,8 @@ public class BlockProcessor {
     if (origin == target) {
       return true;
     } else {
-      String originName = Objects.requireNonNull(origin.getRegistryName()).toString();
-      String targetName = Objects.requireNonNull(target.getRegistryName()).toString();
+      String originName = ForgeRegistries.BLOCKS.getKey(origin).toString();
+      String targetName = ForgeRegistries.BLOCKS.getKey(target).toString();
       boolean useOriginKey = originName.compareTo(targetName) >= 0;
 
       if (useOriginKey) {
@@ -74,7 +75,7 @@ public class BlockProcessor {
 
   private static boolean checkBlock(BlockState blockState) {
     Set<String> ids = new HashSet<>();
-    String blockId = Objects.requireNonNull(blockState.getBlock().getRegistryName()).toString();
+    String blockId = Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(blockState.getBlock())).toString();
     ids.add(blockId);
     Set<String> tags = checkedTags.computeIfAbsent(blockId, (name) -> getTagsFor(blockState));
     tags.forEach(tag -> ids.add("#" + tag));
@@ -115,10 +116,10 @@ public class BlockProcessor {
 
   private static boolean checkMatch(Block origin, Block target) {
     Set<String> group =
-        BlockGroups.getGroup(Objects.requireNonNull(origin.getRegistryName()).toString());
+        BlockGroups.getGroup(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(origin)).toString());
 
     if (group != null) {
-      return group.contains(Objects.requireNonNull(target.getRegistryName()).toString());
+      return group.contains(Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(target)).toString());
     }
     return false;
   }
