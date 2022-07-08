@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [0.1.0-1.19] - 2022.07.07
+### Changed
+- Updated to Minecraft 1.19
+
 ## [1.18.2-0.18] - 2022.03.02
 ### Changed
 - Updated to Minecraft 1.18.2
