@@ -20,8 +20,6 @@ package top.theillusivec4.veinmining.veinmining;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.MiningToolItem;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
@@ -67,6 +65,7 @@ public class VeinMiningEnchantment extends Enchantment {
   public boolean isAvailableForRandomSelection() {
     return VeinMiningConfig.Enchantment.isRandomlySelectable;
   }
+
   @Override
   protected boolean canAccept(Enchantment other) {
     Identifier id = Registry.ENCHANTMENT.getId(other);

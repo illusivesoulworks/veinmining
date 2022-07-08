@@ -85,13 +85,6 @@ public class VeinMiningMod {
     MinecraftForge.EVENT_BUS.register(new VeinMiningClientEventsListener());
   }
 
-//  @SubscribeEvent
-//  public static void registerEnchantment(RegisterEvent event) {
-//    event.register(Keys.ENCHANTMENTS, helper -> {
-//      helper.register(new ResourceLocation(VeinMiningEnchantment.ID), VEIN_MINING);
-//    });
-//  }
-
   @SubscribeEvent
   public static void configLoading(final ModConfigEvent.Loading evt) {
     bakeConfigs(evt);

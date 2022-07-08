@@ -149,7 +149,7 @@ public class VeinMiningEnchantment extends Enchantment {
         VeinMiningConfig.Enchantment.incompatibleEnchantments.contains(rl.toString())) {
       return false;
     }
-    System.out.println("== Super compatibility check " + ench + " ==");
+
     return super.checkCompatibility(ench);
   }
 
