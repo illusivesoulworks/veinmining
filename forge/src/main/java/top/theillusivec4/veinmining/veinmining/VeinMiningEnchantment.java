@@ -91,21 +91,16 @@ public class VeinMiningEnchantment extends Enchantment {
   }
 
   private static boolean canEnchantItem(ItemStack stack) {
-    System.out.println("\n\n== ENCHANT CHECK - " + stack);
     for (String entry : VeinMiningConfig.Enchantment.items) {
-      System.out.println("\tCheck entry " + entry);
       if (PREDICATE_MAP.getOrDefault(entry, k -> false).test(stack)) {
-        System.out.println("\t CHECK OK - Can do action!");
         return true;
       } else{
         if (ForgeRegistries.ITEMS.getKey(stack.getItem()) != null &&
           ForgeRegistries.ITEMS.getKey(stack.getItem()).toString().equals(entry)) {
-          System.out.println("\tCHECK OK! " + ForgeRegistries.ITEMS.getKey(stack.getItem()) + " equal to " + entry);
           return true;
         }
       }
     }
-    System.out.println("\tCheck failed, no enchant");
     return false;
   }
 
