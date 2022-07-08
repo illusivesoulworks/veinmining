@@ -68,6 +68,7 @@ public class VeinMiningEnchantment extends Enchantment {
     return VeinMiningConfig.Enchantment.isRandomlySelectable;
   }
 
+  // TODO delete. Temporary added for adding more logic if needed.
   @Override
   public boolean isAcceptableItem(ItemStack stack) {
     System.out.println("Hiiiii " + stack + " is mining tool?  - " + stack.getItem() + " - ["+(stack.getItem() instanceof MiningToolItem)+"]");
