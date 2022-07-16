@@ -22,7 +22,9 @@
 package top.theillusivec4.veinmining.veinmining.logic;
 
 import com.google.common.collect.Sets;
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
@@ -45,17 +47,41 @@ import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.common.util.LazyOptional;
 import top.theillusivec4.veinmining.VeinMiningMod;
+import top.theillusivec4.veinmining.capabilities.IVeinCapability;
+import top.theillusivec4.veinmining.capabilities.VeinCapability;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 
 public class VeinMiningLogic {
+  
+  static boolean exit = false;
+  
+  private final static Map<Player, LazyOptional<IVeinCapability>> cache = new HashMap<>();
 
   private static final Direction[] CARDINAL_DIRECTIONS =
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
   public static void startVeinMining(ServerPlayer playerEntity, BlockPos pos, Block source) {
+	  
+	
+	LazyOptional<IVeinCapability> tCap = cache.get(playerEntity);
+	
+	if (tCap == null) {
+		tCap = playerEntity.getCapability(VeinCapability.INSTANCE);
+		cache.put(playerEntity, tCap);
+		tCap.addListener(self -> cache.put(playerEntity, null));
+	}
+	
+	
+	tCap.ifPresent(get -> {exit = get.isVeining();});
+	
+	if (exit) {
+		return;
+	}
+	
     ServerLevel world = playerEntity.getLevel();
     ItemStack stack = playerEntity.getMainHandItem();
 
@@ -83,6 +109,8 @@ public class VeinMiningLogic {
     Set<BlockPos> visited = Sets.newHashSet(pos);
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
     addValidNeighbors(candidates, pos, 1);
+    
+    tCap.ifPresent(set -> set.setVeining(true));
 
     while (!candidates.isEmpty() && blocks < maxBlocks) {
       Tuple<BlockPos, Integer> candidate = candidates.poll();
@@ -90,6 +118,7 @@ public class VeinMiningLogic {
       int blockDistance = candidate.getB();
 
       if (stopVeining(stack)) {
+    	tCap.ifPresent(set -> set.setVeining(false));
         return;
       }
       BlockState blockState = world.getBlockState(blockPos);
@@ -104,6 +133,7 @@ public class VeinMiningLogic {
         blocks++;
       }
     }
+    tCap.ifPresent(set -> set.setVeining(false));
   }
 
   private static boolean stopVeining(ItemStack stack) {
