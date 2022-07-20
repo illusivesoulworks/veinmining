@@ -68,19 +68,13 @@ public class VeinMiningEventsListener {
     });
   }
   
-  @EventBusSubscriber
-  class BreakListener {
-	  
-	  @SubscribeEvent
-	  static void blockBreak(BreakEvent evt) {
-		  
-		ServerPlayer player = (ServerPlayer) evt.getPlayer();
-		BlockPos pos = evt.getPos();
-		Block source = player.level.getBlockState(pos).getBlock();
+  @SubscribeEvent
+  public void blockBreak(final BreakEvent evt) {
+	  ServerPlayer player = (ServerPlayer) evt.getPlayer();
+	  BlockPos pos = evt.getPos();
+	  Block source = player.level.getBlockState(pos).getBlock();
 		
-		VeinMiningLogic.startVeinMining(player, pos, source);
-	  }
-	  
+          VeinMiningLogic.startVeinMining(player, pos, source);
   }
   
 }
