@@ -22,6 +22,7 @@
 package top.theillusivec4.veinmining.veinmining.logic;
 
 import com.google.common.collect.Sets;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 import javax.annotation.Nullable;
@@ -50,12 +51,21 @@ import top.theillusivec4.veinmining.config.VeinMiningConfig;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 
 public class VeinMiningLogic {
+  
+  private final static Set<String> uuids = new HashSet<String>();
 
   private static final Direction[] CARDINAL_DIRECTIONS =
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
   public static void startVeinMining(ServerPlayer playerEntity, BlockPos pos, Block source) {
+	  
+	String uuid = playerEntity.getStringUUID();
+	
+	if (uuids.contains(uuid)) {
+		return;
+	}
+	
     ServerLevel world = playerEntity.getLevel();
     ItemStack stack = playerEntity.getMainHandItem();
 
@@ -83,6 +93,8 @@ public class VeinMiningLogic {
     Set<BlockPos> visited = Sets.newHashSet(pos);
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
     addValidNeighbors(candidates, pos, 1);
+    
+    uuids.add(uuid);
 
     while (!candidates.isEmpty() && blocks < maxBlocks) {
       Tuple<BlockPos, Integer> candidate = candidates.poll();
@@ -90,6 +102,7 @@ public class VeinMiningLogic {
       int blockDistance = candidate.getB();
 
       if (stopVeining(stack)) {
+    	uuids.remove(uuid);
         return;
       }
       BlockState blockState = world.getBlockState(blockPos);
@@ -104,6 +117,7 @@ public class VeinMiningLogic {
         blocks++;
       }
     }
+    uuids.remove(uuid);
   }
 
   private static boolean stopVeining(ItemStack stack) {
