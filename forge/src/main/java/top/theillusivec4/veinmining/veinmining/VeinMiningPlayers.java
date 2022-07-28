@@ -22,18 +22,21 @@
 package top.theillusivec4.veinmining.veinmining;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import net.minecraft.world.entity.player.Player;
 
 public class VeinMiningPlayers {
 
   private static final long DIFF = 20;
-  private static final Map<UUID, Long> players = new HashMap<>();
+  private static final Map<UUID, Long> ACTIVATED_MINERS = new HashMap<>();
+  private static final Set<UUID> CURRENT_MINERS = new HashSet<>();
 
   public static void validate(long worldTime) {
-    Iterator<Map.Entry<UUID, Long>> entries = players.entrySet().iterator();
+    Iterator<Map.Entry<UUID, Long>> entries = ACTIVATED_MINERS.entrySet().iterator();
 
     while (entries.hasNext()) {
       Map.Entry<UUID, Long> entry = entries.next();
@@ -45,15 +48,27 @@ public class VeinMiningPlayers {
     }
   }
 
-  public static boolean canVeinMine(Player player) {
-    return players.containsKey(player.getUUID());
+  public static boolean canStartVeinMining(Player player) {
+    return ACTIVATED_MINERS.containsKey(player.getUUID());
   }
 
-  public static void startVeinMining(Player player, long time) {
-    players.put(player.getUUID(), time);
+  public static void activateVeinMining(Player player, long time) {
+    ACTIVATED_MINERS.put(player.getUUID(), time);
+  }
+
+  public static void deactivateVeinMining(Player player) {
+    ACTIVATED_MINERS.remove(player.getUUID());
+  }
+
+  public static boolean isVeinMining(Player player) {
+    return CURRENT_MINERS.contains(player.getUUID());
+  }
+
+  public static void startVeinMining(Player player) {
+    CURRENT_MINERS.add(player.getUUID());
   }
 
   public static void stopVeinMining(Player player) {
-    players.remove(player.getUUID());
+    CURRENT_MINERS.remove(player.getUUID());
   }
 }

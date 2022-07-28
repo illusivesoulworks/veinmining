@@ -50,9 +50,9 @@ public class CPacketState {
       if (sender != null) {
 
         if (msg.activate) {
-          VeinMiningPlayers.startVeinMining(sender, sender.level.getGameTime());
+          VeinMiningPlayers.activateVeinMining(sender, sender.level.getGameTime());
         } else {
-          VeinMiningPlayers.stopVeinMining(sender);
+          VeinMiningPlayers.deactivateVeinMining(sender);
         }
       }
     });

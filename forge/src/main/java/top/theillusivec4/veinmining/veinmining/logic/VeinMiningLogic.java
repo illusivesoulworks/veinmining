@@ -25,6 +25,7 @@ import com.google.common.collect.Sets;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
+import java.util.UUID;
 import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -46,32 +47,20 @@ import net.minecraft.world.level.block.StructureBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.ForgeHooks;
+import net.minecraftforge.event.ForgeEventFactory;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 
 public class VeinMiningLogic {
-  
-  private final static Set<String> uuids = new HashSet<String>();
 
   private static final Direction[] CARDINAL_DIRECTIONS =
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
-  public static void startVeinMining(ServerPlayer playerEntity, BlockPos pos, Block source) {
-	  
-	String uuid = playerEntity.getStringUUID();
-	
-	if (uuids.contains(uuid)) {
-		return;
-	}
-	
+  public static void veinMine(ServerPlayer playerEntity, BlockPos pos, Block source) {
     ServerLevel world = playerEntity.getLevel();
     ItemStack stack = playerEntity.getMainHandItem();
-
-    if (!VeinMiningPlayers.canVeinMine(playerEntity)) {
-      return;
-    }
     BlockState state = world.getBlockState(pos);
     boolean ineffective =
         VeinMiningConfig.VeinMining.requireEffectiveTool &&
@@ -93,8 +82,6 @@ public class VeinMiningLogic {
     Set<BlockPos> visited = Sets.newHashSet(pos);
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
     addValidNeighbors(candidates, pos, 1);
-    
-    uuids.add(uuid);
 
     while (!candidates.isEmpty() && blocks < maxBlocks) {
       Tuple<BlockPos, Integer> candidate = candidates.poll();
@@ -102,7 +89,6 @@ public class VeinMiningLogic {
       int blockDistance = candidate.getB();
 
       if (stopVeining(stack)) {
-    	uuids.remove(uuid);
         return;
       }
       BlockState blockState = world.getBlockState(blockPos);
@@ -117,7 +103,6 @@ public class VeinMiningLogic {
         blocks++;
       }
     }
-    uuids.remove(uuid);
   }
 
   private static boolean stopVeining(ItemStack stack) {
@@ -159,7 +144,7 @@ public class VeinMiningLogic {
     ServerLevel world = player.getLevel();
     BlockState blockstate = world.getBlockState(pos);
     GameType gameType = player.gameMode.getGameModeForPlayer();
-    int exp = net.minecraftforge.common.ForgeHooks.onBlockBreakEvent(world, gameType, player, pos);
+    int exp = ForgeHooks.onBlockBreakEvent(world, gameType, player, pos);
 
     if (exp == -1) {
       return false;
@@ -172,7 +157,7 @@ public class VeinMiningLogic {
         world.sendBlockUpdated(pos, blockstate, blockstate, 3);
         return false;
       } else if (player.getMainHandItem().onBlockStartBreak(pos, player)) {
-        return false;
+        return true;
       } else if (player.blockActionRestricted(world, pos, gameType)) {
         return false;
       } else {
@@ -189,8 +174,7 @@ public class VeinMiningLogic {
           }
 
           if (itemstack.isEmpty() && !itemstack1.isEmpty()) {
-            net.minecraftforge.event.ForgeEventFactory
-                .onPlayerDestroyItem(player, itemstack1, InteractionHand.MAIN_HAND);
+            ForgeEventFactory.onPlayerDestroyItem(player, itemstack1, InteractionHand.MAIN_HAND);
           }
           boolean flag = removeBlock(player, pos, flag1);
           BlockPos spawnPos = VeinMiningConfig.VeinMining.relocateDrops ? originPos : pos;

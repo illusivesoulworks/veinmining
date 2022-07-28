@@ -26,12 +26,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
-import net.minecraft.core.Holder;
 import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.tags.ITagManager;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 
 public class BlockGroups {
@@ -60,20 +60,17 @@ public class BlockGroups {
 
   private static Set<String> createGroup(String[] ids) {
     Set<String> newGroup = new HashSet<>();
+    ITagManager<Block> tagManager = ForgeRegistries.BLOCKS.tags();
 
     for (String id : ids) {
       boolean isTag = id.charAt(0) == '#';
 
-      if (isTag) {
+      if (isTag && tagManager != null) {
         ResourceLocation rl = ResourceLocation.tryParse(id.substring(1));
 
         if (rl != null) {
-          Registry.BLOCK.getTag(TagKey.create(Registry.BLOCK_REGISTRY, rl)).ifPresent(holders -> {
-
-            for (Holder<Block> holder : holders) {
-              newGroup.add(Objects.requireNonNull(holder.value().getRegistryName()).toString());
-            }
-          });
+          tagManager.getTag(TagKey.create(Registry.BLOCK_REGISTRY, rl)).stream().forEach(
+              block -> newGroup.add(Objects.requireNonNull(block.getRegistryName()).toString()));
         }
       } else {
         ResourceLocation rl = ResourceLocation.tryParse(id);

@@ -22,23 +22,23 @@
 package top.theillusivec4.veinmining.veinmining.event;
 
 import javax.annotation.Nonnull;
-import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
-import net.minecraft.util.profiling.ProfilerFiller;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
+import net.minecraft.util.profiling.ProfilerFiller;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 import top.theillusivec4.veinmining.veinmining.logic.BlockProcessor;
 import top.theillusivec4.veinmining.veinmining.logic.VeinMiningLogic;
 
 public class VeinMiningEventsListener {
-	
+
   @SubscribeEvent
   @SuppressWarnings("unused")
   public void worldTick(final TickEvent.WorldTickEvent evt) {
@@ -67,14 +67,21 @@ public class VeinMiningEventsListener {
       }
     });
   }
-  
-  @SubscribeEvent
-  public void blockBreak(final BreakEvent evt) {
-	  ServerPlayer player = (ServerPlayer) evt.getPlayer();
-	  BlockPos pos = evt.getPos();
-	  Block source = player.level.getBlockState(pos).getBlock();
-		
-          VeinMiningLogic.startVeinMining(player, pos, source);
+
+  @SubscribeEvent(priority = EventPriority.LOW)
+  @SuppressWarnings("unused")
+  public void blockBreak(final BlockEvent.BreakEvent evt) {
+
+    if (evt.getPlayer() instanceof ServerPlayer player &&
+        VeinMiningPlayers.canStartVeinMining(player)) {
+      BlockPos pos = evt.getPos();
+      Block source = player.level.getBlockState(pos).getBlock();
+
+      if (!VeinMiningPlayers.isVeinMining(player)) {
+        VeinMiningPlayers.startVeinMining(player);
+        VeinMiningLogic.veinMine(player, pos, source);
+        VeinMiningPlayers.stopVeinMining(player);
+      }
+    }
   }
-  
 }

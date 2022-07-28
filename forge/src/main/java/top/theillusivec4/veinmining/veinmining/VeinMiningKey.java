@@ -21,8 +21,8 @@
 
 package top.theillusivec4.veinmining.veinmining;
 
-import net.minecraft.client.KeyMapping;
 import com.mojang.blaze3d.platform.InputConstants;
+import net.minecraft.client.KeyMapping;
 
 public class VeinMiningKey {
 
