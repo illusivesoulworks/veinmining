@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.16.5-0.17] - 2022.09.01
+### Changed
+- `maxBlocksBase` and `maxBlocksPerLevel` now account for the origin block [#60](https://github.com/TheIllusiveC4/VeinMining/issues/60)
+### Fixed
+- Fixed certain items not being valid for enchanting with Vein Mining from the configuration [#59](https://github.com/TheIllusiveC4/VeinMining/issues/59)
+
 ## [1.16.5-0.16] - 2021.12.23
 ### Fixed
 - Fixed crash with certain modded tools [#38](https://github.com/TheIllusiveC4/VeinMining/issues/38)

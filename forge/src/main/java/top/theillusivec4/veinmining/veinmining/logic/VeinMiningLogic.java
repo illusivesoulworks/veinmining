@@ -75,7 +75,7 @@ public class VeinMiningLogic {
     if (maxBlocks <= 0 || maxDistance <= 0) {
       return;
     }
-    int blocks = 0;
+    int blocks = 1;
     Set<BlockPos> visited = Sets.newHashSet(pos);
     LinkedList<Tuple<BlockPos, Integer>> candidates = new LinkedList<>();
     addValidNeighbors(candidates, pos, 1);
