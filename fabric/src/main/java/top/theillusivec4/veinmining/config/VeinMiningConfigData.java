@@ -225,9 +225,14 @@ public class VeinMiningConfigData implements ConfigData {
     public boolean limitedByDurability = true;
 
     @ConfigEntry.Gui.Tooltip
-    @Comment("Whether to activate vein mining by standing, crouching, or holding down the keybind (\"STANDING\", \"CROUCHING\", \"KEYBINDING\")")
+    @Comment("Whether to activate vein mining (if using with the enchantment) by standing, crouching, or holding down the keybind (\"STANDING\", \"CROUCHING\", \"KEYBINDING\")")
     public VeinMiningConfig.ActivationState activationState =
         VeinMiningConfig.ActivationState.STANDING;
+
+    @ConfigEntry.Gui.Tooltip
+    @Comment("Whether to activate vein mining (if using without the enchantment) by standing, crouching, or holding down the keybind (\"STANDING\", \"CROUCHING\", \"KEYBINDING\")")
+    public VeinMiningConfig.ActivationState activationStateWithoutEnchantment =
+        VeinMiningConfig.ActivationState.KEYBINDING;
 
     @ConfigEntry.Gui.Tooltip
     @Comment("List of whitelisted/blacklisted blocks or block tags")

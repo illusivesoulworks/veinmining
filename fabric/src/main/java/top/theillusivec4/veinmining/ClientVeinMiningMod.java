@@ -37,10 +37,15 @@ public class ClientVeinMiningMod implements ClientModInitializer {
 
       if (world != null && player != null && world.getTime() % 5 == 0) {
         boolean enabled;
+        VeinMiningConfig.ActivationState activationState =
+            VeinMiningConfig.VeinMining.maxBlocksBase > 0 &&
+                VeinMiningConfig.VeinMining.maxDistanceBase > 0 ?
+                VeinMiningConfig.VeinMining.activationStateWithoutEnchantment :
+                VeinMiningConfig.VeinMining.activationState;
 
-        if (VeinMiningConfig.VeinMining.activationState == VeinMiningConfig.ActivationState.STANDING) {
+        if (activationState == VeinMiningConfig.ActivationState.STANDING) {
           enabled = !player.isSneaking();
-        } else if (VeinMiningConfig.VeinMining.activationState == VeinMiningConfig.ActivationState.CROUCHING) {
+        } else if (activationState == VeinMiningConfig.ActivationState.CROUCHING) {
           enabled = player.isSneaking();
         } else {
           enabled = VeinMiningKey.get().isPressed();
