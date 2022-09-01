@@ -25,7 +25,9 @@ import javax.annotation.Nonnull;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentType;
 import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolItem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ToolType;
 import top.theillusivec4.veinmining.VeinMiningMod;
@@ -35,6 +37,8 @@ public class VeinMiningEnchantment extends Enchantment {
 
   public static final String ID = VeinMiningMod.MOD_ID + ":vein_mining";
   public static final Map<String, Predicate<ItemStack>> PREDICATE_MAP;
+  public static final EnchantmentType CATEGORY =
+      EnchantmentType.create(ID, VeinMiningEnchantment::canEnchantItem);
 
   static {
     Map<String, Predicate<ItemStack>> temp = new HashMap<>();
@@ -47,12 +51,22 @@ public class VeinMiningEnchantment extends Enchantment {
   }
 
   public VeinMiningEnchantment() {
-    super(Rarity.RARE, EnchantmentType.DIGGER,
-        new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
+    super(Rarity.RARE, CATEGORY, new EquipmentSlotType[] {EquipmentSlotType.MAINHAND});
   }
 
   private static boolean isToolType(ToolType type, ItemStack stack) {
     return stack.getToolTypes().contains(type);
+  }
+
+  private static boolean canEnchantItem(Item item) {
+
+    for (String entry : VeinMiningConfig.Enchantment.items) {
+
+      if (item.getRegistryName() != null && item.getRegistryName().toString().equals(entry)) {
+        return true;
+      }
+    }
+    return item instanceof ToolItem;
   }
 
   private static boolean canEnchantItem(ItemStack stack) {
@@ -119,7 +133,7 @@ public class VeinMiningEnchantment extends Enchantment {
 
   @Override
   public boolean canApply(@Nonnull ItemStack stack) {
-    return canEnchantItem(stack) && stack.canApplyAtEnchantingTable(this);
+    return canEnchantItem(stack);
   }
 
   @Override
