@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
+## [1.18.2-0.20] - 2022.09.01
+### Changed
+- `maxBlocksBase` and `maxBlocksPerLevel` now account for the origin block [#60](https://github.com/TheIllusiveC4/VeinMining/issues/60)
+
 ## [1.18.2-0.19] - 2022.07.28
 ### Added
 - Added `activationStateWithoutEnchantment` configuration option, defaulted to `"KEYBINDING"`, which controls the
