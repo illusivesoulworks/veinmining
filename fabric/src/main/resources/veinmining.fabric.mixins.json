@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.illusivesoulworks.veinmining.mixin.core",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MixinEnchantmentCategory",
+    "MixinEnchantmentHelper"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
