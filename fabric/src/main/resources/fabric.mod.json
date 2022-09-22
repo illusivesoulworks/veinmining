@@ -22,6 +22,9 @@
     ],
     "mm:early_risers": [
       "com.illusivesoulworks.veinmining.mixin.EarlyRiser"
+    ],
+    "spectrelib": [
+      "com.illusivesoulworks.veinmining.VeinMiningConfigInitializer"
     ]
   },
   "mixins": [

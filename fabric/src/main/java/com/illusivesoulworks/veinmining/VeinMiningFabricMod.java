@@ -36,7 +36,6 @@ public class VeinMiningFabricMod implements ModInitializer {
 
   @Override
   public void onInitialize() {
-    VeinMiningMod.init();
     Registry.register(Registry.ENCHANTMENT, VeinMiningConstants.ENCHANTMENT_ID,
         VeinMiningMod.ENCHANTMENT);
     ServerLifecycleEvents.SERVER_STARTED.register(server -> VeinMiningEvents.reloadDatapack());
