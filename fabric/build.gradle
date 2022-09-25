@@ -7,15 +7,6 @@ plugins {
 
 archivesBaseName = "${mod_id}-fabric"
 
-repositories {
-    maven {
-        url = "https://jitpack.io"
-        content {
-            includeGroup "com.github.Chocohead"
-        }
-    }
-}
-
 dependencies {
     minecraft "com.mojang:minecraft:${minecraft_version}"
     mappings(loom.layered {
@@ -25,16 +16,13 @@ dependencies {
     modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
     modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
     modImplementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-fabric', version: "${spectrelib_range}"
-    modImplementation("com.github.Chocohead:Fabric-ASM:${fabric_asm_version}")
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":common")
 
     include group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-fabric', version: "${spectrelib_version}"
-    include("com.github.Chocohead:Fabric-ASM:${fabric_asm_version}")
 }
 
 loom {
-    accessWidenerPath = file("src/main/resources/veinmining.accesswidener")
 
     runs {
         client {

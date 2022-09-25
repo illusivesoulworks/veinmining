@@ -20,9 +20,6 @@
     "client": [
       "com.illusivesoulworks.veinmining.client.VeinMiningFabricClientMod"
     ],
-    "mm:early_risers": [
-      "com.illusivesoulworks.veinmining.mixin.EarlyRiser"
-    ],
     "spectrelib": [
       "com.illusivesoulworks.veinmining.VeinMiningConfigInitializer"
     ]
@@ -30,7 +27,6 @@
   "mixins": [
     "veinmining.fabric.mixins.json"
   ],
-  "accessWidener": "veinmining.accesswidener",
   "depends": {
     "fabricloader": ">=0.14",
     "fabric": "*",

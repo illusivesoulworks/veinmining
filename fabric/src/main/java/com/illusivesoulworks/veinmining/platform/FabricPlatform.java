@@ -17,9 +17,7 @@
 
 package com.illusivesoulworks.veinmining.platform;
 
-import com.chocohead.mm.api.ClassTinkerers;
 import com.google.common.collect.ImmutableMap;
-import com.illusivesoulworks.veinmining.VeinMiningConstants;
 import com.illusivesoulworks.veinmining.common.config.VeinMiningConfig;
 import com.illusivesoulworks.veinmining.common.platform.services.IPlatform;
 import java.util.Arrays;
@@ -54,8 +52,6 @@ import net.minecraft.world.level.block.state.BlockState;
 
 public class FabricPlatform implements IPlatform {
 
-  private static EnchantmentCategory category;
-
   @Override
   public Set<String> getBlocksFromTag(ResourceLocation resourceLocation) {
     Set<String> result = new HashSet<>();
@@ -70,12 +66,7 @@ public class FabricPlatform implements IPlatform {
 
   @Override
   public EnchantmentCategory getEnchantmentCategory() {
-
-    if (category == null) {
-      category = ClassTinkerers.getEnum(EnchantmentCategory.class,
-          VeinMiningConstants.ENCHANTMENT_ID.toString());
-    }
-    return category;
+    return EnchantmentCategory.DIGGER;
   }
 
   @Override
