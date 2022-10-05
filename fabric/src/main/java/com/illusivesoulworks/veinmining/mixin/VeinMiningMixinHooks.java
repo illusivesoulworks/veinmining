@@ -17,8 +17,8 @@
 
 package com.illusivesoulworks.veinmining.mixin;
 
+import com.illusivesoulworks.veinmining.VeinMiningMod;
 import com.illusivesoulworks.veinmining.common.veinmining.enchantment.VeinMiningEnchantment;
-import java.util.ArrayList;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -27,31 +27,28 @@ import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
 public class VeinMiningMixinHooks {
 
-  public static List<EnchantmentInstance> filterEnchantments(
-      List<EnchantmentInstance> list, int level, ItemStack stack, boolean allowTreasure) {
-    List<EnchantmentInstance> result = new ArrayList<>();
+  public static void removeEnchantment(List<EnchantmentInstance> list, Enchantment enchantment) {
 
-    for (EnchantmentInstance enchantmentInstance : list) {
-      Enchantment enchantment = enchantmentInstance.enchantment;
+    if (enchantment == VeinMiningMod.ENCHANTMENT) {
+      list.remove(list.size() - 1);
+    }
+  }
 
-      if (enchantment instanceof VeinMiningEnchantment veinMiningEnchantment) {
+  public static void addEnchantment(int level, ItemStack stack, boolean allowTreasure,
+                                    List<EnchantmentInstance> returnValue) {
+    VeinMiningEnchantment enchantment = VeinMiningMod.ENCHANTMENT;
 
-        if ((!enchantment.isTreasureOnly() || allowTreasure) && enchantment.isDiscoverable() &&
-            (veinMiningEnchantment.canApplyAtEnchantingTable(stack) ||
-                (stack.is(Items.BOOK) && veinMiningEnchantment.isAllowedOnBooks()))) {
+    if ((!enchantment.isTreasureOnly() || allowTreasure) && enchantment.isDiscoverable() &&
+        (enchantment.canApplyAtEnchantingTable(stack) ||
+            (stack.is(Items.BOOK) && enchantment.isAllowedOnBooks()))) {
 
-          for (int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; --i) {
+      for (int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; --i) {
 
-            if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
-              result.add(new EnchantmentInstance(enchantment, i));
-              break;
-            }
-          }
+        if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
+          returnValue.add(new EnchantmentInstance(enchantment, i));
+          break;
         }
-      } else {
-        result.add(enchantmentInstance);
       }
     }
-    return result;
   }
 }

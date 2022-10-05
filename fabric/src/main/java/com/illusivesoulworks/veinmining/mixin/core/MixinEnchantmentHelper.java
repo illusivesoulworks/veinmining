@@ -18,20 +18,44 @@
 package com.illusivesoulworks.veinmining.mixin.core;
 
 import com.illusivesoulworks.veinmining.mixin.VeinMiningMixinHooks;
+import java.util.Iterator;
 import java.util.List;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(EnchantmentHelper.class)
 public class MixinEnchantmentHelper {
 
-  @ModifyVariable(at = @At("RETURN"), method = "getAvailableEnchantmentResults(ILnet/minecraft/world/item/ItemStack;Z)Ljava/util/List;")
-  private static List<EnchantmentInstance> veinmining$checkVeinMiningEnchantment(
-      List<EnchantmentInstance> list, int level, ItemStack stack, boolean allowTreasure) {
-    return VeinMiningMixinHooks.filterEnchantments(list, level, stack, allowTreasure);
+  @Inject(
+      method = "getAvailableEnchantmentResults(ILnet/minecraft/world/item/ItemStack;Z)Ljava/util/List;",
+      at = @At(
+          value = "INVOKE_ASSIGN",
+          target = "Ljava/util/List;add(Ljava/lang/Object;)Z"),
+      locals = LocalCapture.CAPTURE_FAILSOFT)
+  private static void veinmining$removeVeinMiningEnchantment(int level, ItemStack stack,
+                                                             boolean allowTreasure,
+                                                             CallbackInfoReturnable<List<EnchantmentInstance>> cir,
+                                                             List<EnchantmentInstance> list,
+                                                             Item item, boolean isBook,
+                                                             Iterator<Enchantment> iter,
+                                                             Enchantment enchantment) {
+    VeinMiningMixinHooks.removeEnchantment(list, enchantment);
+  }
+
+  @Inject(
+      method = "getAvailableEnchantmentResults(ILnet/minecraft/world/item/ItemStack;Z)Ljava/util/List;",
+      at = @At("RETURN"))
+  private static void veinmining$addVeinMiningEnchantment(int level, ItemStack stack,
+                                                          boolean allowTreasure,
+                                                          CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
+    VeinMiningMixinHooks.addEnchantment(level, stack, allowTreasure, cir.getReturnValue());
   }
 }
