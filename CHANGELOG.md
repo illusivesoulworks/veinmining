@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 1.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.0.0-beta.5+1.19.2] - 2022.10.05
+### Changed
+- Items that are unbreakable or cannot be damaged now bypass the `limitedByDurability` configuration [#67](https://github.com/illusivesoulworks/veinmining/issues/67)
+### Fixed
+- [Fabric] Fixed mixin mod compatibility issue with EnchantmentHelper [#68](https://github.com/illusivesoulworks/veinmining/issues/68)
+
 ## [1.0.0-beta.4+1.19.2] - 2022.09.25
 ### Fixed
 - [Fabric] Fixed crash with Fabric ASM and some mods trying to use mixin accessors [#64](https://github.com/illusivesoulworks/veinmining/issues/64)
