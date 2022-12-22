@@ -21,30 +21,32 @@ import com.illusivesoulworks.spectrelib.config.SpectreConfigInitializer;
 import com.illusivesoulworks.veinmining.common.network.CPacketState;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningEvents;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningPlayers;
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
-import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.ModInitializer;
+import org.quiltmc.qsl.lifecycle.api.event.ServerLifecycleEvents;
+import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
+import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
+import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
-public class VeinMiningFabricMod implements ModInitializer, SpectreConfigInitializer {
+public class VeinMiningQuiltMod implements ModInitializer, SpectreConfigInitializer {
 
   public static final ResourceLocation STATE_PACKET =
       new ResourceLocation(VeinMiningConstants.MOD_ID, "state");
 
   @Override
-  public void onInitialize() {
+  public void onInitialize(ModContainer modContainer) {
     Registry.register(BuiltInRegistries.ENCHANTMENT, VeinMiningConstants.ENCHANTMENT_ID,
         VeinMiningMod.ENCHANTMENT);
-    ServerLifecycleEvents.SERVER_STARTED.register(server -> VeinMiningEvents.reloadDatapack());
-    ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(
+    ServerLifecycleEvents.READY.register(server -> VeinMiningEvents.reloadDatapack());
+    ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(
         (server, resourceManager, success) -> VeinMiningEvents.reloadDatapack());
-    ServerTickEvents.END_WORLD_TICK.register(
-        world -> VeinMiningPlayers.validate(world.getGameTime()));
+    ServerWorldTickEvents.END.register(
+        (server, world) -> VeinMiningPlayers.validate(world.getGameTime()));
     PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
       if (player instanceof ServerPlayer serverPlayer) {
         VeinMiningEvents.blockBreak(serverPlayer, pos, state);
@@ -58,7 +60,7 @@ public class VeinMiningFabricMod implements ModInitializer, SpectreConfigInitial
   }
 
   @Override
-  public void onInitializeConfig() {
+  public void onInitializeConfig(ModContainer modContainer) {
     VeinMiningMod.init();
   }
 }

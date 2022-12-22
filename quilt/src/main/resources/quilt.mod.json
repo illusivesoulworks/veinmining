@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "quilt_loader": {
+    "group": "com.illusivesoulworks.${mod_id}",
+    "id": "${mod_id}",
+    "version": "${version}",
+    "intermediate_mappings": "net.fabricmc:intermediary",
+    "entrypoints": {
+      "init": [
+        "com.illusivesoulworks.veinmining.VeinMiningQuiltMod"
+      ],
+      "client_init": [
+        "com.illusivesoulworks.veinmining.client.VeinMiningQuiltClientMod"
+      ],
+      "spectrelib": [
+        "com.illusivesoulworks.veinmining.VeinMiningQuiltMod"
+      ]
+    },
+    "depends": [
+      {
+        "id": "quilt_loader",
+        "version": "*"
+      },
+      {
+        "id": "quilt_base",
+        "version": "*"
+      },
+      {
+        "id": "minecraft",
+        "version": "${quilt_mc_version_range}"
+      },
+      {
+        "id": "java",
+        "version": ">=17"
+      },
+      {
+        "id": "spectrelib",
+        "version": ">=0.12.1"
+      },
+      {
+        "id": "quilted_fabric_api",
+        "version": "*"
+      }
+    ],
+    "metadata": {
+      "name": "${mod_name}",
+      "description": "${mod_description}",
+      "contributors": {
+        "${mod_author}": "Owner"
+      },
+      "license": "${license}"
+    }
+  },
+  "mixin": [
+    "veinmining.quilt.mixins.json"
+  ],
+  "minecraft": {
+    "environment": "*"
+  }
+}

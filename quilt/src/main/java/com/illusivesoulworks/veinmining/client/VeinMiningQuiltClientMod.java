@@ -15,14 +15,20 @@
  * License along with Vein Mining.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package com.illusivesoulworks.veinmining;
+package com.illusivesoulworks.veinmining.client;
 
-import com.illusivesoulworks.spectrelib.config.SpectreConfigInitializer;
+import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningKey;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import org.quiltmc.loader.api.ModContainer;
+import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
+import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
 
-public class VeinMiningConfigInitializer implements SpectreConfigInitializer {
+public class VeinMiningQuiltClientMod implements ClientModInitializer {
 
   @Override
-  public void onInitialize() {
-    VeinMiningMod.init();
+  public void onInitializeClient(ModContainer modContainer) {
+    VeinMiningKey.setup();
+    KeyBindingHelper.registerKeyBinding(VeinMiningKey.get());
+    ClientTickEvents.END.register(client -> VeinMiningClientEvents.tick());
   }
 }

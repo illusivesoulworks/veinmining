@@ -51,7 +51,7 @@ import net.minecraft.world.level.block.GameMasterBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class FabricPlatform implements IPlatform {
+public class QuiltPlatform implements IPlatform {
 
   @Override
   public Set<String> getBlocksFromTag(ResourceLocation resourceLocation) {
