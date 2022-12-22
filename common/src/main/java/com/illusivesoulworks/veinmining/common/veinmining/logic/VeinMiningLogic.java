@@ -39,12 +39,12 @@ public class VeinMiningLogic {
       new Direction[] {Direction.DOWN, Direction.UP, Direction.EAST, Direction.WEST,
           Direction.NORTH, Direction.SOUTH};
 
-  public static void veinMine(ServerPlayer playerEntity, BlockPos pos, Block source) {
+  public static void veinMine(ServerPlayer playerEntity, BlockPos pos, BlockState sourceState) {
     ServerLevel world = playerEntity.getLevel();
     ItemStack stack = playerEntity.getMainHandItem();
-    BlockState state = world.getBlockState(pos);
+    Block source = sourceState.getBlock();
     boolean ineffective = VeinMiningConfig.SERVER.requireEffectiveTool.get() &&
-        !Services.PLATFORM.canHarvestDrops(playerEntity, state);
+        !Services.PLATFORM.canHarvestDrops(playerEntity, sourceState);
 
     if (ineffective) {
       return;

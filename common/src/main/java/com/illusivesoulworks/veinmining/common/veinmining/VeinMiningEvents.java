@@ -23,7 +23,6 @@ import com.illusivesoulworks.veinmining.common.veinmining.logic.VeinMiningLogic;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
 public class VeinMiningEvents {
@@ -42,14 +41,10 @@ public class VeinMiningEvents {
 
   public static void blockBreak(ServerPlayer player, BlockPos pos, BlockState state) {
 
-    if (VeinMiningPlayers.canStartVeinMining(player)) {
-      Block source = state.getBlock();
-
-      if (!VeinMiningPlayers.isVeinMining(player)) {
-        VeinMiningPlayers.startVeinMining(player);
-        VeinMiningLogic.veinMine(player, pos, source);
-        VeinMiningPlayers.stopVeinMining(player);
-      }
+    if (VeinMiningPlayers.canStartVeinMining(player) && !VeinMiningPlayers.isVeinMining(player)) {
+      VeinMiningPlayers.startVeinMining(player);
+      VeinMiningLogic.veinMine(player, pos, state);
+      VeinMiningPlayers.stopVeinMining(player);
     }
   }
 }
