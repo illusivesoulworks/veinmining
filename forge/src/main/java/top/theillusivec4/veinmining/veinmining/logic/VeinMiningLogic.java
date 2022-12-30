@@ -106,7 +106,7 @@ public class VeinMiningLogic {
   }
 
   private static boolean stopVeining(ItemStack stack) {
-    return VeinMiningConfig.VeinMining.limitedByDurability &&
+    return stack.isDamageableItem() && VeinMiningConfig.VeinMining.limitedByDurability &&
         (stack.getDamageValue() == stack.getMaxDamage() ||
             (VeinMiningConfig.VeinMining.preventToolDestruction &&
                 stack.getDamageValue() == stack.getMaxDamage() - 1));

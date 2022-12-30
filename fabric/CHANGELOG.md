@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.0.16-1.18.2] - 2022.12.30
+### Changed
+- Changed the localization of the activation keybinding from `Activate` to `Activate Vein Mining` for clarity of purpose
+
 ## [0.0.15-1.18.2] - 2022.10.05
 ### Changed
 - Items that are unbreakable or cannot be damaged now bypass the `limitedByDurability` configuration [#67](https://github.com/illusivesoulworks/veinmining/issues/67)
