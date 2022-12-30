@@ -17,9 +17,6 @@
 
 package top.theillusivec4.veinmining.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import net.minecraft.enchantment.Enchantment;
 import net.minecraftforge.common.ForgeConfigSpec;
 import org.apache.commons.lang3.tuple.Pair;
 import top.theillusivec4.veinmining.VeinMiningMod;
@@ -37,23 +34,35 @@ public class ClientVeinMiningConfig {
     CONFIG = specPair.getLeft();
   }
 
-  public static VeinMiningConfig.ActivationState activationState = VeinMiningConfig.ActivationState.STANDING;
+  public static VeinMiningConfig.ActivationState activationState =
+      VeinMiningConfig.ActivationState.STANDING;
+  public static VeinMiningConfig.ActivationState activationStateWithoutEnchantment =
+      VeinMiningConfig.ActivationState.KEYBINDING;
 
   public static void bake() {
     activationState = CONFIG.activationState.get();
+    activationStateWithoutEnchantment = CONFIG.activationStateWithoutEnchantment.get();
   }
 
   public static class Config {
 
     public final ForgeConfigSpec.EnumValue<VeinMiningConfig.ActivationState> activationState;
+    public final ForgeConfigSpec.EnumValue<VeinMiningConfig.ActivationState>
+        activationStateWithoutEnchantment;
 
     public Config(ForgeConfigSpec.Builder builder) {
       builder.push("vein mining");
 
       activationState = builder.comment(
-          "Whether to activate vein mining by standing, crouching, or holding down the keybind")
+              "Whether to activate vein mining (if using with the enchantment) by standing, crouching, or holding down the keybind")
           .translation(CONFIG_PREFIX + "activationState")
           .defineEnum("activationState", VeinMiningConfig.ActivationState.STANDING);
+
+      activationStateWithoutEnchantment = builder.comment(
+              "Whether to activate vein mining (if using without the enchantment) by standing, crouching, or holding down the keybind")
+          .translation(CONFIG_PREFIX + "activationStateWithoutEnchantment")
+          .defineEnum("activationStateWithoutEnchantment",
+              VeinMiningConfig.ActivationState.KEYBINDING);
 
       builder.pop();
     }

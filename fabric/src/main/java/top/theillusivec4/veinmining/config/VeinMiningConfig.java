@@ -69,6 +69,7 @@ public class VeinMiningConfig {
     public static double playerExhaustionMultiplier = 1.0D;
     public static boolean limitedByDurability = true;
     public static ActivationState activationState = ActivationState.STANDING;
+    public static ActivationState activationStateWithoutEnchantment = ActivationState.KEYBINDING;
     public static Set<String> blocks = new HashSet<>();
     public static PermissionType blocksPermission = PermissionType.BLACKLIST;
     public static Set<String> groups = new HashSet<>();
@@ -89,6 +90,7 @@ public class VeinMiningConfig {
       playerExhaustionMultiplier = veinMining.playerExhaustionMultiplier;
       limitedByDurability = veinMining.limitedByDurability;
       activationState = veinMining.activationState;
+      activationStateWithoutEnchantment = veinMining.activationStateWithoutEnchantment;
       blocks = new HashSet<>();
       blocks.addAll(veinMining.blocks);
       blocksPermission = veinMining.blocksPermission;

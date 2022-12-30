@@ -42,11 +42,15 @@ public class VeinMiningClientEventsListener {
 
         if (world.getGameTime() % 5 == 0) {
           boolean enabled;
+          VeinMiningConfig.ActivationState activationState =
+              VeinMiningConfig.VeinMining.maxBlocksBase > 0 &&
+                  VeinMiningConfig.VeinMining.maxDistanceBase > 0 ?
+                  ClientVeinMiningConfig.activationStateWithoutEnchantment :
+                  ClientVeinMiningConfig.activationState;
 
-          if (ClientVeinMiningConfig.activationState == VeinMiningConfig.ActivationState.STANDING) {
+          if (activationState == VeinMiningConfig.ActivationState.STANDING) {
             enabled = !player.isCrouching();
-          } else if (ClientVeinMiningConfig.activationState ==
-              VeinMiningConfig.ActivationState.CROUCHING) {
+          } else if (activationState == VeinMiningConfig.ActivationState.CROUCHING) {
             enabled = player.isCrouching();
           } else {
             enabled = VeinMiningKey.get().isKeyDown();
