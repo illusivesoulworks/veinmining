@@ -1,0 +1,6 @@
+{
+  "enchantment.veinmining.vein_mining": "Minage en Veine",
+  "enchantment.veinmining.vein_mining.desc": "Casse les blocs connectés correspondants en minant.",
+  "key.veinmining.category": "Minage en Veine (Vein Mining)",
+  "key.veinmining.activate.desc": "Activer le minage en veine"
+}
