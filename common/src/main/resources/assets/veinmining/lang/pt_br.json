@@ -1,6 +1,6 @@
 {
   "enchantment.veinmining.vein_mining": "Mineração de Veias",
-  "enchantment.veinmining.vein_mining.desc": "Quebra blocos semelhantes conectados durante a mineração."
+  "enchantment.veinmining.vein_mining.desc": "Quebra blocos semelhantes conectados durante a mineração.",
   "key.veinmining.category": "Mineração de Veias",
   "key.veinmining.activate.desc": "Ativar Mineração de Veias"
 }
