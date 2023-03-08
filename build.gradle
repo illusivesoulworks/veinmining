@@ -59,6 +59,11 @@ subprojects {
             name = 'Illusive Soulworks'
             url = 'https://maven.theillusivec4.top/'
         }
+
+        maven {
+            name = "CurseMaven"
+            url = 'https://www.cursemaven.com/'
+        }
         mavenLocal()
     }
 
@@ -72,5 +77,9 @@ subprojects {
     // other mod developers.
     tasks.withType(GenerateModuleMetadata) {
         enabled = false
+    }
+
+    tasks.withType(Jar).all {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }

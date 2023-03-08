@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 1.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.1.0+1.19.2] - 2023.03.08
+### Fixed
+- Fixed configuration loading errors by applying workarounds to avoid crashes or invalid data
+- Fixed vein mining ignoring block-specific and item-specific behavior
+
 ## [1.0.2+1.19.2] - 2022.12.30
 ### Fixed
 - [Fabric] Fixed invalid Minecraft version requirement [#77](https://github.com/illusivesoulworks/veinmining/issues/77)

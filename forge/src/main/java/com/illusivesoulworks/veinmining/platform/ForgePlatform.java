@@ -21,6 +21,7 @@ import com.google.common.collect.ImmutableMap;
 import com.illusivesoulworks.veinmining.VeinMiningConstants;
 import com.illusivesoulworks.veinmining.common.config.VeinMiningConfig;
 import com.illusivesoulworks.veinmining.common.platform.services.IPlatform;
+import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningPlayers;
 import com.illusivesoulworks.veinmining.common.veinmining.enchantment.VeinMiningEnchantment;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -30,15 +31,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Predicate;
-import javax.annotation.Nullable;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.stats.Stats;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
@@ -180,10 +179,7 @@ public class ForgePlatform implements IPlatform {
           ItemStack itemstack = player.getMainHandItem();
           ItemStack itemstack1 = itemstack.copy();
           boolean flag1 = blockstate.canHarvestBlock(world, pos, player);
-
-          if (VeinMiningConfig.SERVER.addToolDamage.get()) {
-            mineBlock(itemstack, world, blockstate, pos, player);
-          }
+          itemstack.mineBlock(world, blockstate, pos, player);
 
           if (itemstack.isEmpty() && !itemstack1.isEmpty()) {
             ForgeEventFactory.onPlayerDestroyItem(player, itemstack1, InteractionHand.MAIN_HAND);
@@ -192,7 +188,20 @@ public class ForgePlatform implements IPlatform {
           BlockPos spawnPos = VeinMiningConfig.SERVER.relocateDrops.get() ? originPos : pos;
 
           if (flag && flag1) {
-            playerDestroy(block, world, player, pos, spawnPos, blockstate, blockentity, itemstack1);
+            FoodData foodData = player.getFoodData();
+            float currentExhaustion = foodData.getExhaustionLevel();
+            VeinMiningPlayers.addMiningBlock(world, pos, spawnPos);
+            block.playerDestroy(world, player, pos, blockstate, blockentity, itemstack1);
+            VeinMiningPlayers.removeMiningBlock(world, pos);
+
+            if (VeinMiningConfig.SERVER.addPlayerExhaustion.get()) {
+              float diff = foodData.getExhaustionLevel() - currentExhaustion;
+              foodData.setExhaustion(currentExhaustion);
+              foodData.addExhaustion(
+                  (float) (diff * VeinMiningConfig.SERVER.playerExhaustionMultiplier.get()));
+            } else {
+              foodData.setExhaustion(currentExhaustion);
+            }
           }
 
           if (flag && exp > 0) {
@@ -258,40 +267,6 @@ public class ForgePlatform implements IPlatform {
         "#forge:ores/sapphire",
         "#forge:ores/sulfur"
     );
-  }
-
-  private static void mineBlock(ItemStack stack, Level worldIn, BlockState blockIn,
-                                BlockPos pos, Player playerIn) {
-
-    if (!worldIn.isClientSide && blockIn.getDestroySpeed(worldIn, pos) != 0.0F) {
-      int damage = VeinMiningConfig.SERVER.toolDamageMultiplier.get();
-
-      if (VeinMiningConfig.SERVER.preventToolDestruction.get()) {
-        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamageValue() - 2);
-      }
-
-      if (damage > 0) {
-        stack.hurtAndBreak(damage, playerIn,
-            (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-      }
-    }
-  }
-
-  private static void playerDestroy(Block block, Level worldIn, Player player, BlockPos pos,
-                                    BlockPos spawnPos, BlockState state, @Nullable BlockEntity te,
-                                    ItemStack stack) {
-    player.awardStat(Stats.BLOCK_MINED.get(block));
-
-    if (VeinMiningConfig.SERVER.addPlayerExhaustion.get()) {
-      player.causeFoodExhaustion(
-          (float) (0.005F * (VeinMiningConfig.SERVER.playerExhaustionMultiplier.get())));
-    }
-
-    if (worldIn instanceof ServerLevel) {
-      Block.getDrops(state, (ServerLevel) worldIn, pos, te, player, stack)
-          .forEach((stackToSpawn) -> Block.popResource(worldIn, spawnPos, stackToSpawn));
-      state.spawnAfterBreak((ServerLevel) worldIn, pos, stack, true);
-    }
   }
 
   private static boolean removeBlock(Player player, BlockPos pos, boolean canHarvest) {

@@ -6,11 +6,16 @@ buildscript {
             name = 'ParchmentMC'
             url = 'https://maven.parchmentmc.org/'
         }
+        maven {
+            name = 'Sponge / Mixin'
+            url = 'https://repo.spongepowered.org/repository/maven-public/'
+        }
         mavenCentral()
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
         classpath group: 'org.parchmentmc', name: 'librarian', version: '1.+'
+        classpath group: 'org.spongepowered', name: 'mixingradle', version: '0.7-SNAPSHOT'
         classpath group: 'gradle.plugin.com.matthewprenger', name: 'CurseGradle', version: '1.4.0'
     }
 }
@@ -18,10 +23,17 @@ apply plugin: 'java'
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'org.spongepowered.mixin'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
 apply plugin: 'com.matthewprenger.cursegradle'
 
 archivesBaseName = "${mod_id}-forge"
+
+mixin {
+    add sourceSets.main, "${mod_id}.refmap.json"
+
+    config "${mod_id}.mixins.json"
+}
 
 minecraft {
     mappings channel: 'parchment', version: "${forge_parchment_version}"
@@ -40,6 +52,7 @@ minecraft {
             taskName 'Client'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            args "-mixin.config=${mod_id}.mixins.json"
             mods {
                 modClientRun {
                     source sourceSets.main
@@ -54,6 +67,7 @@ minecraft {
             taskName 'Server'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            args "-mixin.config=${mod_id}.mixins.json"
             mods {
                 modServerRun {
                     source sourceSets.main
@@ -69,6 +83,7 @@ minecraft {
             taskName 'Data'
             property 'mixin.env.remapRefMap', 'true'
             property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+            args "-mixin.config=${mod_id}.mixins.json"
             mods {
                 modDataRun {
                     source sourceSets.main
@@ -84,6 +99,7 @@ sourceSets.main.resources.srcDir 'src/generated/resources'
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
+    annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
     implementation fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}")
     jarJar fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}") {
         jarJar.pin(it, "${spectrelib_version}")
@@ -123,6 +139,10 @@ processResources {
     duplicatesStrategy(DuplicatesStrategy.FAIL)
     exclude('META-INF/mods.toml')
     exclude('pack.mcmeta')
+
+    filesMatching('*.mixins.json') {
+        expand "refmap_target": "${mod_id}."
+    }
     configure { finalizedBy(replaceResources) }
 }
 

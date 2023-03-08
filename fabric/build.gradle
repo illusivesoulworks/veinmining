@@ -20,6 +20,8 @@ dependencies {
     implementation project(":common")
 
     include group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-fabric', version: "${spectrelib_version}"
+
+    modRuntimeOnly "curse.maven:fabricenchantments-498465:4119756"
 }
 
 loom {
