@@ -25,7 +25,7 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentInstance;
 
-public class VeinMiningMixinHooks {
+public class VeinMiningQuiltMixinHooks {
 
   public static void removeEnchantment(List<EnchantmentInstance> list, Enchantment enchantment) {
 

@@ -25,6 +25,7 @@
     ]
   },
   "mixins": [
+    "veinmining.mixins.json",
     "veinmining.fabric.mixins.json"
   ],
   "depends": {

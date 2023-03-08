@@ -52,6 +52,7 @@
     }
   },
   "mixin": [
+    "veinmining.mixins.json",
     "veinmining.quilt.mixins.json"
   ],
   "minecraft": {

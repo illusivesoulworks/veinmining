@@ -21,15 +21,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 
 public class VeinMiningPlayers {
 
   private static final long DIFF = 20;
   private static final Map<UUID, Long> ACTIVATED_MINERS = new HashMap<>();
   private static final Set<UUID> CURRENT_MINERS = new HashSet<>();
+  private static final Map<Level, Map<BlockPos, BlockPos>> MINING_BLOCKS = new HashMap<>();
 
   public static void validate(long worldTime) {
     Iterator<Map.Entry<UUID, Long>> entries = ACTIVATED_MINERS.entrySet().iterator();
@@ -66,5 +70,26 @@ public class VeinMiningPlayers {
 
   public static void stopVeinMining(Player player) {
     CURRENT_MINERS.remove(player.getUUID());
+  }
+
+  public static void addMiningBlock(Level level, BlockPos pos, BlockPos spawnPos) {
+    MINING_BLOCKS.computeIfAbsent(level, (k) -> new HashMap<>()).put(pos, spawnPos);
+  }
+
+  public static void removeMiningBlock(Level level, BlockPos pos) {
+    Map<BlockPos, BlockPos> map = MINING_BLOCKS.get(level);
+
+    if (map != null) {
+      map.remove(pos);
+    }
+  }
+
+  public static Optional<BlockPos> getNewSpawnPosForDrop(Level level, BlockPos pos) {
+    Map<BlockPos, BlockPos> map = MINING_BLOCKS.get(level);
+
+    if (map != null) {
+      return Optional.ofNullable(map.get(pos));
+    }
+    return Optional.empty();
   }
 }

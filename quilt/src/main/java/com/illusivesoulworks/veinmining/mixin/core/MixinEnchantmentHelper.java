@@ -17,7 +17,7 @@
 
 package com.illusivesoulworks.veinmining.mixin.core;
 
-import com.illusivesoulworks.veinmining.mixin.VeinMiningMixinHooks;
+import com.illusivesoulworks.veinmining.mixin.VeinMiningQuiltMixinHooks;
 import java.util.Iterator;
 import java.util.List;
 import net.minecraft.world.item.Item;
@@ -47,7 +47,7 @@ public class MixinEnchantmentHelper {
                                                              Item item, boolean isBook,
                                                              Iterator<Enchantment> iter,
                                                              Enchantment enchantment) {
-    VeinMiningMixinHooks.removeEnchantment(list, enchantment);
+    VeinMiningQuiltMixinHooks.removeEnchantment(list, enchantment);
   }
 
   @Inject(
@@ -56,6 +56,6 @@ public class MixinEnchantmentHelper {
   private static void veinmining$addVeinMiningEnchantment(int level, ItemStack stack,
                                                           boolean allowTreasure,
                                                           CallbackInfoReturnable<List<EnchantmentInstance>> cir) {
-    VeinMiningMixinHooks.addEnchantment(level, stack, allowTreasure, cir.getReturnValue());
+    VeinMiningQuiltMixinHooks.addEnchantment(level, stack, allowTreasure, cir.getReturnValue());
   }
 }
