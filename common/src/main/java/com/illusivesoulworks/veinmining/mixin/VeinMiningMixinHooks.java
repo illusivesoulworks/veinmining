@@ -41,7 +41,7 @@ public class VeinMiningMixinHooks {
                                      ServerPlayer player) {
     int newDamage = damage;
 
-    if (VeinMiningPlayers.isVeinMining(player)) {
+    if (player != null && VeinMiningPlayers.isVeinMining(player)) {
       float multiplier = VeinMiningConfig.SERVER.toolDamageMultiplier.get();
 
       if (multiplier != 1.0f) {

@@ -2,7 +2,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/veinmining/blob/1.19.x/CHANGELOG.md).
 
-## [1.1.0+1.19.2] - 2023.03.08
+## [1.1.1+1.19.2] - 2023.03.09
 ### Fixed
-- Fixed configuration loading errors by applying workarounds to avoid crashes or invalid data
-- Fixed vein mining ignoring block-specific and item-specific behavior
+- Fixed NPE crash with Guard Villagers [#87](https://github.com/illusivesoulworks/veinmining/issues/87)
