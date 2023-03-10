@@ -3,7 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to the format [MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH](https://mcforge.readthedocs.io/en/1.16.x/conventions/versioning/).
 
-## [0.0.16-1.18.2] - 2022.12.30
+## [1.18.2-0.22] - 2023.03.10
+### Fixed
+- Fixed vein mining ignoring block-specific and item-specific behavior
+
+## [1.18.2-0.21] - 2022.12.30
 ### Changed
 - Items that are unbreakable or cannot be damaged now bypass the `limitedByDurability` configuration
 - Changed the localization of the activation keybinding from `Activate` to `Activate Vein Mining` for clarity of purpose

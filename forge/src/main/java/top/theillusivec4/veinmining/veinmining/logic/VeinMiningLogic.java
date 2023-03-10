@@ -36,6 +36,7 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.GameType;
@@ -168,10 +169,7 @@ public class VeinMiningLogic {
           ItemStack itemstack = player.getMainHandItem();
           ItemStack itemstack1 = itemstack.copy();
           boolean flag1 = blockstate.canHarvestBlock(world, pos, player);
-
-          if (VeinMiningConfig.VeinMining.addToolDamage) {
-            onBlockDestroyed(itemstack, world, blockstate, pos, player);
-          }
+          itemstack.mineBlock(world, blockstate, pos, player);
 
           if (itemstack.isEmpty() && !itemstack1.isEmpty()) {
             ForgeEventFactory.onPlayerDestroyItem(player, itemstack1, InteractionHand.MAIN_HAND);
@@ -180,7 +178,20 @@ public class VeinMiningLogic {
           BlockPos spawnPos = VeinMiningConfig.VeinMining.relocateDrops ? originPos : pos;
 
           if (flag && flag1) {
-            harvestBlock(block, world, player, pos, spawnPos, blockstate, tileentity, itemstack1);
+            FoodData foodData = player.getFoodData();
+            float currentExhaustion = foodData.getExhaustionLevel();
+            VeinMiningPlayers.addMiningBlock(world, pos, spawnPos);
+            block.playerDestroy(world, player, pos, blockstate, tileentity, itemstack1);
+            VeinMiningPlayers.removeMiningBlock(world, pos);
+
+            if (VeinMiningConfig.VeinMining.addPlayerExhaustion) {
+              float diff = foodData.getExhaustionLevel() - currentExhaustion;
+              foodData.setExhaustion(currentExhaustion);
+              foodData.addExhaustion(
+                  (float) (diff * VeinMiningConfig.VeinMining.playerExhaustionMultiplier));
+            } else {
+              foodData.setExhaustion(currentExhaustion);
+            }
           }
 
           if (flag && exp > 0) {
@@ -189,40 +200,6 @@ public class VeinMiningLogic {
         }
         return true;
       }
-    }
-  }
-
-  private static void onBlockDestroyed(ItemStack stack, Level worldIn, BlockState blockIn,
-                                       BlockPos pos, Player playerIn) {
-
-    if (!worldIn.isClientSide && blockIn.getDestroySpeed(worldIn, pos) != 0.0F) {
-      int damage = VeinMiningConfig.VeinMining.toolDamageMultiplier;
-
-      if (VeinMiningConfig.VeinMining.preventToolDestruction) {
-        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamageValue() - 2);
-      }
-
-      if (damage > 0) {
-        stack.hurtAndBreak(damage, playerIn,
-            (entity) -> entity.broadcastBreakEvent(EquipmentSlot.MAINHAND));
-      }
-    }
-  }
-
-  private static void harvestBlock(Block block, Level worldIn, Player player, BlockPos pos,
-                                   BlockPos spawnPos, BlockState state, @Nullable BlockEntity te,
-                                   ItemStack stack) {
-    player.awardStat(Stats.BLOCK_MINED.get(block));
-
-    if (VeinMiningConfig.VeinMining.addPlayerExhaustion) {
-      player.causeFoodExhaustion(
-          (float) (0.005F * (VeinMiningConfig.VeinMining.playerExhaustionMultiplier)));
-    }
-
-    if (worldIn instanceof ServerLevel) {
-      Block.getDrops(state, (ServerLevel) worldIn, pos, te, player, stack)
-          .forEach((stackToSpawn) -> Block.popResource(worldIn, spawnPos, stackToSpawn));
-      state.spawnAfterBreak((ServerLevel) worldIn, pos, stack);
     }
   }
 
