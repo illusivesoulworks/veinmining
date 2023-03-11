@@ -27,18 +27,14 @@ import net.minecraft.block.JigsawBlock;
 import net.minecraft.block.StructureBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.player.HungerManager;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.stat.Stats;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.GameMode;
-import net.minecraft.world.World;
 import top.theillusivec4.veinmining.VeinMiningMod;
 import top.theillusivec4.veinmining.config.VeinMiningConfig;
 import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
@@ -54,7 +50,7 @@ public class VeinMiningLogic {
     ServerWorld world = playerEntity.getWorld();
     ItemStack stack = playerEntity.getMainHandStack();
 
-    if (!VeinMiningPlayers.canVeinMine(playerEntity)) {
+    if (!VeinMiningPlayers.canStartVeinMining(playerEntity)) {
       return;
     }
     boolean ineffective = VeinMiningConfig.VeinMining.requireEffectiveTool &&
@@ -164,56 +160,28 @@ public class VeinMiningLogic {
           ItemStack itemStack = player.getMainHandStack();
           ItemStack itemStack2 = itemStack.copy();
           boolean bl2 = player.canHarvest(blockState);
-
-          if (VeinMiningConfig.VeinMining.addToolDamage) {
-            postMine(itemStack, world, blockState, pos, player);
-          }
-          BlockPos spawnPos = VeinMiningConfig.VeinMining.relocateDrops ? originPos : pos;
+          itemStack.postMine(world, blockState, pos, player);
 
           if (bl && bl2) {
-            afterBreak(block, world, player, pos, spawnPos, blockState, blockEntity, itemStack2);
+            BlockPos spawnPos = VeinMiningConfig.VeinMining.relocateDrops ? originPos : pos;
+            HungerManager hungerManager = player.getHungerManager();
+            float currentExhaustion = hungerManager.getExhaustion();
+            VeinMiningPlayers.addMiningBlock(world, pos, spawnPos);
+            block.afterBreak(world, player, pos, blockState, blockEntity, itemStack2);
+            VeinMiningPlayers.removeMiningBlock(world, pos);
+
+            if (VeinMiningConfig.VeinMining.addPlayerExhaustion) {
+              float diff = hungerManager.getExhaustion() - currentExhaustion;
+              hungerManager.setExhaustion(currentExhaustion);
+              hungerManager.addExhaustion(
+                  (float) (diff * VeinMiningConfig.VeinMining.playerExhaustionMultiplier));
+            } else {
+              hungerManager.setExhaustion(currentExhaustion);
+            }
           }
         }
         return true;
       }
-    }
-  }
-
-  private static void postMine(ItemStack stack, World world, BlockState state, BlockPos pos,
-                               PlayerEntity miner) {
-
-    if (!world.isClient && state.getHardness(world, pos) != 0.0F) {
-      int damage = VeinMiningConfig.VeinMining.toolDamageMultiplier;
-
-      if (VeinMiningConfig.VeinMining.preventToolDestruction) {
-        damage = Math.min(damage, stack.getMaxDamage() - stack.getDamage() - 2);
-      }
-
-      if (damage > 0) {
-        stack.damage(1, miner, (e) -> e.sendEquipmentBreakStatus(EquipmentSlot.MAINHAND));
-      }
-    }
-  }
-
-  private static void afterBreak(Block block, World world, PlayerEntity player, BlockPos pos,
-                                 BlockPos spawnPos, BlockState state, BlockEntity blockEntity,
-                                 ItemStack stack) {
-    player.incrementStat(Stats.MINED.getOrCreateStat(block));
-
-    if (VeinMiningConfig.VeinMining.addPlayerExhaustion) {
-      player.addExhaustion(
-          (float) (0.005F * VeinMiningConfig.VeinMining.playerExhaustionMultiplier));
-    }
-    dropStacks(state, world, pos, spawnPos, blockEntity, player, stack);
-  }
-
-  private static void dropStacks(BlockState state, World world, BlockPos pos, BlockPos spawnPos,
-                                 BlockEntity blockEntity, Entity entity, ItemStack stack) {
-
-    if (world instanceof ServerWorld) {
-      Block.getDroppedStacks(state, (ServerWorld) world, pos, blockEntity, entity, stack)
-          .forEach((itemStack) -> Block.dropStack(world, spawnPos, itemStack));
-      state.onStacksDropped((ServerWorld) world, pos, stack);
     }
   }
 }

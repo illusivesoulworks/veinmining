@@ -45,9 +45,9 @@ public class VeinMiningNetwork {
     boolean flag = packetByteBuf.readBoolean();
     minecraftServer.execute(() -> {
       if (flag) {
-        VeinMiningPlayers.startVeinMining(serverPlayerEntity, serverPlayerEntity.world.getTime());
+        VeinMiningPlayers.activateVeinMining(serverPlayerEntity, serverPlayerEntity.world.getTime());
       } else {
-        VeinMiningPlayers.stopVeinMining(serverPlayerEntity);
+        VeinMiningPlayers.deactivateVeinMining(serverPlayerEntity);
       }
     });
   }

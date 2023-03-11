@@ -15,7 +15,7 @@
  * If not, see <https://www.gnu.org/licenses/>.
  */
 
-package top.theillusivec4.veinmining.mixin;
+package top.theillusivec4.veinmining.mixin.core;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -26,6 +26,8 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import top.theillusivec4.veinmining.mixin.VeinMiningMixinHooks;
+import top.theillusivec4.veinmining.veinmining.VeinMiningPlayers;
 import top.theillusivec4.veinmining.veinmining.logic.VeinMiningLogic;
 
 @Mixin(ServerPlayerInteractionManager.class)
@@ -39,7 +41,7 @@ public class ServerPlayerInteractionManagerMixin {
   @Inject(
       at = @At(value = "HEAD"),
       method = "tryBreakBlock(Lnet/minecraft/util/math/BlockPos;)Z")
-  private void _veinmining_preHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
+  private void veinmining$preHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
     source = player.world.getBlockState(pos);
   }
 
@@ -48,7 +50,7 @@ public class ServerPlayerInteractionManagerMixin {
           value = "INVOKE",
           target = "net/minecraft/item/ItemStack.postMine(Lnet/minecraft/world/World;Lnet/minecraft/block/BlockState;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/entity/player/PlayerEntity;)V"),
       method = "tryBreakBlock(Lnet/minecraft/util/math/BlockPos;)Z")
-  private void _veinmining_tryHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
-    VeinMiningLogic.startVeinMining(player, pos, source);
+  private void veinmining$tryHarvest(BlockPos pos, CallbackInfoReturnable<Boolean> ci) {
+    VeinMiningMixinHooks.tryHarvest(player, pos, source);
   }
 }
