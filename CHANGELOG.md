@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 1.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.1.2+1.19.4] - 2023.04.21
+### Changed
+- Updated to Minecraft 1.19.4
+
 ## [1.1.2+1.19.3] - 2023.04.20
 ### Changed
 - [Fabric/Quilt] Experience orb drops now relocate with block drops if `relocateDrops` is true [#92](https://github.com/illusivesoulworks/veinmining/issues/92)
