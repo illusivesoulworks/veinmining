@@ -34,9 +34,9 @@ public class ItemProcessor {
 
   public static synchronized void rebuild() {
     ITEM_CHECKERS.clear();
-    VeinMiningConfig.COMMON.items.clearCache();
+    VeinMiningConfig.COMMON.itemsList.clearCache();
 
-    for (String s : VeinMiningConfig.COMMON.items.getTransformed()) {
+    for (String s : VeinMiningConfig.COMMON.itemsList.getTransformed()) {
 
       if (s.startsWith("#")) {
         ResourceLocation rl = ResourceLocation.tryParse(s.substring(1));

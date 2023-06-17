@@ -18,12 +18,11 @@
 package com.illusivesoulworks.veinmining.common.veinmining;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -31,9 +30,10 @@ import net.minecraft.world.level.Level;
 public class VeinMiningPlayers {
 
   private static final long DIFF = 20;
-  private static final Map<UUID, Long> ACTIVATED_MINERS = new HashMap<>();
-  private static final Set<UUID> CURRENT_MINERS = new HashSet<>();
-  private static final Map<Level, Map<BlockPos, BlockPos>> MINING_BLOCKS = new HashMap<>();
+  private static final Map<UUID, Long> ACTIVATED_MINERS = new ConcurrentHashMap<>();
+  private static final Map<UUID, Long> CURRENT_MINERS = new ConcurrentHashMap<>();
+  private static final Map<Level, Map<BlockPos, BlockPos>> MINING_BLOCKS =
+      new ConcurrentHashMap<>();
 
   public static void validate(long worldTime) {
     Iterator<Map.Entry<UUID, Long>> entries = ACTIVATED_MINERS.entrySet().iterator();
@@ -61,11 +61,11 @@ public class VeinMiningPlayers {
   }
 
   public static boolean isVeinMining(Player player) {
-    return CURRENT_MINERS.contains(player.getUUID());
+    return CURRENT_MINERS.containsKey(player.getUUID());
   }
 
   public static void startVeinMining(Player player) {
-    CURRENT_MINERS.add(player.getUUID());
+    CURRENT_MINERS.put(player.getUUID(), player.level().getGameTime());
   }
 
   public static void stopVeinMining(Player player) {

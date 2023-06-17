@@ -17,10 +17,8 @@
 
 package com.illusivesoulworks.veinmining;
 
-import com.illusivesoulworks.spectrelib.config.SpectreConfigInitializer;
 import com.illusivesoulworks.veinmining.common.network.CPacketState;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningEvents;
-import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningPlayers;
 import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -33,7 +31,7 @@ import org.quiltmc.qsl.lifecycle.api.event.ServerWorldTickEvents;
 import org.quiltmc.qsl.networking.api.ServerPlayNetworking;
 import org.quiltmc.qsl.resource.loader.api.ResourceLoaderEvents;
 
-public class VeinMiningQuiltMod implements ModInitializer, SpectreConfigInitializer {
+public class VeinMiningQuiltMod implements ModInitializer {
 
   public static final ResourceLocation STATE_PACKET =
       new ResourceLocation(VeinMiningConstants.MOD_ID, "state");
@@ -44,9 +42,8 @@ public class VeinMiningQuiltMod implements ModInitializer, SpectreConfigInitiali
         VeinMiningMod.ENCHANTMENT);
     ServerLifecycleEvents.READY.register(server -> VeinMiningEvents.reloadDatapack());
     ResourceLoaderEvents.END_DATA_PACK_RELOAD.register(
-        (server, resourceManager, success) -> VeinMiningEvents.reloadDatapack());
-    ServerWorldTickEvents.END.register(
-        (server, world) -> VeinMiningPlayers.validate(world.getGameTime()));
+        context -> VeinMiningEvents.reloadDatapack());
+    ServerWorldTickEvents.END.register((server, world) -> VeinMiningEvents.tick(world));
     PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
       if (player instanceof ServerPlayer serverPlayer) {
         VeinMiningEvents.blockBreak(serverPlayer, pos, state);
@@ -57,10 +54,5 @@ public class VeinMiningQuiltMod implements ModInitializer, SpectreConfigInitiali
           CPacketState msg = CPacketState.decode(buf);
           server.execute(() -> CPacketState.handle(msg, player));
         });
-  }
-
-  @Override
-  public void onInitializeConfig(ModContainer modContainer) {
-    VeinMiningMod.init();
   }
 }

@@ -36,7 +36,6 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -48,7 +47,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.GameMasterBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.phys.AABB;
 
 public class QuiltPlatform implements IPlatform {
 
@@ -111,7 +109,7 @@ public class QuiltPlatform implements IPlatform {
 
   @Override
   public boolean harvest(ServerPlayer player, BlockPos pos, BlockPos originPos) {
-    Level level = player.getLevel();
+    Level level = player.level();
     BlockState blockState = level.getBlockState(pos);
     GameType gameModeForPlayer = player.gameMode.getGameModeForPlayer();
 
@@ -160,11 +158,11 @@ public class QuiltPlatform implements IPlatform {
       block.playerDestroy(level, player, pos, blockState, blockEntity, itemStack2);
       VeinMiningPlayers.removeMiningBlock(level, pos);
 
-      if (VeinMiningConfig.SERVER.addPlayerExhaustion.get()) {
+      if (VeinMiningConfig.SERVER.addExhaustion.get()) {
         float diff = foodData.getExhaustionLevel() - currentExhaustion;
         foodData.setExhaustion(currentExhaustion);
         foodData.addExhaustion(
-            (float) (diff * VeinMiningConfig.SERVER.playerExhaustionMultiplier.get()));
+            (float) (diff * VeinMiningConfig.SERVER.exhaustionMultiplier.get()));
       } else {
         foodData.setExhaustion(currentExhaustion);
       }

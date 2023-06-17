@@ -36,7 +36,7 @@ public class VeinMiningEnchantment extends Enchantment {
 
   public static boolean canEnchant(Item item) {
 
-    for (String entry : VeinMiningConfig.COMMON.items.getTransformed()) {
+    for (String entry : VeinMiningConfig.COMMON.itemsList.getTransformed()) {
       ResourceLocation resourceLocation = ResourceLocation.tryParse(entry);
 
       if (resourceLocation != null &&

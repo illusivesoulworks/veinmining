@@ -152,7 +152,7 @@ public class ForgePlatform implements IPlatform {
   }
 
   public boolean harvest(ServerPlayer player, BlockPos pos, BlockPos originPos) {
-    ServerLevel world = player.getLevel();
+    ServerLevel world = player.serverLevel();
     BlockState blockstate = world.getBlockState(pos);
     GameType gameType = player.gameMode.getGameModeForPlayer();
     int exp = ForgeHooks.onBlockBreakEvent(world, gameType, player, pos);
@@ -194,11 +194,11 @@ public class ForgePlatform implements IPlatform {
             block.playerDestroy(world, player, pos, blockstate, blockentity, itemstack1);
             VeinMiningPlayers.removeMiningBlock(world, pos);
 
-            if (VeinMiningConfig.SERVER.addPlayerExhaustion.get()) {
+            if (VeinMiningConfig.SERVER.addExhaustion.get()) {
               float diff = foodData.getExhaustionLevel() - currentExhaustion;
               foodData.setExhaustion(currentExhaustion);
               foodData.addExhaustion(
-                  (float) (diff * VeinMiningConfig.SERVER.playerExhaustionMultiplier.get()));
+                  (float) (diff * VeinMiningConfig.SERVER.exhaustionMultiplier.get()));
             } else {
               foodData.setExhaustion(currentExhaustion);
             }

@@ -40,22 +40,23 @@ public class VeinMiningLogic {
           Direction.NORTH, Direction.SOUTH};
 
   public static void veinMine(ServerPlayer playerEntity, BlockPos pos, BlockState sourceState) {
-    ServerLevel world = playerEntity.getLevel();
+    ServerLevel world = playerEntity.serverLevel();
     ItemStack stack = playerEntity.getMainHandItem();
     Block source = sourceState.getBlock();
-    boolean ineffective = VeinMiningConfig.SERVER.requireEffectiveTool.get() &&
+    boolean notCorrect = VeinMiningConfig.SERVER.requireCorrectTool.get() &&
         !Services.PLATFORM.canHarvestDrops(playerEntity, sourceState);
+    boolean tooSlow =
+        stack.getDestroySpeed(sourceState) < VeinMiningConfig.SERVER.requiredDestroySpeed.get();
 
-    if (ineffective) {
+    if (notCorrect || tooSlow) {
       return;
     }
     int veiningLevels = EnchantmentHelper.getItemEnchantmentLevel(VeinMiningMod.ENCHANTMENT, stack);
     int maxBlocks = VeinMiningConfig.SERVER.maxBlocksBase.get() +
         VeinMiningConfig.SERVER.maxBlocksPerLevel.get() * veiningLevels;
-    int maxDistance = VeinMiningConfig.SERVER.maxDistanceBase.get() +
-        VeinMiningConfig.SERVER.maxDistancePerLevel.get() * veiningLevels;
+    int maxDistance = 200;
 
-    if (maxBlocks <= 0 || maxDistance <= 0) {
+    if (maxBlocks <= 0) {
       return;
     }
     int blocks = 1;

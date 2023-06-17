@@ -21,7 +21,7 @@
       "com.illusivesoulworks.veinmining.client.VeinMiningFabricClientMod"
     ],
     "spectrelib": [
-      "com.illusivesoulworks.veinmining.VeinMiningFabricMod"
+      "com.illusivesoulworks.veinmining.VeinMiningConfigInitializer"
     ]
   },
   "mixins": [

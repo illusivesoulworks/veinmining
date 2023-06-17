@@ -13,7 +13,7 @@
         "com.illusivesoulworks.veinmining.client.VeinMiningQuiltClientMod"
       ],
       "spectrelib": [
-        "com.illusivesoulworks.veinmining.VeinMiningQuiltMod"
+        "com.illusivesoulworks.veinmining.VeinMiningConfigInitializer"
       ]
     },
     "depends": [
@@ -48,6 +48,10 @@
       "contributors": {
         "${mod_author}": "Owner"
       },
+      "contact": {
+        "issues": "${issue_tracker}"
+      },
+      "icon": "${mod_id}_icon.png",
       "license": "${license}"
     }
   },

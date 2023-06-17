@@ -36,8 +36,7 @@ public class VeinMiningClientEvents {
       if (world.getGameTime() % 5 == 0) {
         boolean enabled;
         VeinMiningConfig.ActivationState activationState =
-            VeinMiningConfig.SERVER.maxBlocksBase.get() > 0 &&
-                VeinMiningConfig.SERVER.maxDistanceBase.get() > 0 ?
+            VeinMiningConfig.SERVER.maxBlocksBase.get() > 0 ?
                 VeinMiningConfig.CLIENT.activationStateWithoutEnchantment.get() :
                 VeinMiningConfig.CLIENT.activationState.get();
 

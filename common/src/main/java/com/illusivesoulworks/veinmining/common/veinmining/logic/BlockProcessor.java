@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
@@ -86,11 +85,10 @@ public class BlockProcessor {
     ids.add(blockId);
     Set<String> tags = checkedTags.computeIfAbsent(blockId, (name) -> getTagsFor(blockState));
     tags.forEach(tag -> ids.add("#" + tag));
-    VeinMiningConfig.SERVER.blocks.clearCache();
-    Set<String> configs = VeinMiningConfig.SERVER.blocks.getTransformed();
+    VeinMiningConfig.SERVER.blocksList.clearCache();
+    Set<String> configs = VeinMiningConfig.SERVER.blocksList.getTransformed();
 
-    if (VeinMiningConfig.SERVER.blocksPermission.get() ==
-        VeinMiningConfig.PermissionType.BLACKLIST) {
+    if (VeinMiningConfig.SERVER.blocksListType.get() == VeinMiningConfig.ListType.DENY) {
 
       for (String id : configs) {
 

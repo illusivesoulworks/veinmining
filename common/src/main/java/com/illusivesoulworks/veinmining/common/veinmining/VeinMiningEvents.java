@@ -47,4 +47,9 @@ public class VeinMiningEvents {
       VeinMiningPlayers.stopVeinMining(player);
     }
   }
+
+  public static void playerLoggedOut(ServerPlayer player) {
+    VeinMiningPlayers.deactivateVeinMining(player);
+    VeinMiningPlayers.stopVeinMining(player);
+  }
 }

@@ -33,9 +33,9 @@ public class BlockGroups {
 
   public static synchronized void init() {
     BLOCK_TO_GROUP.clear();
-    VeinMiningConfig.SERVER.groups.clearCache();
+    VeinMiningConfig.SERVER.groupsList.clearCache();
 
-    for (String group : VeinMiningConfig.SERVER.groups.getTransformed()) {
+    for (String group : VeinMiningConfig.SERVER.groupsList.getTransformed()) {
       String[] ids = group.split(",");
       Set<String> blockGroup = createGroup(ids);
 

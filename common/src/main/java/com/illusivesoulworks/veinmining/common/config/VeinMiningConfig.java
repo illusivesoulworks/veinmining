@@ -17,21 +17,15 @@
 
 package com.illusivesoulworks.veinmining.common.config;
 
-import com.google.common.collect.Lists;
 import com.illusivesoulworks.spectrelib.config.SpectreConfigSpec;
 import com.illusivesoulworks.veinmining.VeinMiningConstants;
 import com.illusivesoulworks.veinmining.common.platform.Services;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
-import java.util.function.BiPredicate;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -62,110 +56,103 @@ public class VeinMiningConfig {
 
   public static class Server {
 
-    public final SpectreConfigSpec.BooleanValue requireEffectiveTool;
+    public final SpectreConfigSpec.DoubleValue requiredDestroySpeed;
+    public final SpectreConfigSpec.BooleanValue requireCorrectTool;
     public final SpectreConfigSpec.IntValue maxBlocksBase;
-    public final SpectreConfigSpec.IntValue maxDistanceBase;
     public final SpectreConfigSpec.IntValue maxBlocksPerLevel;
-    public final SpectreConfigSpec.IntValue maxDistancePerLevel;
     public final SpectreConfigSpec.BooleanValue diagonalMining;
     public final SpectreConfigSpec.BooleanValue relocateDrops;
     public final SpectreConfigSpec.BooleanValue preventToolDestruction;
     public final SpectreConfigSpec.BooleanValue addToolDamage;
     public final SpectreConfigSpec.IntValue toolDamageMultiplier;
-    public final SpectreConfigSpec.BooleanValue addPlayerExhaustion;
-    public final SpectreConfigSpec.DoubleValue playerExhaustionMultiplier;
+    public final SpectreConfigSpec.BooleanValue addExhaustion;
+    public final SpectreConfigSpec.DoubleValue exhaustionMultiplier;
     public final SpectreConfigSpec.BooleanValue limitedByDurability;
-    public final SpectreConfigSpec.TransformableValue<List<? extends String>, Set<String>> blocks;
-    public final SpectreConfigSpec.EnumValue<PermissionType> blocksPermission;
+    public final SpectreConfigSpec.TransformableValue<List<? extends String>, Set<String>>
+        blocksList;
+    public final SpectreConfigSpec.EnumValue<ListType> blocksListType;
 
-    public final SpectreConfigSpec.TransformableValue<List<? extends String>, Set<String>> groups;
+    public final SpectreConfigSpec.TransformableValue<List<? extends String>, Set<String>>
+        groupsList;
 
     public Server(SpectreConfigSpec.Builder builder) {
-      builder.push("vein mining");
 
-      requireEffectiveTool =
-          builder.comment("Whether or not to require an effective tool to vein mine blocks")
-              .translation(CONFIG_PREFIX + "requireEffectiveTool")
-              .define("requireEffectiveTool", false);
+      requiredDestroySpeed = builder.comment(
+              "The minimum destroy speed the used tool needs on the block to vein mine.")
+          .translation(CONFIG_PREFIX + "requiredDestroySpeed")
+          .defineInRange("requiredDestroySpeed", 1.0D, 0.0D, 100.0D);
+
+      requireCorrectTool =
+          builder.comment(
+                  "If enabled, vein mining will not activate if the used tool cannot harvest drops from the source block.")
+              .translation(CONFIG_PREFIX + "requireCorrectTool")
+              .define("requireCorrectTool", false);
 
       maxBlocksBase =
-          builder.comment("The maximum number of blocks to mine without the enchantment")
+          builder.comment("The maximum number of blocks to vein mine without the enchantment.")
               .translation(CONFIG_PREFIX + "maxBlocksBase")
               .defineInRange("maxBlocksBase", 0, 0, 1000);
 
-      maxDistanceBase =
-          builder.comment("The maximum distance from the source block without the enchantment")
-              .translation(CONFIG_PREFIX + "maxDistanceBase")
-              .defineInRange("maxDistanceBase", 0, 0, 1000);
-
       maxBlocksPerLevel =
-          builder.comment("The maximum number of blocks to mine per level of the enchantment")
+          builder.comment("The maximum number of blocks to vein mine per level of the enchantment.")
               .translation(CONFIG_PREFIX + "maxBlocksPerLevel")
               .defineInRange("maxBlocksPerLevel", 50, 1, 1000);
 
-      maxDistancePerLevel =
-          builder.comment("The maximum distance from the source block per level of the enchantment")
-              .translation(CONFIG_PREFIX + "maxDistancePerLevel")
-              .defineInRange("maxDistancePerLevel", 15, 1, 100);
-
       diagonalMining =
-          builder.comment(
-                  "Whether or not to vein mine diagonally, note this may lead to hidden drops if relocateDrops is false")
+          builder.comment("If enabled, vein mining can mine diagonally.")
               .translation(CONFIG_PREFIX + "diagonalMining")
               .define("diagonalMining", true);
 
       limitedByDurability =
-          builder.comment("Whether or not to stop vein mining when the tool can no longer be used")
+          builder.comment("If enabled, vein mining will stop when the tool can no longer be used.")
               .translation(CONFIG_PREFIX + "limitedByDurability")
               .define("limitedByDurability", true);
 
-      relocateDrops = builder.comment("Whether or not to move all drops to the same location")
+      relocateDrops = builder.comment(
+              "If enabled, vein mining will move drops from blocks to the source location.")
           .translation(CONFIG_PREFIX + "relocateDrops")
           .define("relocateDrops", true);
 
       preventToolDestruction =
-          builder.comment("Whether or not the tool can break while mining additional blocks")
+          builder.comment("If enabled, vein mining will never break tools.")
               .translation(CONFIG_PREFIX + "preventToolDestruction")
               .define("preventToolDestruction", true);
 
       addToolDamage =
-          builder.comment("Whether or not the tool takes damage from mining additional blocks")
+          builder.comment("If enabled, vein mining will damage the tool for each block mined.")
               .translation(CONFIG_PREFIX + "addToolDamage")
               .define("addToolDamage", true);
 
       toolDamageMultiplier =
-          builder.comment("The multiplier to tool damage from mining additional blocks")
+          builder.comment("The multiplier to tool damage from blocks that are vein mined.")
               .translation(CONFIG_PREFIX + "toolDamageMultiplier")
               .defineInRange("toolDamageMultiplier", 1, 0, 1000);
 
-      addPlayerExhaustion =
-          builder.comment("Whether or not the player gets exhaustion from mining additional blocks")
-              .translation(CONFIG_PREFIX + "addPlayerExhaustion")
-              .define("addPlayerExhaustion", true);
+      addExhaustion =
+          builder.comment(
+                  "If enabled, vein mining will cause player exhaustion for each block mined.")
+              .translation(CONFIG_PREFIX + "addExhaustion")
+              .define("addExhaustion", true);
 
-      playerExhaustionMultiplier =
-          builder.comment("The multiplier to player exhaustion from mining additional blocks")
-              .translation(CONFIG_PREFIX + "playerExhaustionMultiplier")
-              .defineInRange("playerExhaustionMultiplier", 1.0F, 0.0F, 1000.0F);
+      exhaustionMultiplier =
+          builder.comment("The multiplier to player exhaustion from blocks that are vein mined.")
+              .translation(CONFIG_PREFIX + "exhaustionMultiplier")
+              .defineInRange("exhaustionMultiplier", 1.0F, 0.0F, 1000.0F);
 
-      blocks = builder.comment("List of whitelisted/blacklisted blocks or block tags")
-          .translation(CONFIG_PREFIX + "blocks")
-          .defineList("blocks", new ArrayList<>(), s -> s instanceof String, Set::copyOf);
+      blocksList = builder.comment("The blocks or block tags for vein mining.")
+          .translation(CONFIG_PREFIX + "blocksList")
+          .defineList("blocksList", new ArrayList<>(), s -> s instanceof String, Set::copyOf);
 
-      blocksPermission =
-          builder.comment("Whether the blocks configuration is a whitelist or a blacklist")
-              .translation(CONFIG_PREFIX + "blocksPermission")
-              .defineEnum("blocksPermission", PermissionType.BLACKLIST);
+      blocksListType =
+          builder.comment("Determines if blocksList contains allowed blocks or denied blocks.")
+              .translation(CONFIG_PREFIX + "blocksListType")
+              .defineEnum("blocksListType", ListType.DENY);
 
-      builder.pop();
-
-      builder.push("groups");
-
-      groups = builder.comment("List of groupings by block IDs or block tags, comma-separated")
-          .translation(CONFIG_PREFIX + "groups")
-          .defineList("groups", generateDefaultGroups(), s -> s instanceof String, Set::copyOf);
-
-      builder.pop();
+      groupsList =
+          builder.comment("The groups of blocks or block tags that are vein mined together.")
+              .translation(CONFIG_PREFIX + "groupsList")
+              .defineList("groupsList", generateDefaultGroups(), s -> s instanceof String,
+                  Set::copyOf);
     }
   }
 
@@ -183,64 +170,61 @@ public class VeinMiningConfig {
     public final SpectreConfigSpec.TransformableValue<List<? extends String>, Set<Enchantment>>
         incompatibleEnchantments;
     public final SpectreConfigSpec.TransformableValue<List<? extends String>, Set<String>>
-        items;
+        itemsList;
 
     public Common(SpectreConfigSpec.Builder builder) {
-      builder.push("enchantment");
 
-      rarity = builder.comment("The rarity of the enchantment")
+      rarity = builder.comment("The rarity of the enchantment.")
           .translation(CONFIG_PREFIX + "rarity")
           .defineEnum("rarity", net.minecraft.world.item.enchantment.Enchantment.Rarity.RARE);
 
-      levels = builder.comment("The number of levels of the enchantment")
+      levels = builder.comment("The number of levels of the enchantment.")
           .translation(CONFIG_PREFIX + "levels")
           .defineInRange("levels", 1, 1, 5);
 
-      isTreasure = builder.comment("Whether or not to consider this enchantment as a treasure")
+      isTreasure = builder.comment("If enabled, the enchantment is considered a treasure enchantment.")
           .translation(CONFIG_PREFIX + "isTreasure")
           .define("isTreasure", false);
 
       isVillagerTrade =
-          builder.comment("Whether or not this enchantment can be offered by villagers for trade")
+          builder.comment("If enabled, the enchantment can be offered by villagers for trade.")
               .translation(CONFIG_PREFIX + "isVillagerTrade")
               .define("isVillagerTrade", true);
 
-      isLootable = builder.comment("Whether or not this enchantment can generate in loot")
+      isLootable = builder.comment("If enabled, the enchantment can generate in loot.")
           .translation(CONFIG_PREFIX + "isLootable")
           .define("isLootable", true);
 
       canApplyAtEnchantingTable =
-          builder.comment("Whether or not this enchantment can be applied at the enchanting table")
+          builder.comment("If enabled, the enchantment can be applied at the enchantment table.")
               .translation(CONFIG_PREFIX + "canApplyAtEnchantingTable")
               .define("canApplyAtEnchantingTable", true);
 
-      canApplyOnBooks = builder.comment("Whether or not this enchantment can be applied on books")
+      canApplyOnBooks = builder.comment("If enabled, the enchantment can be applied on books.")
           .translation(CONFIG_PREFIX + "canApplyOnBooks")
           .define("canApplyOnBooks", true);
 
       minEnchantabilityBase =
-          builder.comment("The minimum enchantability requirement for the first enchantment level")
+          builder.comment("The minimum enchantability required for the first enchantment level.")
               .translation(CONFIG_PREFIX + "minEnchantabilityBase")
               .defineInRange("minEnchantabilityBase", 15, 1, 100);
 
       minEnchantabilityPerLevel = builder.comment(
-              "The additional enchantability requirement for each enchantment level after the first")
+              "The additional enchantability required for each enchantment level after the first.")
           .translation(CONFIG_PREFIX + "minEnchantabilityPerLevel")
           .defineInRange("minEnchantabilityPerLevel", 5, 1, 100);
 
       incompatibleEnchantments = builder
-          .comment("List of enchantments that cannot be applied together with this enchantment")
+          .comment("Enchantments that cannot be applied together with the enchantment.")
           .translation(CONFIG_PREFIX + "incompatibleEnchantments")
           .defineListAllowEmpty(List.of("incompatibleEnchantments"), ArrayList::new,
               s -> s instanceof String,
               (Function<List<? extends String>, Set<Enchantment>>) this::convertEnchantments);
 
-      items = builder.comment("List of items that the enchantment can be applied on")
-          .translation(CONFIG_PREFIX + "items")
-          .defineList("items", Services.PLATFORM.getDefaultItemsConfig(), s -> s instanceof String,
+      itemsList = builder.comment("Items that the enchantment can be applied on.")
+          .translation(CONFIG_PREFIX + "itemsList")
+          .defineList("itemsList", Services.PLATFORM.getDefaultItemsConfig(), s -> s instanceof String,
               Set::copyOf);
-
-      builder.pop();
     }
 
     private Set<Enchantment> convertEnchantments(List<? extends String> input) {
@@ -260,20 +244,16 @@ public class VeinMiningConfig {
         activationStateWithoutEnchantment;
 
     public Client(SpectreConfigSpec.Builder builder) {
-      builder.push("vein mining");
 
       activationState = builder.comment(
-              "Whether to activate vein mining (if using with the enchantment) by standing, crouching, or holding down the keybind")
+              "If maxBlocksBase is 0, determines how to activate vein mining.")
           .translation(CONFIG_PREFIX + "activationState")
-          .defineEnum("activationState", VeinMiningConfig.ActivationState.STANDING);
+          .defineEnum("activationState", ActivationState.STANDING);
 
       activationStateWithoutEnchantment = builder.comment(
-              "Whether to activate vein mining (if using without the enchantment) by standing, crouching, or holding down the keybind")
+              "If maxBlocksBase is greater than 0, determines how to activate vein mining.")
           .translation(CONFIG_PREFIX + "activationStateWithoutEnchantment")
-          .defineEnum("activationStateWithoutEnchantment",
-              VeinMiningConfig.ActivationState.KEYBINDING);
-
-      builder.pop();
+          .defineEnum("activationStateWithoutEnchantment", ActivationState.HOLD_KEY_DOWN);
     }
   }
 
@@ -281,14 +261,14 @@ public class VeinMiningConfig {
     return Services.PLATFORM.getDefaultGroups();
   }
 
-  public enum PermissionType {
-    BLACKLIST,
-    WHITELIST
+  public enum ListType {
+    ALLOW,
+    DENY
   }
 
   public enum ActivationState {
     STANDING,
     CROUCHING,
-    KEYBINDING
+    HOLD_KEY_DOWN
   }
 }

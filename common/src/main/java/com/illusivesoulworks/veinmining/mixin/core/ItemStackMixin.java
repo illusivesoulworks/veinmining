@@ -19,7 +19,8 @@ public class ItemStackMixin {
       at = @At(
           value = "INVOKE",
           target = "net/minecraft/world/item/ItemStack.isDamageableItem()Z"),
-      method = "hurtAndBreak")
+      method = "hurtAndBreak",
+      cancellable = true)
   private <T extends LivingEntity> void veinmining$hurtAndBreak(int amount, T entity,
                                                                 Consumer<T> consumer,
                                                                 CallbackInfo ci) {

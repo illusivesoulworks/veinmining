@@ -17,8 +17,10 @@
 
 package com.illusivesoulworks.veinmining.common.veinmining;
 
+import com.illusivesoulworks.veinmining.common.config.VeinMiningConfig;
 import com.illusivesoulworks.veinmining.common.platform.ClientServices;
 import com.mojang.blaze3d.platform.InputConstants;
+import javax.annotation.Nonnull;
 import net.minecraft.client.KeyMapping;
 
 public class VeinMiningKey {
@@ -32,5 +34,28 @@ public class VeinMiningKey {
 
   public static KeyMapping get() {
     return key;
+  }
+
+  public static final class Mapping extends KeyMapping {
+
+    public Mapping(String pName, int pKeyCode, String pCategory) {
+      super(pName, pKeyCode, pCategory);
+    }
+
+    @Override
+    @Nonnull
+    public String getName() {
+      boolean flag1 = VeinMiningConfig.SERVER.maxBlocksBase.get() > 0 &&
+          VeinMiningConfig.CLIENT.activationStateWithoutEnchantment.get() ==
+              VeinMiningConfig.ActivationState.HOLD_KEY_DOWN;
+      boolean flag2 = VeinMiningConfig.SERVER.maxBlocksBase.get() == 0 &&
+          VeinMiningConfig.CLIENT.activationState.get() ==
+              VeinMiningConfig.ActivationState.HOLD_KEY_DOWN;
+
+      if (!flag1 && !flag2) {
+        return "key.veinmining.activate.error";
+      }
+      return super.getName();
+    }
   }
 }

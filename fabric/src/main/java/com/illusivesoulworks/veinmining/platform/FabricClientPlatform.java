@@ -20,6 +20,7 @@ package com.illusivesoulworks.veinmining.platform;
 import com.illusivesoulworks.veinmining.VeinMiningFabricMod;
 import com.illusivesoulworks.veinmining.common.network.CPacketState;
 import com.illusivesoulworks.veinmining.common.platform.services.IClientPlatform;
+import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningKey;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketByteBufs;
@@ -30,7 +31,7 @@ public class FabricClientPlatform implements IClientPlatform {
 
   @Override
   public KeyMapping createKeyMapping(int key, String desc, String category) {
-    return new KeyMapping("key.veinmining.activate.desc", InputConstants.UNKNOWN.getValue(),
+    return new VeinMiningKey.Mapping("key.veinmining.activate.desc", InputConstants.UNKNOWN.getValue(),
         "key.veinmining.category");
   }
 
