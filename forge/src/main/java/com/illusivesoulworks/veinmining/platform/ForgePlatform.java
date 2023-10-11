@@ -277,10 +277,6 @@ public class ForgePlatform implements IPlatform {
 
     if (removed) {
       state.getBlock().destroy(world, pos, state);
-
-      if (!world.getBlockState(pos).isAir()) {
-        world.removeBlock(pos, false);
-      }
     }
     return removed;
   }

@@ -100,6 +100,8 @@ dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
     compileOnly project(":common")
     annotationProcessor 'org.spongepowered:mixin:0.8.4-SNAPSHOT:processor'
+//    implementation fg.deobf("curse.maven:bedrockores-275083:4358062")
+//    implementation fg.deobf("curse.maven:storagedrawers-223852:3884263")
     implementation fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}")
     jarJar fg.deobf(group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-forge', version: "${spectrelib_range}") {
         jarJar.pin(it, "${spectrelib_version}")
