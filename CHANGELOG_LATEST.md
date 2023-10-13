@@ -2,15 +2,10 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/veinmining/blob/1.20.x/CHANGELOG.md).
 
-## [1.2.0+1.20.1] - 2023.06.17
-### Added
-- Added `requiredDestroySpeed` to `veinmining-server.toml` to determine the needed speed on a used tool to successfully
-  vein mine blocks
-- Added in-game configuration GUI
+## [1.2.1+1.20.1] - 2023.10.11
 ### Changed
-- Updated to Minecraft 1.20.1
-- Configuration options have been renamed with new updated comments
-- `Activate Vein Mining` keybinding will instead display `(Disabled by Configuration)` if the current configuration does
-  not use the keybinding
-### Removed
-- Removed `maxDistanceBase` and `maxDistancePerLevel` configuration options
+- Updated SpectreLib to 0.13.14
+- [Fabric] Updated to Fabric Loader 0.14.23
+### Fixed
+- Fixed blocks being destroyed when they shouldn't [#102](https://github.com/illusivesoulworks/veinmining/issues/102)
+- Fixed configuration files being reset while loaded into a world [#98](https://github.com/illusivesoulworks/veinmining/issues/98)
