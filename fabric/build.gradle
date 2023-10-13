@@ -101,6 +101,13 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     }
     mainFile.addRequirement("fabric-api")
     mainFile.withAdditionalFile(sourcesJar)
+
+    doLast {
+
+        if (project.hasProperty('cf_page') && mainFile.curseFileId != null) {
+            project.ext.curse_link = "${cf_page}/files/${mainFile.curseFileId}"
+        }
+    }
 }
 
 modrinth {
@@ -114,5 +121,12 @@ modrinth {
     gameVersions = "${release_versions}".split(",") as List<String>
     dependencies {
         required.project "fabric-api"
+    }
+}
+
+tasks.modrinth.doLast {
+
+    if (project.hasProperty('modrinth_page') && tasks.modrinth.newVersion != null) {
+        project.ext.modrinth_link = "${modrinth_page}/version/${tasks.modrinth.newVersion.id}"
     }
 }
