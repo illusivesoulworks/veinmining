@@ -18,7 +18,6 @@
 package com.illusivesoulworks.veinmining.common.veinmining.logic;
 
 import com.google.common.collect.Sets;
-import com.illusivesoulworks.veinmining.VeinMiningMod;
 import com.illusivesoulworks.veinmining.common.config.VeinMiningConfig;
 import com.illusivesoulworks.veinmining.common.platform.Services;
 import java.util.LinkedList;
@@ -51,7 +50,9 @@ public class VeinMiningLogic {
     if (notCorrect || tooSlow) {
       return;
     }
-    int veiningLevels = EnchantmentHelper.getItemEnchantmentLevel(VeinMiningMod.ENCHANTMENT, stack);
+    int veiningLevels =
+        EnchantmentHelper.getItemEnchantmentLevel(Services.PLATFORM.getVeinMiningEnchantment(),
+            stack);
     int maxBlocks = VeinMiningConfig.SERVER.maxBlocksBase.get() +
         VeinMiningConfig.SERVER.maxBlocksPerLevel.get() * veiningLevels;
     int maxDistance = 200;

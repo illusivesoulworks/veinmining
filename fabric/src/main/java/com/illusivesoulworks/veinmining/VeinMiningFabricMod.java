@@ -19,6 +19,7 @@ package com.illusivesoulworks.veinmining;
 
 import com.illusivesoulworks.veinmining.common.network.CPacketState;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningEvents;
+import com.illusivesoulworks.veinmining.common.veinmining.enchantment.VeinMiningEnchantment;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
@@ -29,16 +30,19 @@ import net.minecraft.core.Registry;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.enchantment.Enchantment;
 
 public class VeinMiningFabricMod implements ModInitializer {
 
   public static final ResourceLocation STATE_PACKET =
       new ResourceLocation(VeinMiningConstants.MOD_ID, "state");
+  public static Enchantment VEIN_MINING_ENCHANTMENT;
 
   @Override
   public void onInitialize() {
-    Registry.register(BuiltInRegistries.ENCHANTMENT, VeinMiningConstants.ENCHANTMENT_ID,
-        VeinMiningMod.ENCHANTMENT);
+    VEIN_MINING_ENCHANTMENT =
+        Registry.register(BuiltInRegistries.ENCHANTMENT, VeinMiningConstants.ENCHANTMENT_ID,
+            new VeinMiningEnchantment());
     ServerLifecycleEvents.SERVER_STARTED.register(server -> VeinMiningEvents.reloadDatapack());
     ServerLifecycleEvents.END_DATA_PACK_RELOAD.register(
         (server, resourceManager, success) -> VeinMiningEvents.reloadDatapack());

@@ -17,6 +17,7 @@
 
 package com.illusivesoulworks.veinmining.common.platform.services;
 
+import com.illusivesoulworks.veinmining.common.veinmining.enchantment.VeinMiningEnchantment;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -37,6 +38,8 @@ public interface IPlatform {
   Set<String> getBlocksFromTag(ResourceLocation resourceLocation);
 
   EnchantmentCategory getEnchantmentCategory();
+
+  Enchantment getVeinMiningEnchantment();
 
   Optional<Enchantment> getEnchantment(ResourceLocation resourceLocation);
 

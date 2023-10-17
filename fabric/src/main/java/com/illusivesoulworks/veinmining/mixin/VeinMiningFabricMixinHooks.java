@@ -18,6 +18,7 @@
 package com.illusivesoulworks.veinmining.mixin;
 
 import com.illusivesoulworks.veinmining.VeinMiningMod;
+import com.illusivesoulworks.veinmining.common.platform.Services;
 import com.illusivesoulworks.veinmining.common.veinmining.enchantment.VeinMiningEnchantment;
 import java.util.List;
 import net.minecraft.world.item.ItemStack;
@@ -29,24 +30,27 @@ public class VeinMiningFabricMixinHooks {
 
   public static void removeEnchantment(List<EnchantmentInstance> list, Enchantment enchantment) {
 
-    if (enchantment == VeinMiningMod.ENCHANTMENT) {
+    if (enchantment == Services.PLATFORM.getVeinMiningEnchantment()) {
       list.remove(list.size() - 1);
     }
   }
 
   public static void addEnchantment(int level, ItemStack stack, boolean allowTreasure,
                                     List<EnchantmentInstance> returnValue) {
-    VeinMiningEnchantment enchantment = VeinMiningMod.ENCHANTMENT;
+    Enchantment ench = Services.PLATFORM.getVeinMiningEnchantment();
 
-    if ((!enchantment.isTreasureOnly() || allowTreasure) && enchantment.isDiscoverable() &&
-        (enchantment.canApplyAtEnchantingTable(stack) ||
-            (stack.is(Items.BOOK) && enchantment.isAllowedOnBooks()))) {
+    if (ench instanceof VeinMiningEnchantment enchantment) {
 
-      for (int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; --i) {
+      if ((!enchantment.isTreasureOnly() || allowTreasure) && enchantment.isDiscoverable() &&
+          (enchantment.canApplyAtEnchantingTable(stack) ||
+              (stack.is(Items.BOOK) && enchantment.isAllowedOnBooks()))) {
 
-        if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
-          returnValue.add(new EnchantmentInstance(enchantment, i));
-          break;
+        for (int i = enchantment.getMaxLevel(); i > enchantment.getMinLevel() - 1; --i) {
+
+          if (level >= enchantment.getMinCost(i) && level <= enchantment.getMaxCost(i)) {
+            returnValue.add(new EnchantmentInstance(enchantment, i));
+            break;
+          }
         }
       }
     }

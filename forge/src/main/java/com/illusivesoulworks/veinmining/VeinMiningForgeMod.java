@@ -21,6 +21,7 @@ import com.illusivesoulworks.veinmining.client.ForgeClientEventsListener;
 import com.illusivesoulworks.veinmining.common.ForgeCommonEventsListener;
 import com.illusivesoulworks.veinmining.common.network.VeinMiningForgeNetwork;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningKey;
+import com.illusivesoulworks.veinmining.common.veinmining.enchantment.VeinMiningEnchantment;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
@@ -40,9 +41,9 @@ public class VeinMiningForgeMod {
 
   private static final DeferredRegister<Enchantment> ENCHANTMENTS = DeferredRegister.create(
       ForgeRegistries.ENCHANTMENTS, VeinMiningConstants.MOD_ID);
-  private static final RegistryObject<Enchantment> ENCHANTMENT =
+  public static final RegistryObject<Enchantment> ENCHANTMENT =
       ENCHANTMENTS.register(VeinMiningConstants.ENCHANTMENT_ID.getPath(),
-          () -> VeinMiningMod.ENCHANTMENT);
+          VeinMiningEnchantment::new);
 
   public VeinMiningForgeMod() {
     VeinMiningMod.init();

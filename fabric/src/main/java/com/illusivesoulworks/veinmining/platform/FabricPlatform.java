@@ -18,9 +18,11 @@
 package com.illusivesoulworks.veinmining.platform;
 
 import com.google.common.collect.ImmutableMap;
+import com.illusivesoulworks.veinmining.VeinMiningFabricMod;
 import com.illusivesoulworks.veinmining.common.config.VeinMiningConfig;
 import com.illusivesoulworks.veinmining.common.platform.services.IPlatform;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningPlayers;
+import com.illusivesoulworks.veinmining.common.veinmining.enchantment.VeinMiningEnchantment;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +67,13 @@ public class FabricPlatform implements IPlatform {
   @Override
   public EnchantmentCategory getEnchantmentCategory() {
     return EnchantmentCategory.DIGGER;
+  }
+
+
+
+  @Override
+  public Enchantment getVeinMiningEnchantment() {
+    return VeinMiningFabricMod.VEIN_MINING_ENCHANTMENT;
   }
 
   @Override

@@ -19,6 +19,7 @@ package com.illusivesoulworks.veinmining.platform;
 
 import com.google.common.collect.ImmutableMap;
 import com.illusivesoulworks.veinmining.VeinMiningConstants;
+import com.illusivesoulworks.veinmining.VeinMiningForgeMod;
 import com.illusivesoulworks.veinmining.common.config.VeinMiningConfig;
 import com.illusivesoulworks.veinmining.common.platform.services.IPlatform;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningPlayers;
@@ -85,6 +86,11 @@ public class ForgePlatform implements IPlatform {
   @Override
   public EnchantmentCategory getEnchantmentCategory() {
     return CATEGORY;
+  }
+
+  @Override
+  public Enchantment getVeinMiningEnchantment() {
+    return VeinMiningForgeMod.ENCHANTMENT.get();
   }
 
   @Override

@@ -44,10 +44,10 @@ dependencies {
     implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
     implementation project(":common")
 
-    modImplementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-quilt', version: "${spectrelib_range}"
+    modImplementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-quilt', version: '0.13.14+1.20.1'
 
     // Embedded
-    include group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-quilt', version: "${spectrelib_version}"
+    include group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-quilt', version: "0.13.14+1.20.1"
 }
 
 loom {

@@ -20,12 +20,8 @@ package com.illusivesoulworks.veinmining;
 import com.illusivesoulworks.spectrelib.config.SpectreConfig;
 import com.illusivesoulworks.spectrelib.config.SpectreConfigLoader;
 import com.illusivesoulworks.veinmining.common.config.VeinMiningConfig;
-import com.illusivesoulworks.veinmining.common.veinmining.enchantment.VeinMiningEnchantment;
-import net.minecraft.world.item.enchantment.Enchantment;
 
 public class VeinMiningMod {
-
-  public static VeinMiningEnchantment ENCHANTMENT = new VeinMiningEnchantment();
 
   public static void init() {
     String id = VeinMiningConstants.MOD_ID;
