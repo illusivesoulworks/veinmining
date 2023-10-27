@@ -59,5 +59,7 @@
   "gui.veinmining.config.activationState.name": "Activate vein mining (maxBlocksBase = 0)",
   "gui.veinmining.config.activationState.description": "If maxBlocksBase is 0, determines how to activate vein mining.",
   "gui.veinmining.config.activationStateWithoutEnchantment.name": "Activate vein mining (maxBlocksBase > 0)",
-  "gui.veinmining.config.activationStateWithoutEnchantment.description": "If maxBlocksBase is greater than 0, determines how to activate vein mining."
+  "gui.veinmining.config.activationStateWithoutEnchantment.description": "If maxBlocksBase is greater than 0, determines how to activate vein mining.",
+  "gui.veinmining.config.limitedByWorld.name": "Stop vein mining at world bounds",
+  "gui.veinmining.config.limitedByWorld.description": "If enabled, vein mining will not attempt to mine past the boundary of a world."
 }

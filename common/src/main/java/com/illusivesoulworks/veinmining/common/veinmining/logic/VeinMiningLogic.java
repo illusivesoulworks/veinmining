@@ -69,8 +69,10 @@ public class VeinMiningLogic {
       Tuple<BlockPos, Integer> candidate = candidates.poll();
       BlockPos blockPos = candidate.getA();
       int blockDistance = candidate.getB();
+      boolean limitByWorld = blockPos.getY() <= world.getMinBuildHeight() &&
+          VeinMiningConfig.SERVER.limitedByWorld.get();
 
-      if (stopVeining(stack)) {
+      if (limitByWorld || stopVeining(stack)) {
         return;
       }
       BlockState blockState = world.getBlockState(blockPos);

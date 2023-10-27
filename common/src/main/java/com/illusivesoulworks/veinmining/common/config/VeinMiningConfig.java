@@ -68,6 +68,7 @@ public class VeinMiningConfig {
     public final SpectreConfigSpec.BooleanValue addExhaustion;
     public final SpectreConfigSpec.DoubleValue exhaustionMultiplier;
     public final SpectreConfigSpec.BooleanValue limitedByDurability;
+    public final SpectreConfigSpec.BooleanValue limitedByWorld;
     public final SpectreConfigSpec.TransformableValue<List<? extends String>, Set<String>>
         blocksList;
     public final SpectreConfigSpec.EnumValue<ListType> blocksListType;
@@ -138,6 +139,11 @@ public class VeinMiningConfig {
           builder.comment("The multiplier to player exhaustion from blocks that are vein mined.")
               .translation(CONFIG_PREFIX + "exhaustionMultiplier")
               .defineInRange("exhaustionMultiplier", 1.0F, 0.0F, 1000.0F);
+
+      limitedByWorld =
+          builder.comment("If enabled, vein mining will not attempt to mine past the boundary of a world.")
+              .translation(CONFIG_PREFIX + "limitedByWorld")
+              .define("limitedByWorld", true);
 
       blocksList = builder.comment("The blocks or block tags for vein mining.")
           .translation(CONFIG_PREFIX + "blocksList")
