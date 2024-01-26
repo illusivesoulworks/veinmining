@@ -43,7 +43,18 @@ dependencies {
     implementation "net.neoforged:neoforge:${neoforge_version}"
     compileOnly project(":common")
     implementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-neoforge', version: "${spectrelib_range}"
-    jarJar group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-neoforge', version: "${spectrelib_range}"
+    jarJar (group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-neoforge', version: "${spectrelib_range}") {
+        jarJar.pin(it, "${spectrelib_version}")
+    }
+}
+
+tasks.jarJar.configure {
+    archiveClassifier.set("")
+    from(rootProject.file("LICENSE"))
+    from(rootProject.file("COPYING"))
+    from(rootProject.file("COPYING.LESSER"))
+    from(rootProject.file("README.md"))
+    from(rootProject.file("CHANGELOG.md"))
 }
 
 // NeoGradle compiles the game, but we don't want to add our common code to the game's code

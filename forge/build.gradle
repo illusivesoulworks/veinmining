@@ -86,6 +86,15 @@ dependencies {
     }
 }
 
+tasks.jarJar.configure {
+    archiveClassifier.set("")
+    from(rootProject.file("LICENSE"))
+    from(rootProject.file("COPYING"))
+    from(rootProject.file("COPYING.LESSER"))
+    from(rootProject.file("README.md"))
+    from(rootProject.file("CHANGELOG.md"))
+}
+
 tasks.withType(JavaCompile).configureEach {
     source(project(":common").sourceSets.main.allSource)
 }
