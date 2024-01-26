@@ -2,7 +2,11 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/veinmining/blob/1.20.x/CHANGELOG.md).
 
-## [2.1.0+1.20.2] - 2023.10.26
+## [2.2.0+1.20.2] - 2024.01.25
 ### Added
-- Added `limitedByWorld` to `veinmining-server.toml` to enable/disable vein mining past the boundary of a world
-  (for example, the bedrock layer if bedrock is mineable) [#110](https://github.com/illusivesoulworks/veinmining/issues/110)
+- [Forge] Added native Tetra enchantment compatibility [#8](https://github.com/illusivesoulworks/veinmining/issues/8)
+### Changed
+- Updated SpectreLib to 0.14.2
+- [Fabric] No longer requires Fabric Loader 0.14.23+
+### Removed
+- Removed `Disabled by Configuration` keybinding error to avoid overwriting keybindings on restart [#118](https://github.com/illusivesoulworks/veinmining/issues/118)
