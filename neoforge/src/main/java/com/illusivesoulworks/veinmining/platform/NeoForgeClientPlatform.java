@@ -17,28 +17,23 @@
 
 package com.illusivesoulworks.veinmining.platform;
 
-import com.illusivesoulworks.veinmining.VeinMiningQuiltMod;
-import com.illusivesoulworks.veinmining.common.network.CPacketState;
+import com.illusivesoulworks.veinmining.common.network.StatePayload;
 import com.illusivesoulworks.veinmining.common.platform.services.IClientPlatform;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningKey;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.network.FriendlyByteBuf;
-import org.quiltmc.qsl.networking.api.PacketByteBufs;
-import org.quiltmc.qsl.networking.api.client.ClientPlayNetworking;
+import net.neoforged.neoforge.network.PacketDistributor;
 
-public class QuiltClientPlatform implements IClientPlatform {
+public class NeoForgeClientPlatform implements IClientPlatform {
 
   @Override
   public KeyMapping createKeyMapping(int key, String desc, String category) {
-    return new VeinMiningKey.Mapping("key.veinmining.activate.desc", InputConstants.UNKNOWN.getValue(),
-        "key.veinmining.category");
+    return new VeinMiningKey.Mapping("key.veinmining.activate.desc",
+        InputConstants.UNKNOWN.getValue(), "key.veinmining.category");
   }
 
   @Override
   public void sendC2SState(boolean enabled) {
-    FriendlyByteBuf buf = PacketByteBufs.create();
-    CPacketState.encode(new CPacketState(enabled), buf);
-    ClientPlayNetworking.send(VeinMiningQuiltMod.STATE_PACKET, buf);
+    PacketDistributor.SERVER.noArg().send(new StatePayload(enabled));
   }
 }

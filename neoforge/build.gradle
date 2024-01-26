@@ -1,63 +1,67 @@
 plugins {
-    id 'java'
     id 'idea'
     id 'maven-publish'
-    id 'fabric-loom' version '1.4-SNAPSHOT'
+    id 'net.neoforged.gradle.userdev' version '7.0.81'
+    id 'java-library'
     id 'com.modrinth.minotaur' version '2.+'
     id 'net.darkhax.curseforgegradle' version '1.+'
 }
 base {
-    archivesName = "${mod_id}-fabric"
+    archivesName = "${mod_id}-neoforge"
 }
+
+// Automatically enable neoforge AccessTransformers if the file exists
+// This location is hardcoded in FML and can not be changed.
+// https://github.com/neoforged/FancyModLoader/blob/a952595eaaddd571fbc53f43847680b00894e0c1/loader/src/main/java/net/neoforged/fml/loading/moddiscovery/ModFile.java#L118
+if (file('src/main/resources/META-INF/accesstransformer.cfg').exists()) {
+    minecraft.accessTransformers.file file('src/main/resources/META-INF/accesstransformer.cfg')
+}
+runs {
+    configureEach {
+        modSource project.sourceSets.main
+    }
+    client {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+    server {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+        programArgument '--nogui'
+    }
+
+    gameTestServer {
+        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    }
+
+    data {
+        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
 dependencies {
-    minecraft "com.mojang:minecraft:${minecraft_version}"
-    mappings(loom.layered {
-        officialMojangMappings()
-        parchment("org.parchmentmc.data:parchment-${parchment_mc_version}:${parchment_version}@zip")
-    })
-    modImplementation "net.fabricmc:fabric-loader:${fabric_loader_version}"
-    modImplementation "net.fabricmc.fabric-api:fabric-api:${fabric_version}"
-    modImplementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-fabric', version: "${spectrelib_range}"
-    implementation group: 'com.google.code.findbugs', name: 'jsr305', version: '3.0.1'
+    implementation "net.neoforged:neoforge:${neoforge_version}"
     compileOnly project(":common")
-
-    include group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-fabric', version: "${spectrelib_version}"
+    implementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-neoforge', version: "${spectrelib_range}"
+    jarJar group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-neoforge', version: "${spectrelib_range}"
 }
 
-loom {
-    if (project(":common").file("src/main/resources/${mod_id}.accesswidener").exists()) {
-        accessWidenerPath.set(project(":common").file("src/main/resources/${mod_id}.accesswidener"))
-    }
-    mixin {
-        defaultRefmapName.set("${mod_id}.refmap.json")
-    }
-    runs {
-        client {
-            client()
-            setConfigName("Fabric Client")
-            ideConfigGenerated(true)
-            runDir("run")
-        }
-        server {
-            server()
-            setConfigName("Fabric Server")
-            ideConfigGenerated(true)
-            runDir("run")
-        }
-    }
-}
+// NeoGradle compiles the game, but we don't want to add our common code to the game's code
+Spec<Task> notNeoTask = { Task it -> !it.name.startsWith("neo") } as Spec<Task>
 
-tasks.withType(JavaCompile).configureEach {
+tasks.withType(JavaCompile).matching(notNeoTask).configureEach {
     source(project(":common").sourceSets.main.allSource)
 }
-tasks.withType(Javadoc).configureEach {
+
+tasks.withType(Javadoc).matching(notNeoTask).configureEach {
     source(project(":common").sourceSets.main.allJava)
 }
+
 tasks.named("sourcesJar", Jar) {
     from(project(":common").sourceSets.main.allSource)
 }
 
-processResources {
+tasks.withType(ProcessResources).matching(notNeoTask).configureEach {
     from project(":common").sourceSets.main.resources
 }
 
@@ -85,7 +89,6 @@ task publishCurseForge(type: net.darkhax.curseforgegradle.TaskPublishCurseForge)
     "${release_versions}".split(',').each {
         mainFile.addGameVersion("${it}")
     }
-    mainFile.addRequirement("fabric-api")
     mainFile.withAdditionalFile(sourcesJar)
 
     doLast {
@@ -105,9 +108,6 @@ modrinth {
     uploadFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
     additionalFiles = [sourcesJar]
     gameVersions = "${release_versions}".split(",") as List<String>
-    dependencies {
-        required.project "fabric-api"
-    }
 }
 
 tasks.modrinth.doLast {

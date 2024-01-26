@@ -30,7 +30,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(Block.class)
 public class BlockMixin {
 
-  @ModifyVariable(at = @At("HEAD"), method = "popResource", argsOnly = true)
+  @ModifyVariable(at = @At("HEAD"), method = "popResource(Lnet/minecraft/world/level/Level;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/item/ItemStack;)V", argsOnly = true)
   private static BlockPos veinmining$popResource(BlockPos pos, Level level, BlockPos unused,
                                                  ItemStack stack) {
     return VeinMiningMixinHooks.getActualSpawnPos(level, pos);

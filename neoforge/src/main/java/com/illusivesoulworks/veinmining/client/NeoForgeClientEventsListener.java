@@ -17,18 +17,17 @@
 
 package com.illusivesoulworks.veinmining.client;
 
-import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningKey;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import org.quiltmc.loader.api.ModContainer;
-import org.quiltmc.qsl.base.api.entrypoint.client.ClientModInitializer;
-import org.quiltmc.qsl.lifecycle.api.client.event.ClientTickEvents;
+import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.event.TickEvent;
 
-public class VeinMiningQuiltClientMod implements ClientModInitializer {
+public class NeoForgeClientEventsListener {
 
-  @Override
-  public void onInitializeClient(ModContainer modContainer) {
-    VeinMiningKey.setup();
-    KeyBindingHelper.registerKeyBinding(VeinMiningKey.get());
-    ClientTickEvents.END.register(client -> VeinMiningClientEvents.tick());
+  @SubscribeEvent
+  @SuppressWarnings("unused")
+  public void veinMiningState(final TickEvent.ClientTickEvent evt) {
+
+    if (evt.phase == TickEvent.Phase.END) {
+      VeinMiningClientEvents.tick();
+    }
   }
 }

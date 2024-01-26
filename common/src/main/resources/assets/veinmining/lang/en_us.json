@@ -4,6 +4,7 @@
   "key.veinmining.category": "Vein Mining",
   "key.veinmining.activate.desc": "Activate Vein Mining",
   "key.veinmining.activate.error": "(Disabled by Configuration)",
+  "veinmining.networking.failed": "Vein Mining Network Failure",
   "gui.veinmining.config.requiredDestroySpeed.name": "Required destroy speed",
   "gui.veinmining.config.requiredDestroySpeed.description": "The minimum destroy speed the used tool needs on the block to vein mine.",
   "gui.veinmining.config.requireCorrectTool.name": "Require correct tool",

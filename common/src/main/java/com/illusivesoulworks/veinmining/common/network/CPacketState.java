@@ -31,9 +31,9 @@ public record CPacketState(boolean activate) {
     return new CPacketState(buf.readBoolean());
   }
 
-  public static void handle(CPacketState msg, ServerPlayer player) {
+  public static void handle(boolean activate, ServerPlayer player) {
 
-    if (msg.activate) {
+    if (activate) {
       VeinMiningPlayers.activateVeinMining(player, player.level().getGameTime());
     } else {
       VeinMiningPlayers.deactivateVeinMining(player);

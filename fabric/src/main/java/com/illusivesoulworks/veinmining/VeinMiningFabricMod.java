@@ -57,7 +57,7 @@ public class VeinMiningFabricMod implements ModInitializer {
     ServerPlayNetworking.registerGlobalReceiver(STATE_PACKET,
         (server, player, handler, buf, responseSender) -> {
           CPacketState msg = CPacketState.decode(buf);
-          server.execute(() -> CPacketState.handle(msg, player));
+          server.execute(() -> CPacketState.handle(msg.activate(), player));
         });
   }
 }

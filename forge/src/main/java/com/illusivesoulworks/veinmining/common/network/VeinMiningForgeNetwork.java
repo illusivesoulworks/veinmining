@@ -45,7 +45,7 @@ public class VeinMiningForgeNetwork {
 
     // Client-to-Server
     registerC2S(CPacketState.class, CPacketState::encode, CPacketState::decode,
-        CPacketState::handle);
+        (cPacketState, serverPlayer) -> CPacketState.handle(cPacketState.activate(), serverPlayer));
   }
 
   public static <M> void registerC2S(Class<M> messageType, BiConsumer<M, FriendlyByteBuf> encoder,
