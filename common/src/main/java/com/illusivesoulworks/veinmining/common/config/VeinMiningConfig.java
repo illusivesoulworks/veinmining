@@ -141,12 +141,13 @@ public class VeinMiningConfig {
 
       blocksList = builder.comment("The blocks or block tags for vein mining.")
           .translation(CONFIG_PREFIX + "blocksList")
-          .defineList("blocksList", new ArrayList<>(), s -> s instanceof String, Set::copyOf);
+          .defineList("blocksList", List.of("#c:ores", "#forge:ores", "#minecraft:logs"),
+              s -> s instanceof String, Set::copyOf);
 
       blocksListType =
           builder.comment("Determines if blocksList contains allowed blocks or denied blocks.")
               .translation(CONFIG_PREFIX + "blocksListType")
-              .defineEnum("blocksListType", ListType.DENY);
+              .defineEnum("blocksListType", ListType.ALLOW);
 
       groupsList =
           builder.comment("The groups of blocks or block tags that are vein mined together.")
@@ -182,9 +183,10 @@ public class VeinMiningConfig {
           .translation(CONFIG_PREFIX + "levels")
           .defineInRange("levels", 1, 1, 5);
 
-      isTreasure = builder.comment("If enabled, the enchantment is considered a treasure enchantment.")
-          .translation(CONFIG_PREFIX + "isTreasure")
-          .define("isTreasure", false);
+      isTreasure =
+          builder.comment("If enabled, the enchantment is considered a treasure enchantment.")
+              .translation(CONFIG_PREFIX + "isTreasure")
+              .define("isTreasure", false);
 
       isVillagerTrade =
           builder.comment("If enabled, the enchantment can be offered by villagers for trade.")
@@ -223,7 +225,8 @@ public class VeinMiningConfig {
 
       itemsList = builder.comment("Items that the enchantment can be applied on.")
           .translation(CONFIG_PREFIX + "itemsList")
-          .defineList("itemsList", Services.PLATFORM.getDefaultItemsConfig(), s -> s instanceof String,
+          .defineList("itemsList", Services.PLATFORM.getDefaultItemsConfig(),
+              s -> s instanceof String,
               Set::copyOf);
     }
 
