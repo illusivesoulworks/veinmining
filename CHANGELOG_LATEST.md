@@ -2,7 +2,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/veinmining/blob/1.20.x/CHANGELOG.md).
 
-## [3.0.0+1.20.4] - 2024.01.26
+## [3.0.1+1.20.4] - 2024.03.05
+### Added
+- Added `ru_ru` localization [#119](https://github.com/illusivesoulworks/veinmining/pull/119)
 ### Changed
-- Updated to Minecraft 1.20.4
-- Updated to SpectreLib 0.15.1
+- Changed default configuration to vein mine only ores and logs
