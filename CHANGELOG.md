@@ -9,6 +9,8 @@ Prior to version 1.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATC
 - Added `ru_ru` localization [#119](https://github.com/illusivesoulworks/veinmining/pull/119)
 ### Changed
 - Changed default configuration to vein mine only ores and logs
+### Fixed
+- [Quilt] Fixed crash when used with Fabric versions of SpectreLib
 
 ## [1.3.0+1.20.1] - 2024.01.25
 ### Added

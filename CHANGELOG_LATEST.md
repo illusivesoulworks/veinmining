@@ -7,3 +7,5 @@ This is a copy of the changelog for the most recent version. For the full versio
 - Added `ru_ru` localization [#119](https://github.com/illusivesoulworks/veinmining/pull/119)
 ### Changed
 - Changed default configuration to vein mine only ores and logs
+### Fixed
+- [Quilt] Fixed crash when used with Fabric versions of SpectreLib
