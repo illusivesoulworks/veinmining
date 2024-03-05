@@ -4,7 +4,6 @@
   "key.veinmining.category": "Жилокоп",
   "key.veinmining.activate.desc": "Активировать Жилокоп",
   "key.veinmining.activate.error": "(Отключено конфигурацией)",
-  "veinmining.networking.failed": "Сбой сети Жилокоп",
   "gui.veinmining.config.requiredDestroySpeed.name": "Требуемая скорость добычи",
   "gui.veinmining.config.requiredDestroySpeed.description": "Минимальная скорость добычи, необходимая используемому инструменту на блоке для добычи жилы.",
   "gui.veinmining.config.requireCorrectTool.name": "Требуется правильный инструмент",
@@ -33,8 +32,8 @@
   "gui.veinmining.config.blocksList.description": "Определяет, содержит ли список блоков разрешённые блоки или запрёщенные блоки.",
   "gui.veinmining.config.blocksListType.name": "Тип списка блоков Жилокопа",
   "gui.veinmining.config.blocksListType.description": "Определяет, содержит ли список блоков разрешённые блоки или запрещённые блоки.",
-  "gui.veinmining.config.groupsList.name": "Группы Жилокопа",
-  "gui.veinmining.config.groupsList.description": "Группы блоков или теги блоков, которые совместно добываются с Жилокопом.",
+  "gui.veinmining.config.groups.name": "Группы Жилокопа",
+  "gui.veinmining.config.groups.description": "Группы блоков или теги блоков, которые совместно добываются с Жилокопом.",
   "gui.veinmining.config.rarity.name": "Редкость",
   "gui.veinmining.config.rarity.description": "Редкость зачарования.",
   "gui.veinmining.config.levels.name": "Максимум уровней",
@@ -60,7 +59,5 @@
   "gui.veinmining.config.activationState.name": "Активировать Жилокоп (maxBlocksBase = 0)",
   "gui.veinmining.config.activationState.description": "Если maxBlocksBase равно 0, определяет, как активировать Жилокоп.",
   "gui.veinmining.config.activationStateWithoutEnchantment.name": "Активировать Жилокоп (maxBlocksBase > 0)",
-  "gui.veinmining.config.activationStateWithoutEnchantment.description": "Если maxBlocksBase больше 0, определяет, как активировать Жилокоп.",
-  "gui.veinmining.config.limitedByWorld.name": "Остановить Жилокоп на границах мира",
-  "gui.veinmining.config.limitedByWorld.description": "Если включено, Жилокоп не будет пытаться добывать блоки за пределами игрового мира."
+  "gui.veinmining.config.activationStateWithoutEnchantment.description": "Если maxBlocksBase больше 0, определяет, как активировать Жилокоп."
 }
