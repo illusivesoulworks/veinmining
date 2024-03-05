@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 1.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [1.3.1+1.20.1] - 2024.03.05
+### Added
+- Added `ru_ru` localization [#119](https://github.com/illusivesoulworks/veinmining/pull/119)
+### Changed
+- Changed default configuration to vein mine only ores and logs
+
 ## [1.3.0+1.20.1] - 2024.01.25
 ### Added
 - [Forge] Added native Tetra enchantment compatibility [#8](https://github.com/illusivesoulworks/veinmining/issues/8)
