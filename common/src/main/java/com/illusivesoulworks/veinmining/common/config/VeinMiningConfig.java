@@ -69,6 +69,7 @@ public class VeinMiningConfig {
     public final SpectreConfigSpec.DoubleValue exhaustionMultiplier;
     public final SpectreConfigSpec.BooleanValue limitedByDurability;
     public final SpectreConfigSpec.BooleanValue limitedByWorld;
+    public final SpectreConfigSpec.EnumValue<BlocksType> blocks;
     public final SpectreConfigSpec.TransformableValue<List<? extends String>, Set<String>>
         blocksList;
     public final SpectreConfigSpec.EnumValue<ListType> blocksListType;
@@ -146,7 +147,13 @@ public class VeinMiningConfig {
               .translation(CONFIG_PREFIX + "limitedByWorld")
               .define("limitedByWorld", true);
 
-      blocksList = builder.comment("The blocks or block tags for vein mining.")
+      blocks = builder.comment(
+              "Determines the vein mineable blocks based on a preset option or a configured list.")
+          .translation(CONFIG_PREFIX + "blocks")
+          .defineEnum("blocks", BlocksType.CONFIG_LIST);
+
+      blocksList = builder.comment(
+              "The blocks or block tags for vein mining if blocks is set to \"CONFIG_LIST\".")
           .translation(CONFIG_PREFIX + "blocksList")
           .defineList("blocksList", List.of("#c:ores", "#forge:ores", "#minecraft:logs"),
               s -> s instanceof String, Set::copyOf);
@@ -280,5 +287,15 @@ public class VeinMiningConfig {
     STANDING,
     CROUCHING,
     HOLD_KEY_DOWN
+  }
+
+  public enum BlocksType {
+    CONFIG_LIST,
+    ALL,
+    ORES,
+    ORES_LOGS,
+    ORES_STONE,
+    ORES_STONE_LOGS,
+    NO_BLOCK_ENTITIES
   }
 }
