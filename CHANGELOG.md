@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 Prior to version 1.0.0, this project used MCVERSION-MAJORMOD.MAJORAPI.MINOR.PATCH.
 
+## [3.1.0+1.20.4] - 2024.03.20
+### Added
+- Added `blocks` to `veinmining-server.toml` to select between preset options for vein mineable blocks
+### Changed
+- Updated to SpectreLib 0.15.2
+- Optimized networking code
+### Fixed
+- [NeoForge] Fixed networking errors when joining LAN or dedicated servers
+
 ## [3.0.1+1.20.4] - 2024.03.05
 ### Added
 - Added `ru_ru` localization [#119](https://github.com/illusivesoulworks/veinmining/pull/119)
