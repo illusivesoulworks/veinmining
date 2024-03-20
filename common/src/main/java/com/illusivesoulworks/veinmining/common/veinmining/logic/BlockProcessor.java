@@ -74,7 +74,15 @@ public class BlockProcessor {
   }
 
   private static boolean checkBlock(BlockState blockState) {
-    Set<String> ids = new HashSet<>();
+    VeinMiningConfig.BlocksType blocksType = VeinMiningConfig.SERVER.blocks.get();
+
+    if (blocksType == VeinMiningConfig.BlocksType.ALL) {
+      return true;
+    }
+
+    if (blocksType == VeinMiningConfig.BlocksType.NO_BLOCK_ENTITIES) {
+      return !blockState.hasBlockEntity();
+    }
     String blockId =
         Services.PLATFORM.getResourceLocation(blockState.getBlock()).map(ResourceLocation::toString)
             .orElse("");
@@ -82,31 +90,51 @@ public class BlockProcessor {
     if (blockId.isEmpty()) {
       return false;
     }
-    ids.add(blockId);
+    Set<String> blockIds = new HashSet<>();
+    blockIds.add(blockId);
     Set<String> tags = checkedTags.computeIfAbsent(blockId, (name) -> getTagsFor(blockState));
-    tags.forEach(tag -> ids.add("#" + tag));
-    VeinMiningConfig.SERVER.blocksList.clearCache();
-    Set<String> configs = VeinMiningConfig.SERVER.blocksList.getTransformed();
+    tags.forEach(tag -> blockIds.add("#" + tag));
+    boolean allow = true;
+    Set<String> validIds = new HashSet<>();
 
-    if (VeinMiningConfig.SERVER.blocksListType.get() == VeinMiningConfig.ListType.DENY) {
-
-      for (String id : configs) {
-
-        if (ids.contains(id)) {
-          return false;
-        }
+    switch (blocksType) {
+      case ORES -> {
+        validIds.add("#c:ores");
+        validIds.add("#forge:ores");
       }
-      return true;
-    } else {
-
-      for (String id : configs) {
-
-        if (ids.contains(id)) {
-          return true;
-        }
+      case ORES_LOGS -> {
+        validIds.add("#c:ores");
+        validIds.add("#forge:ores");
+        validIds.add("#minecraft:logs");
       }
-      return false;
+      case ORES_STONE -> {
+        validIds.add("#c:ores");
+        validIds.add("#forge:ores");
+        validIds.add("#minecraft:base_stone_overworld");
+        validIds.add("#minecraft:base_stone_nether");
+      }
+      case ORES_STONE_LOGS -> {
+        validIds.add("#c:ores");
+        validIds.add("#forge:ores");
+        validIds.add("#minecraft:logs");
+        validIds.add("#minecraft:base_stone_overworld");
+        validIds.add("#minecraft:base_stone_nether");
+      }
+      case CONFIG_LIST -> {
+        VeinMiningConfig.SERVER.blocksList.clearCache();
+        Set<String> set = VeinMiningConfig.SERVER.blocksList.getTransformed();
+        validIds.addAll(set);
+        allow = VeinMiningConfig.SERVER.blocksListType.get() == VeinMiningConfig.ListType.ALLOW;
+      }
     }
+
+    for (String id : validIds) {
+
+      if (blockIds.contains(id)) {
+        return allow;
+      }
+    }
+    return !allow;
   }
 
   private static Set<String> getTagsFor(BlockState blockState) {
