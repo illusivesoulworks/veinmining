@@ -2,10 +2,6 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/) a
 
 This is a copy of the changelog for the most recent version. For the full version history, go [here](https://github.com/illusivesoulworks/veinmining/blob/1.20.x/CHANGELOG.md).
 
-## [1.3.1+1.20.1] - 2024.03.05
+## [1.4.0+1.20.1] - 2024.03.20
 ### Added
-- Added `ru_ru` localization [#119](https://github.com/illusivesoulworks/veinmining/pull/119)
-### Changed
-- Changed default configuration to vein mine only ores and logs
-### Fixed
-- [Quilt] Fixed crash when used with Fabric versions of SpectreLib
+- Added `blocks` to `veinmining-server.toml` to select between preset options for vein mineable blocks
