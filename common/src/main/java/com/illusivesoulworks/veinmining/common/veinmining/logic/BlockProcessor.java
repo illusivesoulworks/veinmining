@@ -23,8 +23,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import net.minecraft.core.HolderSet;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 
@@ -43,8 +44,8 @@ public class BlockProcessor {
 
   public static boolean isValidTarget(BlockState state, Block source) {
     Block block = state.getBlock();
-    return Services.PLATFORM.getResourceLocation(block).map(resourceLocation -> !state.isAir() &&
-        checkedBlocks.computeIfAbsent(resourceLocation.toString(),
+    return Services.PLATFORM.getResourceLocation(block).map(identifier -> !state.isAir() &&
+        checkedBlocks.computeIfAbsent(identifier.toString(),
             (name) -> BlockProcessor.checkBlock(state)) && matches(source, block)).orElse(false);
   }
 
@@ -54,9 +55,9 @@ public class BlockProcessor {
       return true;
     } else {
       String originName =
-          Services.PLATFORM.getResourceLocation(origin).map(ResourceLocation::toString).orElse("");
+          Services.PLATFORM.getResourceLocation(origin).map(Identifier::toString).orElse("");
       String targetName =
-          Services.PLATFORM.getResourceLocation(target).map(ResourceLocation::toString).orElse("");
+          Services.PLATFORM.getResourceLocation(target).map(Identifier::toString).orElse("");
 
       if (originName.isEmpty() && targetName.isEmpty()) {
         return false;
@@ -84,7 +85,7 @@ public class BlockProcessor {
       return !blockState.hasBlockEntity();
     }
     String blockId =
-        Services.PLATFORM.getResourceLocation(blockState.getBlock()).map(ResourceLocation::toString)
+        Services.PLATFORM.getResourceLocation(blockState.getBlock()).map(Identifier::toString)
             .orElse("");
 
     if (blockId.isEmpty()) {
@@ -139,7 +140,7 @@ public class BlockProcessor {
 
   private static Set<String> getTagsFor(BlockState blockState) {
     Set<String> tags = new HashSet<>();
-    BuiltInRegistries.BLOCK.getTagNames().forEach(blockTagKey -> {
+    BuiltInRegistries.BLOCK.getTags().map(HolderSet.Named::key).forEach(blockTagKey -> {
 
       if (blockState.is(blockTagKey)) {
         tags.add(blockTagKey.location().toString());
@@ -150,9 +151,9 @@ public class BlockProcessor {
 
   private static boolean checkMatch(Block origin, Block target) {
     String originName =
-        Services.PLATFORM.getResourceLocation(origin).map(ResourceLocation::toString).orElse("");
+        Services.PLATFORM.getResourceLocation(origin).map(Identifier::toString).orElse("");
     String targetName =
-        Services.PLATFORM.getResourceLocation(target).map(ResourceLocation::toString).orElse("");
+        Services.PLATFORM.getResourceLocation(target).map(Identifier::toString).orElse("");
 
     if (originName.isEmpty() || targetName.isEmpty()) {
       return false;

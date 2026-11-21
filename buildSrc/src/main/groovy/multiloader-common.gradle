@@ -29,10 +29,6 @@ repositories {
         name = 'Illusive Soulworks'
         url = 'https://maven.theillusivec4.top'
     }
-    maven {
-        name = 'ParchmentMC'
-        url = 'https://maven.parchmentmc.org'
-    }
 }
 
 dependencies {
@@ -51,6 +47,10 @@ dependencies {
     }
 }
 
+test {
+    failOnNoDiscoveredTests = false
+}
+
 sourcesJar {
     from(rootProject.file("LICENSE"))
     from(rootProject.file("COPYING"))
@@ -60,7 +60,6 @@ sourcesJar {
 }
 
 jar {
-    archiveClassifier.set("slim")
     from(rootProject.file("LICENSE"))
     from(rootProject.file("COPYING"))
     from(rootProject.file("COPYING.LESSER"))
@@ -85,12 +84,8 @@ processResources {
             "version"                    : version,
             "group"                      : project.group, //Else we target the task's group.
             "minecraft_version"          : minecraft_version,
-            "forge_version"              : forge_version,
-            "forge_version_range"        : forge_version_range,
             "minecraft_version_range"    : minecraft_version_range,
             "minecraft_version_range_alt": minecraft_version_range_alt,
-            "fabric_version"             : fabric_version,
-            "fabric_loader_version"      : fabric_loader_version,
             "mod_name"                   : mod_name,
             "mod_author"                 : mod_author,
             "mod_id"                     : mod_id,

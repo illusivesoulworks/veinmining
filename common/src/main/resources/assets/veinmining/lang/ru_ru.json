@@ -1,7 +1,7 @@
 {
   "enchantment.veinmining.vein_mining": "Жилокоп",
   "enchantment.veinmining.vein_mining.desc": "Разрушает все блоки жилы одной руды руды при добыче.",
-  "key.veinmining.category": "Жилокоп",
+  "key.category.veinmining.veinmining": "Жилокоп",
   "key.veinmining.activate.desc": "Активировать Жилокоп",
   "key.veinmining.activate.error": "(Отключено конфигурацией)",
   "veinmining.networking.failed": "Сбой сети Жилокоп",

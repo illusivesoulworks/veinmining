@@ -43,7 +43,7 @@ public class VeinMiningLogic {
           Direction.NORTH, Direction.SOUTH};
 
   public static void veinMine(ServerPlayer playerEntity, BlockPos pos, BlockState sourceState) {
-    ServerLevel world = playerEntity.serverLevel();
+    ServerLevel world = playerEntity.level();
     ItemStack stack = playerEntity.getMainHandItem();
     Block source = sourceState.getBlock();
     boolean notCorrect = VeinMiningConfig.SERVER.requireCorrectTool.get() &&
@@ -77,7 +77,7 @@ public class VeinMiningLogic {
       Tuple<BlockPos, Integer> candidate = candidates.poll();
       BlockPos blockPos = candidate.getA();
       int blockDistance = candidate.getB();
-      boolean limitByWorld = blockPos.getY() <= world.getMinBuildHeight() &&
+      boolean limitByWorld = blockPos.getY() <= world.getMinY() &&
           VeinMiningConfig.SERVER.limitedByWorld.get();
 
       if (limitByWorld || stopVeining(stack)) {

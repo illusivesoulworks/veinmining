@@ -10,7 +10,7 @@ public class ClientPackets {
     Minecraft mc = Minecraft.getInstance();
 
     if (mc.player != null && VeinMiningConfig.CLIENT.enableEnchantmentNotifications.get()) {
-      mc.player.displayClientMessage(VeinMiningClientEvents.getTutorialMessage(), true);
+      mc.player.sendOverlayMessage(VeinMiningClientEvents.getTutorialMessage());
     }
   }
 }

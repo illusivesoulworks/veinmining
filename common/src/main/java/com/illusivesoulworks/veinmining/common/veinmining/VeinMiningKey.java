@@ -17,17 +17,23 @@
 
 package com.illusivesoulworks.veinmining.common.veinmining;
 
+import com.illusivesoulworks.veinmining.VeinMiningConstants;
 import com.illusivesoulworks.veinmining.common.platform.ClientServices;
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.resources.Identifier;
 
 public class VeinMiningKey {
+
+  // Translated as "key.category.veinmining.veinmining"
+  public static final KeyMapping.Category CATEGORY = new KeyMapping.Category(
+      Identifier.fromNamespaceAndPath(VeinMiningConstants.MOD_ID, VeinMiningConstants.MOD_ID));
 
   private static KeyMapping key;
 
   public static void setup() {
     key = ClientServices.PLATFORM.createKeyMapping(InputConstants.UNKNOWN.getValue(),
-        "key.veinmining.activate.desc", "key.veinmining.category");
+        "key.veinmining.activate.desc", CATEGORY);
   }
 
   public static KeyMapping get() {
@@ -36,7 +42,7 @@ public class VeinMiningKey {
 
   public static final class Mapping extends KeyMapping {
 
-    public Mapping(String pName, int pKeyCode, String pCategory) {
+    public Mapping(String pName, int pKeyCode, KeyMapping.Category pCategory) {
       super(pName, pKeyCode, pCategory);
     }
   }

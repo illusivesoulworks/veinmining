@@ -31,7 +31,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.TranslatableContents;
-import net.minecraft.world.item.EnchantedBookItem;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.enchantment.Enchantment;
 import net.minecraft.world.item.enchantment.EnchantmentHelper;
@@ -61,11 +61,11 @@ public class VeinMiningClientEvents {
               EnchantmentHelper.getItemEnchantmentLevel(enchantment, player.getMainHandItem()) : 0;
 
           if (activationState != VeinMiningConfig.ActivationState.HOLD_KEY_DOWN) {
-            player.displayClientMessage(
-                Component.translatable("tutorial.veinmining.key.no_configuration"), true);
+            player.sendOverlayMessage(
+                Component.translatable("tutorial.veinmining.key.no_configuration"));
           } else if (needsEnchantment && level == 0) {
-            player.displayClientMessage(
-                Component.translatable("tutorial.veinmining.key.no_enchantment"), true);
+            player.sendOverlayMessage(
+                Component.translatable("tutorial.veinmining.key.no_enchantment"));
           }
         }
 
@@ -86,7 +86,7 @@ public class VeinMiningClientEvents {
     Minecraft mc = Minecraft.getInstance();
     LocalPlayer player = mc.player;
 
-    if (player != null && needsEnchantment && !(stack.getItem() instanceof EnchantedBookItem)) {
+    if (player != null && needsEnchantment && !stack.is(Items.ENCHANTED_BOOK)) {
 
       if (VeinMiningConfig.CLIENT.enableEnchantmentTooltips.get()) {
         Holder<Enchantment> enchantment = player.registryAccess().lookup(Registries.ENCHANTMENT)
