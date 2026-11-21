@@ -21,6 +21,7 @@ import com.illusivesoulworks.veinmining.common.config.VeinMiningConfig;
 import com.illusivesoulworks.veinmining.common.network.SPacketNotify;
 import com.illusivesoulworks.veinmining.common.platform.services.IPlatform;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningPlayers;
+import com.illusivesoulworks.veinmining.mixin.core.AccessorFoodData;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -30,13 +31,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.food.FoodData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.GameType;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.GameMasterBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -50,24 +51,24 @@ public class FabricPlatform implements IPlatform {
   }
 
   @Override
-  public Set<String> getBlocksFromTag(ResourceLocation resourceLocation) {
+  public Set<String> getBlocksFromTag(Identifier identifier) {
     Set<String> result = new HashSet<>();
-    BuiltInRegistries.BLOCK.getTag(TagKey.create(Registries.BLOCK, resourceLocation))
+    BuiltInRegistries.BLOCK.get(TagKey.create(Registries.BLOCK, identifier))
         .ifPresent(block -> {
           for (Holder<Block> blockHolder : block) {
-            blockHolder.unwrapKey().ifPresent(key -> result.add(key.location().toString()));
+            blockHolder.unwrapKey().ifPresent(key -> result.add(key.identifier().toString()));
           }
         });
     return result;
   }
 
   @Override
-  public Block getBlock(ResourceLocation resourceLocation) {
-    return BuiltInRegistries.BLOCK.get(resourceLocation);
+  public Block getBlock(Identifier identifier) {
+    return BuiltInRegistries.BLOCK.getValue(identifier);
   }
 
   @Override
-  public Optional<ResourceLocation> getResourceLocation(Block block) {
+  public Optional<Identifier> getResourceLocation(Block block) {
     return Optional.of(BuiltInRegistries.BLOCK.getKey(block));
   }
 
@@ -76,13 +77,15 @@ public class FabricPlatform implements IPlatform {
     return playerEntity.hasCorrectToolForDrops(state);
   }
 
+  // Mirrors ServerPlayerGameMode#destroyBlock(BlockPos) from 26.1 plus the Fabric API
+  // PlayerBlockBreakEvents hooks, with drop relocation and exhaustion scaling added.
   @Override
   public boolean harvest(ServerPlayer player, BlockPos pos, BlockPos originPos) {
-    Level level = player.level();
+    ServerLevel level = player.level();
     BlockState blockState = level.getBlockState(pos);
     GameType gameModeForPlayer = player.gameMode.getGameModeForPlayer();
 
-    if (!player.getMainHandItem().getItem().canAttackBlock(blockState, level, pos, player)) {
+    if (!player.getMainHandItem().canDestroyBlock(blockState, level, pos, player)) {
       return false;
     }
     BlockEntity blockEntity = level.getBlockEntity(pos);
@@ -92,6 +95,7 @@ public class FabricPlatform implements IPlatform {
       level.sendBlockUpdated(pos, blockState, blockState, 3);
       return false;
     }
+
     if (player.blockActionRestricted(level, pos, gameModeForPlayer)) {
       return false;
     }
@@ -103,37 +107,39 @@ public class FabricPlatform implements IPlatform {
           .onBlockBreakCanceled(level, player, pos, blockState, blockEntity);
       return false;
     }
-    block.playerWillDestroy(level, pos, blockState, player);
+    BlockState adjustedState = block.playerWillDestroy(level, pos, blockState, player);
     boolean bl = level.removeBlock(pos, false);
 
     if (bl) {
       PlayerBlockBreakEvents.AFTER.invoker()
-          .afterBlockBreak(level, player, pos, blockState, blockEntity);
-      block.destroy(level, pos, blockState);
+          .afterBlockBreak(level, player, pos, adjustedState, blockEntity);
+      block.destroy(level, pos, adjustedState);
     }
-    if (player.isCreative()) {
+
+    if (player.preventsBlockDrops()) {
       return true;
     }
     ItemStack itemStack = player.getMainHandItem();
     ItemStack itemStack2 = itemStack.copy();
-    boolean bl2 = player.hasCorrectToolForDrops(blockState);
-    itemStack.mineBlock(level, blockState, pos, player);
+    boolean bl2 = player.hasCorrectToolForDrops(adjustedState);
+    itemStack.mineBlock(level, adjustedState, pos, player);
 
     if (bl && bl2) {
       BlockPos spawnPos = VeinMiningConfig.SERVER.relocateDrops.get() ? originPos : pos;
       FoodData foodData = player.getFoodData();
-      float currentExhaustion = foodData.getExhaustionLevel();
+      AccessorFoodData accessor = (AccessorFoodData) foodData;
+      float currentExhaustion = accessor.getExhaustionLevel();
       VeinMiningPlayers.addMiningBlock(level, pos, spawnPos);
-      block.playerDestroy(level, player, pos, blockState, blockEntity, itemStack2);
+      block.playerDestroy(level, player, pos, adjustedState, blockEntity, itemStack2);
       VeinMiningPlayers.removeMiningBlock(level, pos);
 
       if (VeinMiningConfig.SERVER.addExhaustion.get()) {
-        float diff = foodData.getExhaustionLevel() - currentExhaustion;
-        foodData.setExhaustion(currentExhaustion);
+        float diff = accessor.getExhaustionLevel() - currentExhaustion;
+        accessor.setExhaustionLevel(currentExhaustion);
         foodData.addExhaustion(
             (float) (diff * VeinMiningConfig.SERVER.exhaustionMultiplier.get()));
       } else {
-        foodData.setExhaustion(currentExhaustion);
+        accessor.setExhaustionLevel(currentExhaustion);
       }
     }
     return true;

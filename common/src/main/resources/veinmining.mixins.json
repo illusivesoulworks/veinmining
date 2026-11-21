@@ -4,6 +4,7 @@
   "package": "com.illusivesoulworks.veinmining.mixin.core",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "AccessorFoodData",
     "MixinBlock"
   ],
   "client": [

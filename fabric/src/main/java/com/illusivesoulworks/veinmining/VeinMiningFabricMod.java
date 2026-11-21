@@ -18,7 +18,6 @@
 package com.illusivesoulworks.veinmining;
 
 import com.illusivesoulworks.veinmining.common.data.BlockGroupsResourceListener;
-import com.illusivesoulworks.veinmining.common.data.FabricBlockGroupsResourceListener;
 import com.illusivesoulworks.veinmining.common.network.CPacketState;
 import com.illusivesoulworks.veinmining.common.network.SPacketNotify;
 import com.illusivesoulworks.veinmining.common.veinmining.VeinMiningEvents;
@@ -30,7 +29,8 @@ import net.fabricmc.fabric.api.event.player.PlayerBlockBreakEvents;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.v1.ResourceLoader;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.packs.PackType;
@@ -40,12 +40,11 @@ public class VeinMiningFabricMod implements ModInitializer {
   @Override
   public void onInitialize() {
     ServerLifecycleEvents.SERVER_STARTED.register(server -> VeinMiningEvents.reloadDatapack());
-    ServerTickEvents.END_WORLD_TICK.register(VeinMiningEvents::tick);
-    ResourceManagerHelper resourceManagerHelper = ResourceManagerHelper.get(PackType.SERVER_DATA);
-    FabricBlockGroupsResourceListener fabricBlockGroupsResourceListener =
-        new FabricBlockGroupsResourceListener();
-    BlockGroupsResourceListener.INSTANCE = fabricBlockGroupsResourceListener;
-    resourceManagerHelper.registerReloadListener(fabricBlockGroupsResourceListener);
+    ServerTickEvents.END_LEVEL_TICK.register(VeinMiningEvents::tick);
+    BlockGroupsResourceListener.INSTANCE = new BlockGroupsResourceListener();
+    ResourceLoader.get(PackType.SERVER_DATA).registerReloadListener(
+        Identifier.fromNamespaceAndPath(VeinMiningConstants.MOD_ID, "groups"),
+        BlockGroupsResourceListener.INSTANCE);
     ServerPlayConnectionEvents.DISCONNECT.register(
         (handler, server) -> VeinMiningEvents.playerLoggedOut(handler.getPlayer()));
     PlayerBlockBreakEvents.AFTER.register((world, player, pos, state, blockEntity) -> {
@@ -53,11 +52,11 @@ public class VeinMiningFabricMod implements ModInitializer {
         VeinMiningEvents.blockBreak(serverPlayer, pos, state);
       }
     });
-    PayloadTypeRegistry.playC2S().register(CPacketState.TYPE, CPacketState.STREAM_CODEC);
-    PayloadTypeRegistry.playS2C().register(SPacketNotify.TYPE, SPacketNotify.STREAM_CODEC);
+    PayloadTypeRegistry.serverboundPlay().register(CPacketState.TYPE, CPacketState.STREAM_CODEC);
+    PayloadTypeRegistry.clientboundPlay().register(SPacketNotify.TYPE, SPacketNotify.STREAM_CODEC);
     ServerPlayNetworking.registerGlobalReceiver(CPacketState.TYPE, (payload, context) -> {
       ServerPlayer player = context.player();
-      MinecraftServer server = player.getServer();
+      MinecraftServer server = player.level().getServer();
       boolean activate = payload.activate();
 
       if (server != null) {

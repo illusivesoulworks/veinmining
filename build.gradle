@@ -7,12 +7,20 @@ def publishDiscord() {
 
 
 
+        if (project(':fabric').hasProperty('curse_link')) {
+            cfLinks.add("[Fabric](${project(':fabric').findProperty('curse_link')})")
+        }
+
         if (project(':neoforge').hasProperty('curse_link')) {
             cfLinks.add("[NeoForge](${project(':neoforge').findProperty('curse_link')})")
         }
         def modrinthLinks = new StringJoiner('\\n')
 
 
+
+        if (project(':fabric').hasProperty('modrinth_link')) {
+            modrinthLinks.add("[Fabric](${project(':fabric').findProperty('modrinth_link')})")
+        }
 
         if (project(':neoforge').hasProperty('modrinth_link')) {
             modrinthLinks.add("[NeoForge](${project(':neoforge').findProperty('modrinth_link')})")
@@ -97,6 +105,22 @@ def ordered(String... dependencyPaths) {
 
 tasks.register('publishNeoForge') {
     dependsOn ordered(':neoforge:modrinth', ':neoforge:publishCurseForge')
+
+    doLast {
+        publishDiscord()
+    }
+}
+
+tasks.register('publishFabric') {
+    dependsOn ordered(':fabric:modrinth', ':fabric:publishCurseForge')
+
+    doLast {
+        publishDiscord()
+    }
+}
+
+tasks.register('publishFabricNeoForge') {
+    dependsOn ordered(':fabric:modrinth', ':fabric:publishCurseForge', ':neoforge:modrinth', ':neoforge:publishCurseForge')
 
     doLast {
         publishDiscord()
