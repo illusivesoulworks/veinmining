@@ -18,9 +18,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MixinItemStack {
 
   @Inject(
-      at = @At(
-          value = "INVOKE",
-          target = "net/minecraft/world/item/ItemStack.isDamageableItem()Z"),
+      // 26.1 moved the isDamageableItem() check into processDurabilityChange, so cancel at HEAD
+      at = @At("HEAD"),
       method = "hurtAndBreak(ILnet/minecraft/server/level/ServerLevel;Lnet/minecraft/world/entity/LivingEntity;Ljava/util/function/Consumer;)V",
       cancellable = true)
   private void veinmining$itemDamage(int amount, ServerLevel serverLevel,

@@ -30,7 +30,7 @@
     "${mod_id}.fabric.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.15",
+    "fabricloader": ">=${fabric_loader_version}",
     "fabric-api": "*",
     "minecraft": "${minecraft_version_range_alt}",
     "java": ">=${java_version}"

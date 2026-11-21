@@ -1,7 +1,5 @@
 package com.illusivesoulworks.veinmining.common.data;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -17,36 +15,36 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.annotation.Nonnull;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.FileToIdConverter;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimpleJsonResourceReloadListener;
+import net.minecraft.util.ExtraCodecs;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.profiling.ProfilerFiller;
 
-public class BlockGroupsResourceListener extends SimpleJsonResourceReloadListener {
+public class BlockGroupsResourceListener extends SimpleJsonResourceReloadListener<JsonElement> {
 
-  private static final Gson GSON =
-      (new GsonBuilder()).setPrettyPrinting().disableHtmlEscaping().create();
   public static BlockGroupsResourceListener INSTANCE;
 
   private List<Set<String>> groups = new ArrayList<>();
 
   public BlockGroupsResourceListener() {
-    super(GSON, "veinmining");
+    super(ExtraCodecs.JSON, FileToIdConverter.json("veinmining"));
   }
 
   @Override
-  protected void apply(@Nonnull Map<ResourceLocation, JsonElement> object,
+  protected void apply(@Nonnull Map<Identifier, JsonElement> object,
                        @Nonnull ResourceManager resourceManager,
                        @Nonnull ProfilerFiller profilerFiller) {
-    Map<ResourceLocation, JsonElement> sorted = new LinkedHashMap<>();
+    Map<Identifier, JsonElement> sorted = new LinkedHashMap<>();
     resourceManager.listPacks().forEach(packResources -> {
       Set<String> namespaces = packResources.getNamespaces(PackType.SERVER_DATA);
       namespaces.forEach(
           namespace -> packResources.listResources(PackType.SERVER_DATA, namespace, "veinmining",
-              (resourceLocation, inputStreamIoSupplier) -> {
-                ResourceLocation rl = ResourceLocation.fromNamespaceAndPath(namespace, "groups");
+              (identifier, inputStreamIoSupplier) -> {
+                Identifier rl = Identifier.fromNamespaceAndPath(namespace, "groups");
                 JsonElement el = object.get(rl);
 
                 if (el != null) {
@@ -56,8 +54,8 @@ public class BlockGroupsResourceListener extends SimpleJsonResourceReloadListene
     });
     List<Set<String>> blocks = new ArrayList<>();
 
-    for (Map.Entry<ResourceLocation, JsonElement> entry : sorted.entrySet()) {
-      ResourceLocation resourcelocation = entry.getKey();
+    for (Map.Entry<Identifier, JsonElement> entry : sorted.entrySet()) {
+      Identifier resourcelocation = entry.getKey();
 
       try {
         fromJson(blocks, GsonHelper.convertToJsonObject(entry.getValue(), "top element"));

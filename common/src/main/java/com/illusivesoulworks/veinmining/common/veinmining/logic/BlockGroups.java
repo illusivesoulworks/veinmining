@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 
@@ -42,13 +42,13 @@ public class BlockGroups {
     for (String id : ids) {
 
       if (id.charAt(0) == '#') {
-        ResourceLocation rl = ResourceLocation.tryParse(id.substring(1));
+        Identifier rl = Identifier.tryParse(id.substring(1));
 
         if (rl != null) {
           newGroup.addAll(Services.PLATFORM.getBlocksFromTag(rl));
         }
       } else {
-        ResourceLocation rl = ResourceLocation.tryParse(id);
+        Identifier rl = Identifier.tryParse(id);
 
         if (rl != null) {
           Block block = Services.PLATFORM.getBlock(rl);

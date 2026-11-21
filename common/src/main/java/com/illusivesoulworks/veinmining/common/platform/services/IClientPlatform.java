@@ -21,7 +21,7 @@ import net.minecraft.client.KeyMapping;
 
 public interface IClientPlatform {
 
-  KeyMapping createKeyMapping(int key, String desc, String category);
+  KeyMapping createKeyMapping(int key, String desc, KeyMapping.Category category);
 
   void sendC2SState(boolean enabled);
 }

@@ -2,51 +2,58 @@ import net.darkhax.curseforgegradle.TaskPublishCurseForge
 
 plugins {
     id 'multiloader-loader'
-    id 'net.neoforged.gradle.userdev' version '7.0.142'
+    id 'net.neoforged.moddev' version '2.0.148'
     id 'com.modrinth.minotaur' version '2.+'
     id 'net.darkhax.curseforgegradle' version '1.+'
 }
 
-// Automatically enable neoforge AccessTransformers if the file exists
-// This location is hardcoded in FML and can not be changed.
-// https://github.com/neoforged/FancyModLoader/blob/a952595eaaddd571fbc53f43847680b00894e0c1/loader/src/main/java/net/neoforged/fml/loading/moddiscovery/ModFile.java#L118
-def at = file('src/main/resources/META-INF/accesstransformer.cfg')
-if (at.exists()) {
-    minecraft.accessTransformers.file at
-}
-runs {
-    configureEach {
-        modSource project.sourceSets.main
-    }
-    client {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-    }
-    server {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
-        programArgument '--nogui'
+neoForge {
+    version = project.neoforge_version
+    addModdingDependenciesTo sourceSets.test
+
+    // Automatically enable NeoForge AccessTransformers if the file exists
+    def at = file('src/main/resources/META-INF/accesstransformer.cfg')
+    if (at.exists()) {
+        accessTransformers.from(at.absolutePath)
     }
 
-    gameTestServer {
-        systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+    runs {
+        configureEach {
+            systemProperty 'neoforge.enabledGameTestNamespaces', project.mod_id
+            ideName = "NeoForge ${it.name.capitalize()} (${project.path})"
+        }
+        client {
+            client()
+            gameDirectory = project.file('runs/client')
+        }
+        server {
+            server()
+            programArgument '--nogui'
+            gameDirectory = project.file('runs/server')
+        }
+        gameTestServer {
+            type = "gameTestServer"
+            gameDirectory = project.file('runs/gametest')
+        }
+        data {
+            clientData()
+            gameDirectory = project.file('runs/data')
+            programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
+        }
     }
 
-    data {
-        programArguments.addAll '--mod', project.mod_id, '--all', '--output', file('src/generated/resources/').getAbsolutePath(), '--existing', file('src/main/resources/').getAbsolutePath()
-    }
-}
-
-subsystems {
-    parchment {
-        minecraftVersion = "${parchment_mc}"
-        mappingsVersion = "${parchment_version}"
+    mods {
+        "${mod_id}" {
+            sourceSet(sourceSets.main)
+            // Dev-only game tests, never packaged into the mod jar
+            sourceSet(sourceSets.test)
+        }
     }
 }
 
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 dependencies {
-    implementation "net.neoforged:neoforge:${neoforge_version}"
-
     implementation group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-neoforge', version: "${spectrelib_version}"
     jarJar group: 'com.illusivesoulworks.spectrelib', name: 'spectrelib-neoforge', version: "${spectrelib_version}"
 }
@@ -59,20 +66,11 @@ sourceSets {
     }
 }
 
-tasks.jarJar.configure {
-    archiveClassifier.set("")
-    from(rootProject.file("LICENSE"))
-    from(rootProject.file("COPYING"))
-    from(rootProject.file("COPYING.LESSER"))
-    from(rootProject.file("README.md"))
-    from(rootProject.file("CHANGELOG.md"))
-}
-
 tasks.register('publishCurseForge', TaskPublishCurseForge) {
     apiToken = findProperty('curseKey')
     //debugMode = true
     def projectId = "${cf_id}".toString()
-    def mainFile = upload(projectId, file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar"))
+    def mainFile = upload(projectId, file("${project.layout.buildDirectory.get().asFile}/libs/${base.archivesName.get()}-${version}.jar"))
     mainFile.changelogType = 'markdown'
     mainFile.changelog = file('../CHANGELOG_LATEST.md')
     mainFile.releaseType = "${release_type}"
@@ -93,10 +91,10 @@ modrinth {
     token = findProperty('modrinthKey') ?: ""
     //debugMode = true
     projectId = "${modrinth_id}"
-    versionName = getArchivesBaseName() + "-" + getVersion()
+    versionName = base.archivesName.get() + "-" + getVersion()
     versionType = "${release_type}"
     changelog = file('../CHANGELOG_LATEST.md').text
-    uploadFile = file("${project.buildDir}/libs/${archivesBaseName}-${version}.jar")
+    uploadFile = file("${project.layout.buildDirectory.get().asFile}/libs/${base.archivesName.get()}-${version}.jar")
     additionalFiles = [sourcesJar]
     gameVersions = "${release_versions}".split(",") as List<String>
 }
@@ -105,5 +103,24 @@ tasks.modrinth.doLast {
 
     if (project.hasProperty('modrinth_page') && tasks.modrinth.newVersion != null) {
         project.ext.modrinth_link = "${modrinth_page}/version/${tasks.modrinth.newVersion.id}"
+    }
+}
+
+// Implement mcgradleconventions loader attribute so the common and loader variants never get mixed up
+def loaderAttribute = Attribute.of('io.github.mcgradleconventions.loader', String)
+['apiElements', 'runtimeElements', 'sourcesElements', 'javadocElements'].each { variant ->
+    configurations.named("$variant") {
+        attributes {
+            attribute(loaderAttribute, 'neoforge')
+        }
+    }
+}
+sourceSets.configureEach {
+    [it.compileClasspathConfigurationName, it.runtimeClasspathConfigurationName, it.getTaskName(null, 'jarJar')].each { variant ->
+        configurations.named("$variant") {
+            attributes {
+                attribute(loaderAttribute, 'neoforge')
+            }
+        }
     }
 }

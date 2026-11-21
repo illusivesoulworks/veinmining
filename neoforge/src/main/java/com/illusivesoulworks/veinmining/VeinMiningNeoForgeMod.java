@@ -63,12 +63,13 @@ public class VeinMiningNeoForgeMod {
     NeoForge.EVENT_BUS.register(new NeoForgeClientEventsListener());
   }
 
-  @EventBusSubscriber(modid = VeinMiningConstants.MOD_ID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+  @EventBusSubscriber(modid = VeinMiningConstants.MOD_ID, value = Dist.CLIENT)
   public static class ClientModEvents {
 
     @SubscribeEvent
     public static void registerKeys(final RegisterKeyMappingsEvent evt) {
       VeinMiningKey.setup();
+      evt.registerCategory(VeinMiningKey.CATEGORY);
       evt.register(VeinMiningKey.get());
     }
   }

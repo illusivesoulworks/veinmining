@@ -20,7 +20,7 @@ package com.illusivesoulworks.veinmining.common.platform.services;
 import java.util.Optional;
 import java.util.Set;
 import net.minecraft.core.BlockPos;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -29,11 +29,11 @@ public interface IPlatform {
 
   void sendNotifyS2C(ServerPlayer player);
 
-  Set<String> getBlocksFromTag(ResourceLocation resourceLocation);
+  Set<String> getBlocksFromTag(Identifier identifier);
 
-  Block getBlock(ResourceLocation resourceLocation);
+  Block getBlock(Identifier identifier);
 
-  Optional<ResourceLocation> getResourceLocation(Block block);
+  Optional<Identifier> getResourceLocation(Block block);
 
   boolean canHarvestDrops(ServerPlayer playerEntity, BlockState state, BlockPos pos);
 

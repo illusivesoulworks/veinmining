@@ -1,21 +1,14 @@
 import javax.net.ssl.HttpsURLConnection
 import java.nio.charset.StandardCharsets
 
-plugins {
-    // Required for NeoGradle
-    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.7"
-}
-
 def publishDiscord() {
     try {
         def cfLinks = new StringJoiner('\\n')
 
+
+
         if (project(':fabric').hasProperty('curse_link')) {
             cfLinks.add("[Fabric](${project(':fabric').findProperty('curse_link')})")
-        }
-
-        if (project(':forge').hasProperty('curse_link')) {
-            cfLinks.add("[Forge](${project(':forge').findProperty('curse_link')})")
         }
 
         if (project(':neoforge').hasProperty('curse_link')) {
@@ -23,15 +16,13 @@ def publishDiscord() {
         }
         def modrinthLinks = new StringJoiner('\\n')
 
+
+
         if (project(':fabric').hasProperty('modrinth_link')) {
             modrinthLinks.add("[Fabric](${project(':fabric').findProperty('modrinth_link')})")
         }
 
-        if (project(':forge').hasProperty('modrinth_link')) {
-            modrinthLinks.add("[Forge](${project(':forge').findProperty('modrinth_link')})")
-        }
-
-        if (project(':neoforge').hasProperty('curse_link')) {
+        if (project(':neoforge').hasProperty('modrinth_link')) {
             modrinthLinks.add("[NeoForge](${project(':neoforge').findProperty('modrinth_link')})")
         }
         println(cfLinks)
@@ -112,22 +103,6 @@ def ordered(String... dependencyPaths) {
     return dependencies
 }
 
-tasks.register('publishFabric') {
-    dependsOn ordered(':fabric:modrinth', ':fabric:publishCurseForge')
-
-    doLast {
-        publishDiscord()
-    }
-}
-
-tasks.register('publishForge') {
-    dependsOn ordered(':forge:modrinth', ':forge:publishCurseForge')
-
-    doLast {
-        publishDiscord()
-    }
-}
-
 tasks.register('publishNeoForge') {
     dependsOn ordered(':neoforge:modrinth', ':neoforge:publishCurseForge')
 
@@ -136,8 +111,8 @@ tasks.register('publishNeoForge') {
     }
 }
 
-tasks.register('publishFabricForge') {
-    dependsOn ordered(':forge:modrinth', 'forge:publishCurseForge', ':fabric:modrinth', ':fabric:publishCurseForge')
+tasks.register('publishFabric') {
+    dependsOn ordered(':fabric:modrinth', ':fabric:publishCurseForge')
 
     doLast {
         publishDiscord()
@@ -146,22 +121,6 @@ tasks.register('publishFabricForge') {
 
 tasks.register('publishFabricNeoForge') {
     dependsOn ordered(':fabric:modrinth', ':fabric:publishCurseForge', ':neoforge:modrinth', ':neoforge:publishCurseForge')
-
-    doLast {
-        publishDiscord()
-    }
-}
-
-tasks.register('publishForgeNeoForge') {
-    dependsOn ordered(':forge:modrinth', ':forge:publishCurseForge', ':neoforge:modrinth', ':neoforge:publishCurseForge')
-
-    doLast {
-        publishDiscord()
-    }
-}
-
-tasks.register('publishFabricForgeNeoForge') {
-    dependsOn ordered(':forge:modrinth', ':forge:publishCurseForge', ':fabric:modrinth', ':fabric:publishCurseForge', ':neoforge:modrinth', ':neoforge:publishCurseForge')
 
     doLast {
         publishDiscord()
